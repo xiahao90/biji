@@ -1,0 +1,161 @@
+curl---snoopy 获取远端的文件  
+curl 模拟表单的登陆
+
+
+file_get_contents()
+
+snoopy:
+
+
+
+curl:利用url 语言规定来传送文件和数据的一种工具
+ 
+curl ： 支持 http https
+
+php 默认是支持 curl
+
+打开curl 
+
+extension=php_curl.dll 
+先在本机测试，在php.ini中去掉了extension=php_curl.dll前面的;，查看一下phpinfo()，并没有curl。
+将libeay32.dll 和ssleay32.dll复制到system32下，重启apache，刷新phpinfo()，看到了curl。
+
+curl的使用： 四剑
+ 1--初始化  curl_init(); 返回一个资源
+ 2--设置变量 curl_setopt(资源,常量，常量值)；
+ 3--执行并返回结果  curl_exec(资源)
+ 4--关闭curl 资源 curl_close(资源)
+
+常见的常量：
+  CURLOPT_URL      设置需要抓起网页的路径
+  CURLOPT_HEADER   设置header 头信息  值 1 或者 0  如果是1 表示要求浏览器保存字符串 否则 输出字符串
+  CURLOPT_POST     模拟post提交
+  CURLOPT_RETURNTRANSFER   是否运行当前设置的这个curl地址 值 1 或者0 如果是1 表示运行这个curl 地址 否则 不运行
+  CURLOPT_POSTFIESDS 设置post 提交的数据 ,相当于点击了按钮
+
+实例：
+ curl 获取运程数据
+<?php
+ /**
+  * 初始化
+  */ 
+ $curl=curl_init(); 
+ /**
+  *  设置远程的url地址
+  * 
+  * http://www.baidu.com/s?wd=值
+  */ 
+ curl_setopt($curl,CURLOPT_URL,'http://www.baidu.com/s?wd=php100');
+ /**
+  * 设置执行这个url 
+  */ 
+  curl_setopt($curl,CURLOPT_RETURNTRANSFER,1); 
+ /**
+  * 开始执行 url   返回结果
+  */ 
+  
+  $data=curl_exec($curl);
+  /**
+   * 
+   * 关闭资源
+   */ 
+    curl_close($curl);
+   
+   echo '<pre>';
+      print_r($data);
+   echo '</pre>';
+?>
+
+curl 运程登录网站
+
+<?php
+
+/**
+ * @author phpadmin
+ * @copyright 2012
+ * 
+ * 不通过登录界面进行登录
+ * 从我的服务器 远程的去登录你的网站
+ * 
+ * 1--准备数据 url
+ * 
+ */
+   
+   $post_url='http://127.0.0.1/loginAction.php'; //这是登录地址
+
+   $post_data='name=lyle_zhang&pwd=test123&sub=登录'; //设置post 数据
+   /**
+    * 执行curl
+    * 
+    * 初始化是传递地址
+    */
+    $ch=curl_init($post_url); 
+    /**
+     * 模拟浏览器传递
+     */ 
+    curl_setopt($ch,CURLOPT_HEADER,0);
+    /**
+     * 设置运行该curl
+     */ 
+     
+     curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+     
+     /**
+      * 模拟post 提交
+      * 告诉浏览器 我数据时 post 提交过来的
+      */ 
+      
+      curl_setopt($ch,CURLOPT_POST,1);
+      
+      /**
+       * 设置执行post 相当于 点击了 登录的这个按钮
+       */ 
+       
+       curl_setopt($ch,CURLOPT_POSTFIELDS,$post_data);
+       
+       /**
+        * 执行 curl
+        *  返回数据
+        */ 
+         $data=curl_exec($ch);
+        
+        /**
+         * 关闭
+         */ 
+         
+         curl_close($ch);
+   
+   
+    echo '<pre>';
+      print_r($data);
+    echo '</pre>';
+?>
+
+用CURL模拟用户登录并采集需要用户登录的页面的。
+<?php
+$cookie_jar = tempnam('./tmp','cookie');
+$ch = curl_init(); 
+curl_setopt($ch, CURLOPT_URL,'登陆地址');
+curl_setopt($ch, CURLOPT_POST, 1);
+$request = 'username=xxx&pwd=xxx';
+curl_setopt($ch, CURLOPT_POSTFIELDS, $request);//传递数据
+curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie_jar);//把返回来的cookie信息保存在$cookie_jar文件中
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);//设定返回的数据是否自动显示
+curl_setopt($ch, CURLOPT_HEADER, false);//设定是否显示头信息
+curl_setopt($ch, CURLOPT_NOBODY, false);//设定是否输出页面内容
+curl_exec($ch);
+curl_close($ch); //get data after login
+
+$ch2 = curl_init();
+curl_setopt($ch2, CURLOPT_URL, '查看地址');
+curl_setopt($ch2, CURLOPT_HEADER, false);
+curl_setopt($ch2, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch2, CURLOPT_COOKIEFILE, $cookie_jar);
+$orders = curl_exec($ch2);
+
+echo $orders;
+curl_close($ch2);// 实践证明很稳定:)
+?>
+
+
+   

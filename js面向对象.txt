@@ -1,0 +1,80 @@
+json 
+
+封装 继承 多态
+
+js 同样也有这三个根本要素
+
+js 面向对象构造函数
+面向对象： 代码更加规范 代码可以重复使用
+
+总结:
+   1 js 的数据的属性或者方法（函数） 封装非常的简单，没有类class ，完全由对象动态操纵.
+
+	2. js 中的this关键字是　访问局部属性　或者　局部函数
+
+	３.　在js中将局部函数设置成全局函数通过js 设置临时函数赋值来实现.
+	4.不同的对象可以使用相同的函数名
+	5.函数其实就是一个对象
+
+属性配置：
+
+
+   对象的属性配置：
+
+ var stu=Object.create(null)；  //声明一个空对象
+ Object.defineproperty(
+        对象名,"属性名",{
+		value:"value值",
+		writable:true, 属性是否可更改
+		configurable:true, 属性配置是否可更改
+		enumerable:true是否允许循环
+		}
+     );
+
+js 面向对象的关键字：
+
+ this
+
+ call()   自动调用
+
+ apply()  
+
+原型关键字：
+
+prototype（这种写法经常使用）
+
+   语法规则：
+
+   对象.prototype={
+
+     属性:值,.........
+	方法名：function(形参列表){
+	},.....
+    
+ }
+
+<script type="text/javascript">
+    var userinfo={"name":"张雪林","sex":"女","email":"xxxxx@qq.com","msg":"祝贺成为2012年度华育国际集团优秀学员","src":"xxxx.jpg"}; //userinfo 对象
+    var sayHello=function (){  //对象下面的某个方法
+       var hello='hello word'+this.email; //在面向对象里面 可以访问自己的属性和方法 this 关键字
+        var my_img=document.getElementById('myimg');
+       if(my_img){
+         my_img.setAttribute('src',this.src);
+       }
+       alert(hello);
+   }
+   userinfo.hello=sayHello;  //将对象的方法赋给一个临时方法 
+    userinfo.hello();  //访问这个方法
+    alert(userinfo.name+':'+userinfo.msg);
+   
+</script>
+
+
+
+
+
+
+
+
+
+

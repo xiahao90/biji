@@ -1,0 +1,223 @@
+PHP正则入门:
+PHP正则表达式主要用于字符串的模式分割、匹配、查找及替换操作。使用正则表达式在某些简单的环境下可能效率不高，
+因此如何更好的使用PHP正则表达式需要综合考虑。
+
+PHP正则表达式的定义：
+用于描述字符排列和匹配模式的一种语法规则。
+
+PHP中的正则函数：
+PHP中有两套正则函数，两者功能差不多，分别为：
+一套是由PCRE（Perl Compatible Regular Expression）库提供的。使用“preg_”为前缀命名的函数；
+一套由POSIX（Portable Operating System Interface of Unix ）扩展提供的。使用以“ereg_”为前缀命名的函数；
+（POSIX的正则函数库，自PHP 5.3以后，就不在推荐使用，从PHP6以后，就将被移除）
+由于POSIX正则即将推出历史舞台，并且PCRE和perl的形式差不多，更利于我们在perl和php之间切换，所以这里重点介绍PCRE正则的使用。
+
+PCRE正则表达式
+PCRE全称为Perl Compatible Regular Expression，意思是Perl兼容正则表达式。
+在PCRE中，通常将模式表达式（即正则表达式）包含在两个反斜线“/”之间，如“/apple/”。
+正则中重要的几个概念有：元字符、转义、模式单元（重复）、反义、引用和断言，这些概念都javascript中轻松的理解和掌握。
+
+ preg_filter —正则表达式搜索和替换
+ preg_filter("正则", "替换","目标");
+ preg_grep ( string $pattern , array $input [, int $flags = 0 ] )
+ preg_match — 执行一个正则表达式匹配
+ preg_match ( string $pattern , string $subject [, array &$matches [, int $flags = 0 [, int $offset = 0 ]]] )
+ preg_match_all — 全局正则表达式匹配
+ preg_replace — 执行一个正则表达式的搜索和替换
+ preg_split — 通过一个正则表达式分隔字符串
+
+常用的元字符(Meta-character)：
+元字符     说明
+\A       匹配字符串串首的原子
+\Z       匹配字符串串尾的原子
+\b       匹配单词的边界     /\bis/   匹配头为is的字符串   /is\b/   匹配尾为is的字符串   /\bis\b/ 定界
+\B       匹配除单词边界之外的任意字符   /\Bis/   匹配单词“This”中的“is”
+\d     匹配一个数字；等价于[0-9]
+\D     匹配除数字以外任何一个字符；等价于[^0-9]
+\w     匹配一个英文字母、数字或下划线；等价于[0-9a-zA-Z_]
+\W     匹配除英文字母、数字和下划线以外任何一个字符；等价于[^0-9a-zA-Z_]
+\s     匹配一个空白字符；等价于[\f\t\v]
+\S     匹配除空白字符以外任何一个字符；等价于[^\f\t\v]
+\f     匹配一个换页符等价于 \x0c 或 \cL
+       匹配一个换行符；等价于 \x0a 或 \cJ
+       匹配一个回车符等价于\x0d 或 \cM
+\t     匹配一个制表符；等价于 \x09\或\cl
+\v     匹配一个垂直制表符；等价于\x0b或\ck
+\oNN   匹配一个八进制数字
+\xNN   匹配一个十六进制数字
+\cC    匹配一个控制字符
+
+模式修正符（Pattern Modifiers）：
+模式修正符在忽略大小写、匹配多行中使用特别多，掌握了这一个修正符，往往能解决我们遇到的很多问题。
+i     －可同时匹配大小写字母
+M     －将字符串视为多行
+S     －将字符串视为单行，换行符做普通字符看待，使“.”匹配任何字符
+X     －模式中的空白忽略不计  
+U     －匹配到最近的字符串
+e     －将替换的字符串作为表达使用
+格式：/apple/i匹配“apple”或“Apple”等，忽略大小写。     /i
+
+匹配
+字符	 说明
+\    将下一字符标记为特殊字符、文本、反向引用或八进制转义符。例如，“n”匹配字符“n”。“\n”匹配换行符。序列“\\”匹配“\”，“\(”匹配“(”。
+^    匹配输入字符串开始的位置。如果设置了 RegExp 对象的 Multiline 属性，^ 还会与“\n”或“\r”之后的位置匹配。
+$    匹配输入字符串结尾的位置。如果设置了 RegExp 对象的 Multiline 属性，$ 还会与“\n”或“\r”之前的位置匹配。
+*   零次或多次匹配前面的字符或子表达式。例如，zo* 匹配“z”和“zoo”。* 等效于 {0,}。
++   一次或多次匹配前面的字符或子表达式。例如，“zo+”与“zo”和“zoo”匹配，但与“z”不匹配。+ 等效于 {1,}。
+?   零次或一次匹配前面的字符或子表达式。例如，“do(es)?”匹配“do”或“does”中的“do”。? 等效于 {0,1}。
+{n}      n 是非负整数。正好匹配 n 次。例如，“o{2}”与“Bob”中的“o”不匹配，但与“food”中的两个“o”匹配。
+{n,}     n 是非负整数。至少匹配 n 次。例如，“o{2,}”不匹配“Bob”中的“o”，而匹配“foooood”中的所有 o。“o{1,}”等效于“o+”。“o{0,}”等效于“o*”。
+{n,m}    M 和 n 是非负整数，其中 n <= m。匹配至少 n 次，至多 m 次。例如，“o{1,3}”匹配“fooooood”中的头三个 o。'o{0,1}' 等效于 'o?'。注意：您不能将空格插入逗号和数字之间。
+?       当此字符紧随任何其他限定符（*、+、?、{n}、{n,}、{n,m}）之后时，匹配模式是“非贪心的”。“非贪心的”模式匹配搜索到的、尽可能短的字符串，而默认的“贪心的”模式匹配搜索到的、尽可能长的字符串。例如，在字符串“oooo”中，“o+?”只匹配单个“o”，而“o+”匹配所有“o”。
+.       匹配除“\n”之外的任何单个字符。若要匹配包括“\n”在内的任意字符，请使用诸如“[\s\S]”之类的模式。
+
+
+
+
+
+
+一、什么是数据采集
+几年前，除几个大门户网站以外，基本上都是个人网站。资讯分散，内容也并不多。
+几年后，商业网站越来越多，资讯需要大量集中，即便有足够的财力聘请大量的文字编辑，也未必能满足无时无刻变化的信息资源。
+咨讯采集已成了让所有网站经营者青睐的技术。
+
+二、数据采集的思路：
+采集程序的思路很简单大体可以分为以下几个步骤：
+   　 1、获取远程文件源代码（file_get_contents或用fopen 或则用fsocket实现http协议的get，或者php 的curd扩展或者php的其他第三方开源类）
+          注:最好不要使用file_get_contents和fopen，会遇见你想象不到的问题，用fsocket实现http协议的get，现在大多数的网站都使用了防采集技术，采集内容的时候用信息抽取技术。
+      2、分析代码得到自己想要的内容（这里用正则匹配）。
+　　  3、依据得到的内容进行下载入库等操作。
+
+
+三、分享一下个人的采集心得：
+
+1.不采那些作防盗链了的站，其实可以作假来路但是这样的站采集成本太高
+
+2.采集尽量快的站，最好在本地进行采集
+
+3.采集时有很多时候可以先把一部分数据存入数据库，等以后进行下一步的处理。
+
+4.采集的时候一定要作好出错处理，我一般都是如果采集三次没有成功就跳过。以前经常就因为一条内容不能采就卡在那里一直的采。
+
+5.入库前一定要作好判断，检查内容的合法，过滤不必要的字符串。
+
+四、分享一个链接地址 ：正则表达式在线测试 
+http://tool.chinaz.com/regex
+
+
+五：分享一些常用的php正则
+ 匹配中文字符的正则表达式： [\u4e00-\u9fa5] 
+ 匹配双字节字符(包括汉字在内)： [^\x00-\xff]
+ 匹配HTML标记的正则表达式： /<(.*)>.*<\/>|<(.*) \/>/ 
+ 匹配IP地址的正则表达式  /(\d+)\.(\d+)\.(\d+)\.(\d+)/g 
+ 匹配Email地址的正则表达式： \w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)* 
+ 匹配网址URL的正则表达式： http://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)? 
+ 匹配信息中的图片链接:  /(s|S)(r|R)(c|C)*=*('|")?(w||/|.)+('|"| *|>)?/
+ 用正则表达式从URL地址中提取文件名：/(.*\/)([^\.]+).*/ig
+ 中国电话号码验证 /((d{3,4})|d{3,4}-)?d{7,8}(-d{3})*/
+ 中国邮政编码验证 /d{6}/
+ 电子邮件验证 /w+([-+.]w+)*@w+([-.]w+)*.w+([-.]w+)*/
+ 身份证验证 /d{18}|d{15}/
+常用数字验证  /d{n}/ n为规定长度   /d{n,m}/ n到m的长度范围
+
+非法字符验证
+匹配非法字符如:< > & / ' | 
+正则表达式 [^<>&/|'\]+
+
+日期验证
+匹配形式如:20030718,030718
+范围:1900--2099
+正则表达式((((19){1}|(20){1})d{2})|d{2})[01]{1}d{1}[0-3]{1}d{1}
+
+下面是一些实用实例
+$str = 'http://www.youku.com/show_page/id_ABCDEFG.html'
+$regex = '/^http://([w.]+)/([w]+)/([w]+).html$/i'; 
+
+键所在正则表达式，[//S//s]*? 匹配所有字符
+<span id="thread_2224"><a href="viewthread.php?tid=2224&extra=page%3D1">2008-09赛季前瞻</a></span>所有满足这种条件的数据
+<span id=/"([//S//s]*?)/"><a href=/"([//S//s]*?)/">([//S//s]*?)</a></span>/
+
+html代码：
+<tr>
+<td class="rank">1</td>
+<td><a target="_blank" href="A1">A1</a></td>
+<td>98678</td>
+<td>101516</td>
+<td>710610</td>
+<td>
+<a target="_blank" href="A2">A2</a>
+<a target="_blank" href="A3">A3</a>
+<a target="_blank" href="A4">A4</a>
+</td>
+</tr>
+<tr>
+<td class="rank">2</td>
+<td><a target="_blank" href="B1">B1</a></td>
+<td>24692</td>
+<td>33096</td>
+<td>231669</td>>
+<td>
+<a target="_blank" href="B2">B2</a>
+<a target="_blank" href="B3">B3</a>
+<a target="_blank" href="B4">B4</a>
+</td>
+</tr>
+    
+我想读取的到数据是
+<td><a target="_blank" href="A1">A1</a></td>
+<td><a target="_blank" href="B1">B1</a></td>
+
+preg_match_all("/<a target=\"\w*\" href=\"\w*\">\w*<\/a>/iUs",$str,$arr);
+print_r($arr);
+
+下面给大家共享一些数据采集常用的php自定义函数代码：
+
+//取得所有链接
+function get_all_url($code){
+        preg_match_all('/<a\s+href=["|\']?([^>"\' ]+)["|\']?\s*[^>]*>([^>]+)<\/a>/i',$code,$arr);
+        return array('name'=>$arr[2],'url'=>$arr[1]);
+}
+
+//清除HTML标记
+function ClearHtml($str){
+        $str = str_replace('<','&lt;',$str);
+        $str = str_replace('>','&gt;',$str);
+        return $str;
+}
+
+//返回字符串中的所有单词 $distinct=true 去除重复
+function split_en_str($str,$distinct=true) {
+        preg_match_all('/([a-zA-Z]+)/',$str,$match);
+        if ($distinct == true) {
+                $match[1] = array_unique($match[1]);
+        }
+        sort($match[1]);
+        return $match[1];
+}
+
+//获得当前的脚本网址
+function get_php_url(){
+        if(!empty($_SERVER["REQUEST_URI"])){
+                $scriptName = $_SERVER["REQUEST_URI"];
+                $nowurl = $scriptName;
+        }else{
+                $scriptName = $_SERVER["PHP_SELF"];
+                if(empty($_SERVER["QUERY_STRING"])) $nowurl = $scriptName;
+                else $nowurl = $scriptName."?".$_SERVER["QUERY_STRING"];
+        }
+        return $nowurl;
+}
+
+
+}
+
+/获取指定标记中的内容
+function get_tag_data($str, $start, $end){
+        if ( $start == '' || $end == '' ){
+               return;
+        }
+        $str = explode($start, $str);
+        $str = explode($end, $str[1]);
+        return $str[0];
+}
+

@@ -1,0 +1,102 @@
+
+
+常用的windows 对象：  
+
+  js 的页面跳转：window.location="url";
+
+  js 页面刷新：  location.reload();  相当于是 f5
+   history.go(数字); 如果 该数字是正数 前进， 如果数字是一个负数 后退
+
+打开浏览器窗口：
+  window.open("页面url链接地址",'新浏览器窗口的name',新浏览器窗口的width,新浏览器窗口的height,是否显示地址栏
+,是否显示菜单栏，新浏览器窗口是否可以调节大小，是否添加状态栏，是否显示标题栏，是否显示工具栏);
+
+var boxObject;
+  function openBox(){
+     //window.open("页面url链接地址",'新浏览器窗口的name',新浏览器窗口的width,新浏览器窗口的height,是否显示地址栏
+//,是否显示菜单栏，新浏览器窗口是否可以调节大小，是否添加状态栏，是否显示标题栏，是否显示工具栏);
+      boxObject=window.open('7.html','showBox',"width=500,height=500,location=yes,menubar=yes,resizable=no,status=yes,titlebar=yes,toolbar=yes");
+
+  }
+  
+  function closeBox(){
+      boxObject.close();
+  }
+
+-------------
+a标签打开或者关闭新窗口
+
+ <a hreft="" target="_blank">新开一个窗口</a>
+
+  <a href="javascript:self.close()" >关闭当前窗口</a>
+
+  var mydiv=document.getElementById('mydiv');
+      alert(mydiv.style.width);  //js 访问元素对象的css属性
+      alert(mydiv.style.height);
+
+    document.getElementById()  通过id 找对象  返回某个具体的对象
+    document.getElementsByTagName() 通过标签元素找对象 返回数组对象
+
+ function findObject(){
+           inputs=document.getElementsByTagName('input');
+           alert(inputs.length);
+           alert(inputs[0].value); 获取对象的属性
+      }
+    document.getElementsByName()  通过元素的name属性 找对象 返回数组对象
+
+
+区分元素对象的4个常用选择器
+元素本身
+id
+name   --是专门为编程而设置的
+class
+
+
+正则表达式
+  正则对象： 
+
+ 声明正则对象：  var reg=/正则规则/;
+                  var reg2=new RegExp('正则规则')；
+
+  正则规则：
+    元字符 和 匹配字符组成
+
+    \w  配置字母数字 下划线  
+    \W  非字母数字 下划线  
+
+     \d  数字
+      \D 非数字
+        
+        \s 除tab 所有所有空白字符
+       \S 非xxxx
+[] 匹配[] 里面的任意一个字符串
+      [a-z]  匹配 小写 字符 a-z 任意一个
+      [a-zA-Z]
+	[A-Z]
+  [a-z-A-Z0-9_]
+[^ ]匹配除了[] 里面的字符
+
+{n,m} n最少匹配 n 次  m表示最大匹配m 次
+
+
++ 至少匹配一次
+
+？匹配0次 或者 1次
+
+. * 在所有正则中他们是贪婪匹配  
+
+通常我们在做贪婪匹配的时候  (.*?)
+
+() 分组  表示这是一个匹配单元
+^ 开始
+
+$ 结束
+
+转义  \
+
+配置：
+  正则对象.exec(需要配置的字符串);  如果匹配成功  返回具体对象 否则返回 null
+  正则对象.test(需要配置的字符串);  如果匹配成功  返回true 否则返回 false
+
+
+----------------------------------------------------

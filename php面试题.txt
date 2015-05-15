@@ -1,0 +1,819 @@
+1.PHP解析URL是哪个函数？
+parse_url() 是讲URL解析成有固定键值的数组的函数
+$ua=parse_url(“http://username:password@hostname/path?arg=value#anchor”);
+print_r($ua);
+结果：
+
+Array
+(
+[scheme] => http
+[host] => hostname
+[user] => username
+[pass] => password
+[path] => /path
+[query] => arg=value
+[fragment] => anchor
+)
+
+2.什么是smarty? Smarty的优点是什么？能够使HTML和PHP分离开使用的模板
+能够使HTML和PHP分离开使用的模板:Smarty,Dwoo,TinyButStrong,Template Lite,Savant,phemplate,XTemplate
+什么是smarty?
+Smarty是一个使用PHP写出来的PHP模板引擎，目的是要使用PHP程序同美工分离,使的程序员改变程序的逻辑内容时不会影响到美工的页面设计，美工重新修改页面时不会影响到程序的程序逻辑，这在多人合作的项目中显的尤为重要。（也易于程序的多样式开发）
+Smarty优点
+1. 速度快：相对其他模板引擎。 2. 编译型：采用smarty编写的程序在运行时要编译成一个非模板技术的PHP文件
+3 缓存技术：它可以将用户最终看到的HTML文件缓存成一个静态的HTML页
+4. 插件技术：smarty可以自定义插件。
+不适合使用smarty的地方
+1. 需要实时更新的内容。例如像股票显示，它需要经常对数据进行更新  2. 小项目。小项目因为项目简单而美工与程序员兼于一人的项目
+
+
+3.如何配置、使用和清除Smarty缓存
+
+1、Smarty缓存的配置
+$smarty->cache_dir = “/caches/”; //缓存目录
+$smarty->caching = true; //开启缓存,为flase的时侯缓存无效
+$smarty->cache_lifetime = 60; //缓存时间
+2、Smarty缓存的使用和清除
+$smarty->display(‘cache.tpl’, cache_id); //创建带ID的缓存
+$smarty->clear_all_cache(); //清除所有缓存
+$smarty->clear_cache(‘index.htm’); //清除index.tpl的缓存
+$smarty->clear_cache(‘index.htm’,cache_id); //清除指定id的缓存
+
+
+4.介绍一下Cookie和Session及他们之间的区别
+
+在非常多时候，我们需要跟踪浏览者在整个网站的活动，对他们身份进行自动或半自动的识别（也就是平时常说的网站登陆之类的功能），这时候，我们常采用Cookie与 Session来跟踪和判断。
+区别：
+Session信息是存放在server端，但session id是存放在client cookie的，当然php的session存放方法是多样化的，这样就算禁用cookie一样可以跟踪Cookie是完全保持在客户端的如：IE firefox 当客户端禁止cookie时将不能再使用
+使用Cookie的限制
+1、必须在HTML文件的内容输出之前设置；
+2、不同的浏览器对Cookie的处理不一致，且有时会出现错误的结果。
+3、限制是在客户端的。一个浏览器能创建的Cookie数量最多为30个，并且每个不能超过4KB，每个WEB站点能设置的Cookie总数不能超过20个。
+
+5.PHP开发的一般流程
+
+1、尽量完整的需求方案，具体到每个功能点上
+2、建模结构UML，通过UML工具建立专业的模或自己画一个简单的关系图。
+3、建立数据库
+1）、建立的表名、字段名要与他的功能有关系英文不好的拼音同样可以
+2）、根据结构建立数据库表，原则是不定项内容一定要分表。
+3）、字段类型要考虑内容是否够用就好，选择适合的类型 INT Varchar Date
+
+4、设计HTML
+文件和脚本的实现
+根据模和数据库来设计页面是个很科学的方法，当然有的时候有人喜欢根据模型设计页面，数据库基于页面设计，都是可以的。设计页面时要考虑到每个细节，包括提示消息页面，错误页面。
+5、PHP代码的书写
+1）、先建立底层结构和文件夹（如果是大型的网站同样设计一个文件UML
+2）、基础功能分类关联，以便今后代码引用。
+3）、代码的书写，注意简洁性和函数的使用，内部函数能实现的尽量用内部函数
+4）、在部分关键位置加以代码注释。
+6、程序的测试和修正
+1）、对于发现的BUG不能就解决BUG而解决，要处于完整程序考虑。避免收之东隅失之桑榆。
+2）、对于解决过的BUG已经要详细记录，以便日后更新。
+
+
+6.PHP如何对用户密码进行加密
+ md5() sha1()
+
+7.mysql_pconnect()和mysql_connect()有什么区别
+两者的区别主要有两个：
+1. 在进行数据库连接时，函数会先找同一个host, 用户和密码的persistent（持续的）的链接，如果能找到，则使用这个链接而不返回一个新的链接。
+2. mysql_pconnect()创建的数据库连接在脚本执行完毕后仍然保留，可以被后来的代码继续使用，mysql_close()函数也不会关闭mysql_pconnect()创建的链接。
+
+
+8.请说明 PHP 中传值与传引用的区别。什么时候传值什么时候传引用？
+答： 传值只是把某一个变量的值传给了另一个变量，而引用则说明两者指向了同一个地方。
+9. 在PHP中error_reporting这个函数有什么作用？
+答： The error_reporting() function sets the error_reporting directive at runtime. PHP has many levels of errors, using this function sets that level for the duration (runtime) of your script.
+10. 请用正则表达式（Regular Expression）写一个函数验证电子邮件的格式是否正确。
+答：
+if(isset($_POST['action']) &&
+$_POST['action']=='submitted')
+{
+$email=$_POST['email'];
+if(!preg_match(“/^(?:w+.?)*w+@(?:w+.?)*w+$/”,$email))
+{
+echo
+“电子邮件检测失败”;
+}
+else
+{
+echo
+“电子邮件检测成功”;
+}
+}
+else{
+
+}
+?>
+
+11.表单中 get与post提交方法的区别?
+  get是发送请求HTTP协议通过url参数传递进行接收,而post是实体数据,可以通过表单提交大量信息.
+
+12.echo(),print(),print_r()的区别
+echo是PHP语句, print和print_r是函数,语句没有返回值,函数可以有返回值(即便没有用)
+print（） 只能打印出简单类型变量的值(如int,string)
+print_r（） 可以打印出复杂类型变量的值(如数组,对象)
+echo 输出一个或者多个字符串
+
+
+13.include和require有什么区别？
+区别在于他们如何处理失败， 如果require的文件没有找到， 会造成fatal error，脚本停止执行，如果include的文件没有找到， 会显示警告，但是脚本会继续执行。
+
+
+14.给一个变量赋值为0123，但是输出该变量的值总是为其他数字，请问这是什么问题？
+PHP 解释器会把以0开始的数字当做是八进制的，所以它的值会变成八进制的。
+
+15.PHP里面如何定义一个常量(constant)?
+通过define()指令，例如：define(“MYCONSTANT”, 100)
+
+16.如何对一个变量进行值传递？
+可以像C++那样， 在变量的前面加上&, 例如：$a = &$b
+
+17.请描述$message和$$message的区别，并输出这两个变量的结果。
+<?php
+  $user = ‘zhangsan’
+  $message = ‘user’; 
+  $$message = ‘zhangsan’;
+?>
+$message是个简单的变量，$$message是变量的变量，表示这个变量的值。
+
+
+18.htmlentities() 和 htmlspecialchars()有什么区别
+htmlspecialchars只转化<、>、 单引号、双引号、&符号
+htmlentities会转化所有的html符号
+
+
+19.如何处理简单的PHP错误
+1. 把PHP.ini 里的 display_errors = On 才可以显示错误位置
+2. 习惯使用echo 或者 print 打印
+3. 使用注释来屏蔽符号来调试
+// ……….
+/*………… */
+#…………..
+4. 看错误信息
+
+20.PHP数据运算类型都有哪些
+四种标量类型：
+boolean（布尔型） 理解为真假型
+integer（整型）
+float（浮点型，也作“double”） 理解为小数型
+string（字符串）
+两种复合类型：
+array（数组）
+object（对象）
+boolean（布尔型） 理解为真假型
+$bo=TRUE; $bo=FALSE;
+integer（整型）
+$bo=1; $bo=-12;
+float（浮点型，也作“double”） 理解为小数型
+$bo=1.001; $bo=3.1415926;
+string（字符串）
+$bo=“这段字符串 or EN Word”;
+array（数组）
+$bo=array(1,2,3,4); $bo=array(“A”=>1 , “B”=>2)
+
+21.PHP中如何创建和修改数组
+PHP中的数组是一个关键字或值的集合
+（值可以是任何一种类型，包括另一个数组）
+PHP中使用array来创建一个数组：
+
+array( key=>value , key=>value …… )
+例子：
+
+$arr = array (3,5,7,9,6);
+
+$arr = array (“id”=>2,”title”=>3);
+创建 和 修改 数组：
+用方括号的语法来修改数组 ： $arr[] = value
+$arr = array(“a” => “视频”, “b”=>”教程”, “c” => “六”);
+
+$arr['a'] = “Mianwww”;
+$arr['c'] = “面试题”;
+
+22.HP如何自定义函数
+使用 Function 来自定义一个函数：
+格式为：
+Function func_name($val){
+……
+}
+函数的命名跟自定义变量一样，只能使用 _, A~Z, a~z
+一个自定义函数中的变量是局部的，函数外不生效
+使用global全局变量的时候，在函数外才可使用变量（不建议）
+为了放置全局变量的混乱可以使用 unset($var)删除一个变量
+使用自定义函数实例操作：
+（1）使用return 函数返回函数内部值
+（2）自定义函数值的接收和选择性接收
+（3）function_exists() 判断函数是否存在
+（4）引用返回值 使用&符号
+
+23.PHP如何与mysql建立链接
+php.ini 加载mysql组件：
+extension=php_mysql.dll 前的; 去掉
+extension_dir = ” ” 路径是否正确
+PHP链接mysql函数
+mysql_connect: 开启 MySQL 链接
+mysql_select_db: 打开一个数据库
+@ 和 or die 隐藏错误 和 条件显示
+mysql_connect(“主机”, “用户名”, “密码”)
+mysql_select_db(“打开数据库”,连接标识符);
+如果不特别声明连接标识符，则默认为是上一次打开的连接。
+
+
+24.PHP如何去执行一个SQL语句
+mysql_query (SQL语句 ,连接标识符);
+说明：mysql_query用来根据连接标识符向该数据库服务器的当前数据库发送查询，
+如果连接标识符默认，则默认为是上一次打开的连接。
+返回值：成功后返回一个结果标识符，失败时返回false。
+$sql = “SELECT * FROM test”;
+$result = @ mysql_query($sql, $conn) or die(mysql_error());
+
+
+25.请描述mysql_fetch_row(result); mysql_fetch_array(result); 的区别？
+说明：mysql_fetch_row用来查询结果的一行保存至数组，该数组下标从0开始，每一个数组元素对应
+一个域。通过循环，可以将查询结果全部获得。
+
+说明：mysql_fetch_array和mysql_fetch_row功能基本相同，只不过它除了可以用从0开始的偏移量作
+索引，还可以用域名作索引。
+值返回下一行的所有域值，并将其保存至一个数组中，没有行时返回false。
+mysql_query(“set names ‘GBK’”); 解决中文乱码
+
+
+26.用PHP打印出前一天的时间,格式是2006-5-10 22:21:21
+//echo date('Y-m-d H:i:s',time()-60*60*24
+echo date("Y:m:d H:i:s",strtotime("-1 day"));
+?>
+
+27.使用哪些工具进行版本控制？
+CVS和SVN,SVN号称下一代CVS,功能强大,不过CVS是老牌,市占率很高.我一直用SVN,题目是问用什么工具,呃,这个可能需要这么回答:CVS Server on Apache作服务端,WinCVS作客户端;Subversion on Apache/DAV 做服务端,TortoiseSVN做客户端,或者Subclipse做客户端
+
+
+28.如何实现字符串翻转？
+其实PHP本身就有字符串翻转的函数:strrev(),不妨试试echo strrev($str);不过所有的这三种方法都不能解决中文字符串翻转的问题，会出错的。
+function reverse($var)
+{
+$res="";
+for($i=0,$j=strlen($var);$i<$j;$i++)
+{
+$res=$var[$i].$res;
+}
+return $res;
+}
+$tmpvar="wofang";
+$res=reverse($tmpvar);
+echo $res;
+?>
+
+29.用PHP写出显示客户端IP与服务器IP的代码:
+$ip=gethostbyname ("");
+echo $ip;
+?>
+
+30.优化MYSQL数据库的方法。
+(1).数据库设计方面,这是DBA和Architect的责任,设计结构良好的数据库,必要的时候,去正规化(英文是这个:denormalize,中文翻译成啥我不知道),允许部分数据冗余,避免JOIN操作,以提高查询效率
+(2).系统架构设计方面,表散列,把海量数据散列到几个不同的表里面.快慢表,快表只留最新数据,慢表是历史存档.集群,主服务器Read & write,从服务器read only,或者N台服务器,各机器互为Master
+(3).(1)和(2)超越PHP Programmer的要求了,会更好,不会没关系.检查有没有少加索引
+(4).写高效的SQL语句,看看有没有写低效的SQL语句,比如生成笛卡尔积的全连接啊,大量的Group By和order by,没有limit等等.必要的时候,把数据库逻辑封装到DBMS端的存储过程里面.缓存查询结果,explain每一个sql语句
+(5).所得皆必须,只从数据库取必需的数据,比如查询某篇文章的评论数,select count(*) … where article_id = ? 就可以了,不要先select * … where article_id = ?然后msql_num_rows.
+只传送必须的SQL语句,比如修改文章的时候,如果用户只修改了标题,那就update … set title = ? where article_id = ?不要set content = ?(大文本)
+(6).必要的时候用不同的存储引擎.比如InnoDB可以减少死锁.HEAP可以提高一个数量级的查询速度
+
+31、谈谈事务处理
+A给B的账户转账50美元的例子
+
+
+32.执行程序段将输出__。
+
+//参考手册》语言参考》运算符》算术运算符》%为取模运算,输出0
+echo 8%(-2)."
+“;
+//取模 $a % $b 在 $a 为负值时的结果也是负值。输出-2
+echo ((-8)%3).”
+“;
+//输出2
+echo (8%(-3)).”
+“;
+?>
+
+33.在HTTP 1.0中，状态码 401 的含义是____；如果返回“找不到文件”的提示，则可用 header 函数，其语句为____。
+
+答：401表示未授权;header(“HTTP/1.0 404 Not Found”);[见参考手册》函数参考》HTTP函数》header]
+
+
+34.数组函数 arsort 的作用是____；语句 error_reporting(2047)的作用是____。
+
+答：arsort:对数组进行逆向排序并保持索引关系 error_reporting(2047)的作用是:report All errors and warnings
+
+
+35.写出一个正则表达式，过虑网页上的所有JS/VBS脚本（即把script标记及其内容都去掉）：
+
+$script="以下内容不显示：";
+echo preg_replace("/].*?>.*?/si", "替换内容", $script);
+?>
+
+
+36.以Apache模块的方式安装PHP，在文件http.conf中首先要用语句____动态装载PHP模块，
+然后再用语句____使得Apache把所有扩展名为php的文件都作为PHP脚本处理。
+答：LoadModule php5_module "c:/php/php5apache2.dll";AddType application/x-httpd-php .php
+
+见参考手册》目录》II. 安装与配置》6. Windows 系统下的安装》Microsoft Windows 下的 Apache 2.0.x
+
+37.语句 include 和 require 都能把另外一个文件包含到当前文件中，它们的区别是____；为了避免多次包含同一文件，可以用语句____来代替它们。
+答：在如何处理失败时，include() 产生一个警告而 require() 则导致一个致命错误;require_once()/include_once()
+
+38.一个函数的参数不能是对变量的引用，除非在php.ini中把____设为on.
+答：allow_call_time_pass_reference boolean :是否启用在函数调用时强制参数被按照引用传递, 见参考手册》附录G
+
+
+39.SQL 中LEFT JOIN的含义是__,如果 tbl_user记录了学生的姓名(name)和学号(ID)，
+tbl_score记录了学生（有的学生考试以后被开除了，没有其记录）的学号(ID)和考试成绩(score)以及考试科目(subject)，要想打印出各个学生姓名及对应的的各科总成绩，则可以用SQL语句____.
+
+答：自然左外连接
+
+create database phpinterview;
+use phpinterview
+create table tbl_user
+(
+ID int not null,
+name varchar(50) not null,
+primary key (ID)
+);
+create table tbl_score
+(
+ID int not null,
+score dec(6,2) not null,
+subject varchar(20) not null
+);
+
+insert into tbl_user (ID, name) values (1, 'beimu');
+insert into tbl_user (ID, name) values (2, 'aihui');
+insert into tbl_score (ID, score, subject) values (1, 90, '语文');
+insert into tbl_score (ID, score, subject) values (1, 80, '数学');
+insert into tbl_score (ID, score, subject) values (2, 86, '数学');
+insert into tbl_score (ID, score, subject) values (2, 96, '语文');
+
+select A.id,sum(B.score) as sumscore
+from tbl_user A left join tbl_score B
+on A.ID=B.ID
+group by A.id
+
+
+40.在PHP中，heredoc是一种特殊的字符串，它的结束标志必须____
+答：结束标识符所在的行不能包含任何其它字符除";"
+
+41.写一个函数，能够遍历一个文件夹下的所有文件和子文件夹。
+
+function my_scandir($dir)
+{
+$files=array();
+if(is_dir($dir))
+{
+if($handle=opendir($dir))
+{
+while(($file=readdir($handle))!==false)
+{
+if($file!="." && $file!="..")
+{
+if(is_dir($dir."/".$file))
+{
+$files[$file]=my_scandir($dir."/".$file);
+}
+else
+{
+$files[]=$dir."/".$file;
+}
+}
+}
+closedir($handle);
+return $files;
+}
+}
+}
+print_r(my_scandir("D:Program FilesInternet ExplorerMUI"));
+?>
+
+42.不用新变量直接交换现有两个变量的值. (考php基本功)
+答案：list($a, $b) = array($b, $a);
+
+43、PHP数字金额转大小格式，同时说明思路 (考数组掌握)
+
+44、SQL查询语句如下：
+select * from table where (ID = 10) or (ID = 32) or (ID = 22) or (ID = 76) or (ID = 13) or (ID = 44)
+让结果按10，32，22，76，13，44的顺序检索出来,请问如何书写？ （sql能力）
+Select * From Table where id = 10
+
+union
+
+Select * From Table where id = 32
+
+union
+
+Select * From Table where id = 22
+
+union
+
+Select * From Table where id = 76
+
+union
+
+Select * From Table where id = 13
+
+union
+
+Select * From Table where id = 14
+
+
+
+45、简单写一个上传文件程序，要求同时上传文件数量可以人为控制 （逻辑能力）
+
+46、php同时调用3个数据库中的一个表的信息（架设A.a.aid=B.b.bid=C.c.cid），请说明思路及书写部分代码
+
+
+47、现有一IM软件，使用id、email做为注册条件，假设已注册1040人，有一zh_cn论坛，使用id、email做为注册条件，假设已注册200人，有一en_us论坛，使用id、email做为注册条件，假设已注册150人
+要求：将三者同步，使用统一的注册流程 ，写出设计思路
+
+
+48.解释一下PHP里面的三元运算符
+举例说明：a= b==c? 1 : 2 ，若b==c,则a的值为1 否则a的值为2
+
+49.如何知道有几个参数传入到了一个function?
+func_num_args() 函数返回传入的参数的个数。
+
+50.PHP里面所有的对象是passed by value (值传递)还是 passed by reference（引用传递）?
+PHP里面所有的对象都是值传递。
+
+51.如何调用父类的构造方法？
+使用parent::constructor($value)
+
+
+52._sleep和_wakeup有什么特殊含义？
+_sleep返回需要被保存的变量的数组，而_wakeup则是取得这些需要被保存的变量
+
+
+53.求两个日期的差数，例如2007-2-5 ~ 2007-3-6 的日期差数
+
+54. 请写一个函数，实现以下功能：
+字符串“open_door” 转换成 “OpenDoor”、”make_by_id” 转换成 ”MakeById”。
+
+
+55. 要求写一段程序，实现以下数组$arr1转换成数组$arr2：
+$arr1 = array (
+’0′ => array (‘fid’ => 1, ‘tid’ => 1, ‘name’ =>’Name1′ ),
+’1′ => array (‘fid’ => 1, ‘tid’ => 2 , ‘name’ =>’Name2′ ),
+’2′ => array (‘fid’ => 1, ‘tid’ => 5 , ‘name’ =>’Name3′ ),
+’3′ => array (‘fid’ => 1, ‘tid’ => 7 , ‘name’ =>’Name4′ ),
+’4′ => array (‘fid’ => 3, ‘tid’ => 9, ‘name’ =>’Name5′ )
+);
+$arr2 = array (
+’0′ => array (
+’0′ => array ( ‘tid’ => 1, ‘name’ => ‘Name1′),
+’1′ => array ( ‘tid’ => 2, ‘name’ => ‘Name2′),
+’2′ => array ( ‘tid’ => 5, ‘name’ => ‘Name3′),
+’3′ => array ( ‘tid’ => 7, ‘name’ => ‘Name4′)
+),
+’1′ => array (
+’0′ => array ( ‘tid’ => 9, ‘name’ => ‘Name5′ )
+)
+);
+$a[$v['fid]][]=$v;
+
+56.请简述数据库设计的范式及应用。
+一般第3范式就足以，用于表结构的优化，这样做既可以避免应用程序过于复杂同时也避免了SQL语句过于庞大所造成系统效率低下。
+
+57.一个表中的Id有多个记录，把所有这个id的记录查出来，并显示共有多少条记录数，用SQL语句及视图、存储过程分别实现。
+DELIMITER //
+CREATE PROCEDURE ProcGet
+(
+IN ID_a INT(11)
+)
+
+BEGIN
+DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN END;
+SELECT COUNT(*) AS Sum FROM News Where ID = ID_a;
+END;//
+
+CALL ProcGet(88)//
+
+58.表中有A B C三列,用SQL语句实现：当A列大于B列时选择A列否则选择B列，当B列大于C列时选择B列否则选择C列。
+DELIMITER //
+CREATE PROCEDURE ProcOut()
+BEGIN
+DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN END;
+DECLARE Sum_a INT(11);
+DECLARE Sum_b INT(11);
+DECLARE Sum_c INT(11);
+
+– 获取A列中的总值 <–
+DECLARE cur_1 CURSOR FOR SELECT SUM(A) FROM table_name;
+OPEN cur_1;
+FETCH cur_ 1 INTO Sum_a;
+CLOSE cur_1;
+
+– 获取B列中的总值 <–
+DECLARE cur_2 CURSOR FOR SELECT SUM(B) FROM table_name;
+OPEN cur_2;
+FETCH cur_ 2 INTO Sum_b;
+CLOSE cur_2;
+
+– 获取C列中的总值 <–
+DECLARE cur_3 CURSOR FOR SELECT SUM(C) FROM table_name;
+OPEN cur_3;
+FETCH cur_ 3 INTO Sum_c;
+CLOSE cur_3;
+
+IF Sum_a > Sum_b THEN
+SELECT A FROM table_name;
+
+ELSEIF Sum_b > Sum_c THEN
+SELECT B FROM table_name;
+
+ELSE
+SELECT C FROM table_name;
+END IF;;
+END;//
+
+CALL ProcOut()//
+
+
+59. 两张表 city表和province表。分别为城市与省份的关系表。
+city:
+id City Provinceid
+1 广州 1
+2 深圳 1
+3 惠州 1
+4 长沙 2
+5 武汉 3
+………. 广州
+province:
+id Province
+1 广东
+2 湖南
+3 湖北
+……….
+（1） 写一条sql语句关系两个表，实现：显示城市的基本信息。？
+（2） 显示字段：城市id ，城市名， 所属省份 。
+如：
+Id（城市id） Cityname(城市名) Privence(所属省份)
+。。。。。。。。。
+。。。。。。。。。
+（2）如果要统计每个省份有多少个城市，请用group by 查询出来。？
+显示字段：省份id ，省份名，包含多少个城市。
+
+
+60. 按照你的经验请简述软件工程进行软件开发的步骤。以下工具Rational Rose、PowerDesigner、Project、VSS或CVS、TestDirector使用过那种,有缺点是什么？
+
+
+61. 列举LINUX下面你使用过的软件？
+
+62. 请使用伪语言结合数据结构冒泡排序法对以下一组数据进行排序 10 2 36 14 10 25 23 85 99 45。
+
+
+63.有一个论坛，帖子的数据巨大，请简要说明如何提高用户搜索帖子的效率。
+在程序方面，可以使用页面缓存技术。在前台界面着设计方面也可以让用户输入多一些的关键字，比如帖子的标题，发贴人的id，时间等，这样就可以大大提高搜索的效率了。
+缓存下就行了，模板缓存和局部缓存都可以
+
+64、在blog中用户注册后自动绑定一个：用户名.mmosite.com这样的二级域名，请简要的说出解决方案。
+可以用两个IIS站点，一个是主站，一个是域名跳转
+用于跳转的站点在IIS里必须添加一个空的主机头（默认站点）
+还需要以下几点：
+1.泛域名解析将*.yourdomain.com解析到你的Web服务器所在IP地址
+2.在域名跳转站点的缺省页编辑程序，获得*.yourdomain.com中的*的值，跳转到主站
+$_SERVER['HTT_HOST']; 根据这个查询下数据库就行了
+
+
+65、请用PHP脚本解析出在
+http://srfi.schemers.org/srfi-28/mail-archive/maillist.html
+这个页面中出现的所有email，并保存到数组。
+preg_match_all \w+@([\w\.]+) 就行了
+
+
+66、用javascript 脚本写出下面的功能。有一个页面有两条图片广告，当用户访问这个页面时按百分之一的概率随机点击两个广告中的一个广告。
+parseInt(Math.random()*100)==1
+
+
+67、有一篇文章内容包含中文和英文字符，现在需要将文章中的英文单词全部提取出来。比如下面的文字：
+RF Online has been officially rele按钮功ased for
+提取结果应该是：
+RF
+Online
+has
+been
+officially
+rele
+ased
+for
+请用C语言写出这个函数。
+preg_match_all \w+
+C语言也简单assoc范围判断下就行
+
+
+
+68、请使用linux下的shell(Bourne Again Shell)脚本写出下面要求的功能：
+现在有一个目录/video/temp/用来存放用户上传的视频文件，这个目录是临时的现在我们需要定时把这个目录里文件转移到/video/年月日/下面来，请写出脚本
+#!/usr/bin/php -n
+foreach(glob(“/video/temp/”) as $file){
+copy…
+}
+
+
+69.写一个函数，算出两个文件的相对路径
+如 $a = ‘/a/b/c/d/e.php’;
+$b = ‘/a/b/12/34/c.php’;
+计算出 $b 相对于 $a 的相对路径应该是 ../../c/d将()添上
+
+
+70.你如何利用 PHP 解決 HTTP 的無狀態本質？
+  最主要的倆各選擇是 session 和 cookie。使用 session 的方法是在每一頁的開始加上 session_start()，然後利用 $_SESSION 散列表來儲存 session 變量。至於 cookie 你只需記著一個原則：在輸出任何文字之前調用 set_cookie() 函式，此外只需使用 $_COOKIE 散列表便可以存取所有 cookie 變量。
+還有一個不那麼可靠的方法，就是利用訪客的 IP 地址，這個方法有特定的危險性。
+
+
+71. GD 函式庫用來做什麼？
+
+ 這個可能是我最喜歡的函式庫，自從 PHP 4.3.0 版本後 GD 便內建在 PHP 系統中。這個函式庫讓你處理和顯示各式格式的圖檔，它的另一個常見用途是製作所圖檔。GD 以外的另一個選擇是 ImageMagick，但這個函式庫並不內建於 PHP 之中，必須由系統管理員安裝在伺服器上。
+
+
+72. 以下哪一個函式可以把瀏覽器轉向到另一個頁面？
+* redir()
+這不是一個 PHP 函式，會引致執行錯誤。
+* header()
+這個是正確答案，header() 用來插入卷頭資料，可以用來使瀏覽器轉向到另一個頁面，例如：
+
+header(”Location: http://www.search-this.com/”);
+
+* location()
+這不是一個 PHP 函式，會引致執行錯誤。
+* redirect()
+這不是一個 PHP 函式，會引致執行錯誤。
+4. 以下哪一個函式可以用來開啟檔案以便讀／寫？
+* fget()
+這不是一個 PHP 函式，會引致執行錯誤。
+* file_open()
+這不是一個 PHP 函式，會引致執行錯誤。
+* fopen()
+這是正確答案，fopen() 可以用來開啟檔案以便讀／寫，事實上這個函式還有很多選項，詳細資料請參閱 php.net。
+* open_file()
+
+73.你如何產生一個 myclass 的物件？
+$obj = new myclass();
+
+
+74.「===」是什麼？試舉一個「==」是真但「===」是假的例子。
+
+75. foo() 與 @foo() 有什麼分別？
+
+
+76.sort()、assort()、和 ksort() 有什麼分別？它們分別在什麼情況下使用？
+
+* sort()
+根據陣列中元素的值，以英文字母順序排序，索引鍵會由 0 到 n-1 重新編號。主要是當陣列索引鍵的值無關疼癢時用來把陣列排序。
+* assort()
+PHP 沒有 assort() 函式，所以可能是 asort() 的筆誤。
+asort()
+與 sort() 一樣把陣列的元素按英文字母順序來排列，不同的是所有索引鍵都獲得保留，特別適合替聯想陣列排序。
+* ksort()
+根據陣列中索引鍵的值，以英文字母順序排序，特別適合用於希望把索引鍵排序的聯想陣列。
+
+
+77.MYSQL支持事务吗?
+在缺省模式下，MYSQL是autocommit模式的，所有的数据库更新操作都会即时提交，所以在缺省情况下，mysql是不支持事务的。
+但是如果你的MYSQL表类型是使用InnoDB Tables 或 BDB tables的话，你的MYSQL就可以使用事务处理,使用SET AUTOCOMMIT=0就可以使MYSQL允许在非autocommit模式，
+在非autocommit模式下，你必须使用COMMIT来提交你的更改，或者用ROLLBACK来回滚你的更改。
+示例如下：
+START TRANSACTION;
+SELECT @A:=SUM(salary) FROM table1 WHERE type=1;
+UPDATE table2 SET summmary=@A WHERE type=1;
+COMMIT;
+
+
+78.一张表,里面有ID自增主键,当insert了17条记录之后,删除了第15,16,17条记录,再把Mysql重启,再insert一条记录,这条记录的ID是18还是15
+
+
+79.加班问题
+离职原因
+对公司的看法要求
+
+80.谈谈你的工作经历
+
+81.谈谈你的人生规划
+
+82.谈谈你的一个项目
+
+83.你在登录我们的网站时发现什么BUG了么
+
+84.例如100个用户同时登陆，你如何进行设计
+85．如何判定系统性能是否符合要求
+86．你以前工作的感觉怎样
+
+87.自我介绍
+88、问了些学校和工作的情况
+89、网游的理解，提到了网游的框架
+
+90、给你一个客户端和服务器，关注哪些方面
+91、谈谈自己玩过的网游，发现了哪些BUG
+92、服务器的压力测试
+93、谈谈你用过哪些工具？
+******************************************
+面试问题：
+1、接触php多久了
+2、做过什么项目
+
+笔试题：
+①写一个文本计数器，只能使用file相关函数
+②写一个函数遍历目录结构
+③数据库相关
+  -建表
+  -什么是外键，写出2中2表连接查询
+  -什么是存储过程
+④ 封装PDO操作 添、删、改
+
+------------------------------------------------------------
+          学生反馈面试题
+---------------------------------------------------------
+佳诚那边 就看了下写的代码 讲了下代码，
+
+智源，那么问的工作经验，问的多些
+
+赏金猎人，那边说的是问了写技术问题js，mysql优化。然后说的他们现在处于发展阶段团队已经成型了，想招技术好的，提升下整体实力
+
+1.thinkphp的m方法和d方法有啥区别
+2.js和jquery的区别
+3.php5.2和php5.3垃圾回收算法有什么区别
+4.写一个双向链表排序 从低到高排序
+5.做了几个上线的网站
+6.给你一个3000并发的网站，你如何处理
+7.网站访问量达到了3-5万，如何优化
+8.你写程序注意安全性没有
+9.你用过 cakephp没有
+10.mysql 和mssql有什么区别
+11.写一个非连续表的查询，要求查询从id=10开始的连续10条数据
+12.mysql有一个limit，mssql也有一个类似的是什么?
+13.你对跨数据库查询的认识?
+14.你了解到数据库优化的方法
+
+面试应该是看的是基础是否好..
+mysql 的基础语法,还有优化,缓存技术,
+php的函数熟不熟悉..
+如果没有要做题,他就像你说的,会拿着简历..
+看上面的东西,寻找问题问..
+有一次一个面试官问我php连接数据库,主要用的是什么方式..
+我说的直接用的mysql,pdo有了解过,
+他说的最好使用pdo连接..
+
+php 高端笔试题
+１、请列举你能想到的UNIX信号，并说明信号用途。
+２、请列举、你能想到的所有的字符串查找算法，并加注释简单说明。
+３、有一个IP地址（192.168.0.1），请写出其32位无符号整数形式。
+４、写出、你能想到的所有HTTP返回状态值，并说明用途（比如：返回404表示找不到页面）
+ 
+
+基础任务-选作（会得到额外分数）：
+１、画几个你最熟悉的SERVER端模型出来（格式不重要，尽量将图画清楚，说明思路即可）
+======================================
+进阶任务：
+１、PHP的垃圾收集机制是怎样的？
+　　说明：
+　　１）如果，你熟悉PHP源码，那么请从源码入手，回答些问题，会获得额外加分
+　　２）如果，你不熟悉PHP源码，那么尽你所能，多写点东西，包括利用自己的编程直觉得到的信息，都可以。
+　　３）对，则有分，错误不扣，不写无分。
+２、请写出HTTP头，并符合以下要求：
+　　１）这是一个post请求
+　　２）目标：http://www.example.com:8080/test
+　　３）POST变量：
+　　　　username: test
+　　　　pwd: test2
+　　　　intro: Hello world!
+　　４）包含以下COOKIE信息：
+　　　　cur_query: you&me
+　　说明：
+　　１）如果，你记不得某个HTTP协议中的指令字了，那么，无奈这举是用“汉字”代替。
+　　２）如果，你能记住更多的HTTP协议指令字，那么多写几句，总是没坏处，对吧？
+　　３）最关键的，只需要画出正确的“轮廓”（还记得httpwatch等工具打印出来的头部吗？那就是“轮廓”的含义），也会有分数，但如果，连“轮廓”都写错了，那么就很遗憾了。
+ 
+设计任务：
+１、最近总有人骚扰我们的投票模块，需要你来设计一个投票限制的东东
+　　要求如下：
+　　１）要求每个QQ号码（假设此QQ号码在UNIT32内可以表示）10分钟这内只能投5票。
+　　２）我们的用户很踊跃，平均每天要有2000万人左右通过此程序投票。
+　　说明：
+　　１）无需写代码，只需要图跟文字即可。
+　　２）对于关键逻辑，请用图加代码表示出来，这也是对你文字表达能力的一个考验。
+　　３）对你能想到的所有的边界条件列出来，这是对你逻辑思维全面与敏捷性的考验。
+　　４）存储部分，尽你所能吧。如果，你需要一个自己设计的存储层，那么把这个存储层的实现，用文字＋图片方式描述清楚，要是设计合理，你会获得华丽的奖分。
+ 
+
+编程任务：
+１、我们碰到了大麻烦，一个新来的传教士惹恼了上帝，上帝很愤怒，要求我们把圣经（bbe.txt）背熟，直至他说哪个单词，我们就要飞快的回答出这个单词在第几行第几个单词位置。听说你是个优秀的程序员，那么髟助我们完成这个不可能的任务吧。
+　　要求如下：
+　　１）/myworks/example/bbe.txt，98版本英文圣经一本
+　　２）输入部分要求如下：php ./example.php [单词]
+　　３）输出部分如下：[单词] 1,2 2,4 5,6　表示：此单词在1行2列（第二个单词），2行4列...
+　　说明：
+　　１）此文本4MB之巨...
+　　２）单词的含义：由英文字母（大小写），数字（0-9）组成的串
+　　３）提供给你的机器OS为ubuntu 9.10，内存只有1G，而且，很不幸的，其中700M用来做了别的
+　　４）上机考试不允许上网，但我装了man文档以及读取CHM以及PDF的阅读器，在电脑的桌面的CHM文件夹中，有相应的PHP参考手册
+　　５）算法复杂度要求不能大于O（N^2）（就是N的平方）　　６）什么？PHP低效且用起来不顺手，好的，你可以用别的语言来实现。但注意：提供给你的机器上只有python 2.4/perl 5.8/gcc[g++] 4.1
+
+
+
+

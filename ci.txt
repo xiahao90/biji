@@ -1,0 +1,852 @@
+1、什么是框架：
+   框架就是一套提供基本功能组件，并做了安全控制，使程序员的工作重点放在业务逻辑上面，框架规范了编程规则，程序员可以基于这套规则进行功能组件扩展.减少代码的编写量
+
+2.什么是CodeIgniter？
+CodeIgniter是一个小巧的php框架，名称由两个单词组成，code代码Igniter点火器，连起来意思是代码点火器（什么意思？），简称CI
+  先简单介绍下CI，是一个极其轻量级的php framework。这个可以个YII比较下。php的framework 有一个最大的特点，MVC的层次很清晰，使用后会让你对Model， view， controller有更好的认识。
+　CodeIgniter 是一套给 PHP 网站开发者使用的应用程序开发框架和工具包。她提供一套丰富的标准库以及简单的接口和逻辑结构，其目的是使开发人员更快速地进行项目开发。使用 CodeIgniter 可以减少代码的编写量，并将你的精力投入到项目的创造性开发上。 
+  CodeIgniter是由Ellislab公司的CEORickEllis开发的。其核心框架是为这个程序特别编写的，而其他很多类库、辅助函数和子系统则来自于RickEllis和PaulBurdick编写的内容管理系统  ExpressionEngine。来自RubyonRails的灵感启发我们创造了一个PHP框架，并且将框架的概念引入到网络社区的一般意识中。 
+
+
+3.什么是MVC:
+   MVC 是一种将应用程序的逻辑层和表现层进行分离的方法。
+   模型 (Model) 代表你的数据结构。通常来说，你的模型类将包含取出、插入、更新你的数据库资料这些功能。 
+   
+  视图 (View) 是展示给用户的信息。一个视图通常是一个网页，但是在 CodeIgniter 中，一个视图也可以是一个页面片段，如页头、页尾。它还可以是一个 RSS 页面，或任何其它类型的“页面”。 
+  
+  控制器 (Controller) 是模型、视图以及其他任何处理 HTTP 请求所必须的资源之间的中介，并生成网页。
+
+
+4.ci优点：
+  是免费的  是轻量级的  是快速的  使用 M-V-C 模型   生成干净的 URL
+ 功能强大  是可扩展的  不需要模板引擎   已彻底文档化   拥有一个友好的用户社区
+
+
+5. ci安装
+   http://codeigniter.org.cn/
+   下载 解压
+  解压后目录介绍：
+application  项目应用目录
+-----cache 保存cache文件目录
+-----config 配置文件目录
+-----controllers  网站控制层文件
+-----errors 保存错误输出信息文件
+-----helpers 框架自带助手类文件目录
+-----hooks 用户定义钩子类文件目录
+-----language 用户定义提示信息语言文件目录
+-----libraries 用户定义扩展类文件目录
+-----logs 日志文件目录
+-----models 网站业务逻辑层文件目录
+-----views 网站展现层文件目录
+-----third_party  插件类文件目录，可扩展添加新文件
+
+system  框架核心目录
+index.php  程序的主入口
+
+
+6.构建自己项目:
+
+6.1配置:
+     首页配置 index.php
+  在部署项目的时候 通常我们需要修改index.php 两个地方
+   $system_path='system';  通常我们修改成 include或者　core 或者其他你系统自定义目录名
+   $application_folder='application';  通常修改成你的项目名称 或者你自定义目录名
+ 
+ 修改配置文件：
+    app/application/config/config.php
+
+   $config['base_url']	= 'http://127.0.0.1/myapp/';     修改成你服务器上的项目的根目录
+
+   $config['encryption_key'] = 'test123!@';  如果你要使用session 那么ci 是需要你的加密密钥 所以这里需要填写自定义的密钥
+
+在config文件下配置$config['base_url']，加载URL类后，通过base_url()调用
+
+$config['url_suffix'] = '.html';  设置后缀名  example.com/index.php/class/function/ID.html  
+
+$config['global_xss_filtering'] = FALSE;  改为 true 那么ci 将自动过滤xss  通常我们选择手动过滤xss攻击
+
+数据库配置文件
+  app/application/config/database.php
+   
+db['default']['hostname'] = 'localhost';  #数据库服务器名
+$db['default']['username'] = 'root'; #数据库服务器用户名
+$db['default']['password'] = 'test123'; #数据库密码
+$db['default']['database'] = 'mytest'; #数据库名
+$db['default']['dbdriver'] = 'mysql';  #数据库驱动
+$db['default']['dbprefix'] = 'mytest_';  #设置表前缀
+$db['default']['pconnect'] = TRUE;  #是否使用长链接
+$db['default']['db_debug'] = TRUE;  #是否启用数据库调试 在正式布置项目是 建议设为 false
+$db['default']['cache_on'] = FALSE;  #是否开启数据库缓存
+$db['default']['cachedir'] = '';  #数据缓存目录地址
+$db['default']['char_set'] = 'utf8'; #设置编码
+$db['default']['dbcollat'] = 'utf8_general_ci'; #数据库坚持编码
+$db['default']['swap_pre'] = '';
+$db['default']['autoinit'] = TRUE;
+$db['default']['stricton'] = FALSE; 
+
+
+路由配置文件
+   app/applicatioin/config/routers.php
+
+$route['default_controller'] = "home";  默认控制器
+$route['404_override'] = '';   #自定义 404 错误页面地址
+
+
+ci默认的url路由：
+据模型-视图-控制器模式，在此 URL 段一般以如下形式表示：
+  example.com/index.php/class/function/ID
+     1.第一段表示调用控制器类。即Controllers
+     2.第二段表示调用类中的函数或方法。即该Controller下的一个function
+     3.第三及更多的段表示的是传递给控制器的参数。如 ID 或其他各种变量。
+  获取uri段
+   $this->uri->segment(n)； 获取指定段
+   $this->uri->uri_string()；返回完全的uri;http://example.com/index.php/news/local/345
+  其他url函数参考URL帮助
+
+
+
+
+
+
+
+如果我们需要修改url路由为get方式： index.php?c=class&m=function&id=345
+
+那么需要修改配置文件即可，打开application/config/config.php
+$config['enable_query_strings'] = FALSE;  #改成 true
+$config['controller_trigger'] = 'c';
+$config['function_trigger'] = 'm';
+
+注意：开启之后仍可以第一种URL规则
+
+6.2运行流程：
+配置完成后了解ci 的运行流程
+  index.php---路由解析---安全验证---application/controller---view---cache--index.php
+  
+
+6.3命名规则
+命名规则：
+   控制器： 文件名与类名相同，文件名首字母小写，类名首字母大写
+   模型：   文件名与类名相同，文件名首字母小写，类名首字母大写  Namemodel
+   视图：   后缀名 .php
+
+
+6.4控制器
+所有控制器必须继承 CI_Controller  子类必须实现父类的构造方法
+在子类构造函数里面 调用控制的构造函数 
+  home.php
+
+class Home  extends CI_Controller{
+  public  function __construct(){
+   	parent::__construct();
+   }
+
+
+}
+
+6.5控制器调用视图并传递参数
+ci有一个默认的执行方法  index
+public function index(){
+	 header('content-type:text/html;charset=utf-8');
+	$this->load->view('public/header'); //控制器调用视图
+	$this->load->view('index');
+        $this->load->view('public/footer');
+ }
+
+控制器传递数据给view
+   $data=array();
+  $this->load->view('public/header'，$data); //控制器调用视图
+
+6.6 视图语法规则：
+  ci的视图语法同php几乎完全相同， 不同的是判断与循环可以使用下面的语法规则替代：
+
+条件判断
+ <?php if ($username == 'sally'): ?>
+
+   <h3>Hi Sally</h3>
+
+<?php elseif ($username == 'joe'): ?>
+
+   <h3>Hi Joe</h3>
+
+<?php else: ?>
+
+   <h3>Hi unknown user</h3>
+
+<?php endif; ?>
+
+循环：
+  <?php foreach ($todo as $item): ?>
+
+    <? echo  $item； ?>
+
+<?php endforeach; ?>
+
+
+
+6.7控制器调用模型：
+    $this->load->model('Model_name');
+    $this->Model_name->function(); 
+ 比如：
+ $this->load->model('Usermodel');
+ $id=$this->Usermodel->addUser();
+
+6.8 模型
+   usermodel.php
+
+  class Usermodel extends CI_Model {
+    public function __construct(){
+       parent::__construct();
+      //加载数据库类
+       $this->load->database(); //一旦被载入，你可以在任何地方像这样使用它
+    }
+    
+    public function addUser(){
+    	 $data=array('id'=>null,'name'=>'mymy','pwd'=>md5('123456'));
+    	 $id=$this->db->insert('user',$data);  //执行成功后返回true
+    	 return $id;
+    }
+
+    public function updateUser($id){
+    	$where=array('id'=>$id);
+    	$setDatas=array('pwd'=>md5('test123'));
+    	$r=$this->db->update('user',$setDatas,$where);
+    	return $r;
+    }
+
+
+}
+
+常用数据库操作函数：
+  $this->db->insert(表名,数据);  插入
+
+  $this->db->update(表名,数据,条件);  修改
+  $this->db->delete(表名,条件);  删除
+  $this->db->truncate(表名); 清空表数据
+  链接查询
+  $this->db->select('title')->from('mytable')->where('id', $id)->limit(10, 20);
+  查询：
+   $this->db->query(sql语句);
+   $this->db->get(表名);  //等价于 select * from 表名
+  $query = $this->db->get_where('mytable', array('id' => $id), $limit, $offset);
+  //等价于： select * from 表名 where id=$id limit $offset,$limit; 
+
+  查询时 select 和 get 一起使用
+ $this->db->select('title, content, date');
+ $query = $this->db->get('表名');
+ //等价于 select title, content, date from 表名
+
+查询预防sql注入：
+   $this->db->escape()
+  封装查询
+  $sql = "SELECT * FROM some_table WHERE id = ? AND status = ? AND author = ?"; 
+  $this->db->query($sql, array(3, 'live', 'Rick'));
+
+查询资源处理： 所有的查询都将返回一个资源结果集  $query=$this->db->query($sql);
+  $query->num_rows(); 返回当前请求的行数
+  $query->free_result();会释放当前查询所占用的内存并删除其关联的资源标识
+  $query->result_array(); 执行成功时将记录集作为关联数组返回。失败时返回空数组,通常使用foreach遍历
+
+  foreach ($query->result_array() as $row){
+   echo $row['title'];
+   echo $row['name'];
+   echo $row['body'];
+}
+
+  row_array()； 获取某一行数据
+  $this->db->count_all();返回指定表的总行数
+  $this->db->affected_rows()；当执行写入操作（insert,update等）的查询后，显示被影响的行数。
+  $this->db->insert_id()；执行插入成功后的id
+
+  事物
+  $this->db->trans_begin();
+  $this->db->query('一条SQL查询...');
+  $this->db->query('另一条查询...');
+  $this->db->query('还有一条查询...');
+if ($this->db->trans_status() === FALSE){
+    $this->db->trans_rollback();
+}else{
+    $this->db->trans_commit();
+}
+
+备注：$this->db->query()可以执行insert update select
+
+其他详见手册数据库类操作
+
+数据库缓存：
+  在你需要缓存数据的地方打开缓存，然后查询数据
+  $this->db->cache_on();
+  $query = $this->db->query("SELECT * FROM mytable");
+
+ 清除所有的缓存：
+   $this->db->cache_delete_all();
+
+ 清除指定缓存：
+   $this->db->cache_delete('控制器', '方法');
+  如果你访问的是  xxxx.com/index.php/a/aa，那么ci将会在缓存目录下面创建a/aa缓存文件
+
+注意：缓存的目的主要是为了减少数据库的服务器压力，打开缓存需要配置缓存目录地址
+    /applicaton/config/database.php/
+      $db['default']['cachedir'] = './cache';
+
+
+6.9 session的应用
+  使用session必须配置session
+    /application/config/config.php
+
+  $config['encryption_key'] = 'abc@%^%'; //配置自定义密钥
+  $config['sess_expiration'] = 7200;    //session 持续的秒数,2小时
+  $config['sess_encrypt_cookie'] = FALSE;    //是否对 session 数据加密
+
+  session 是作为插件库存在的所以使用时必须加装插件session库
+ this->load->library('session');
+
+$session_id = $this->session->userdata('session_id'); //获取sessionid不存在,返回FALSE
+$this->session->set_userdata($array);    //添加 session数组
+$this->session->set_userdata('some_name', 'some_value');同时添加多个session
+
+$this->session->unset_userdata('some_name');   //删除 Session 数据
+
+$this->session->sess_destroy();     //销毁 Session
+
+6.10 帮助函数使用
+
+$this->load->helper('number');     数字辅助函数
+
+$this->load->helper('string');     字符串帮助函数
+
+$this->load->helper('url');        url辅助函数
+  echo  site_url("news/local/123");#http://example.com/index.php/news/local/123
+  echo  current_url()； 返回当前完整的url
+  echo  base_url();  返回配置文件中的url基本配置 http://127.0.0.1/myapp/
+  echo  base_url('news/local/123'); #http://127.0.0.1/myapp/news/local/123
+  echo  anchor('news/local/123', '链接点我', array('title' => '标题'));#<a href="http://example.com/index.php/news/local/123" title="标题">链接点我</a>
+  $atts = array(
+              'width'      => '800',
+              'height'     => '600',
+              'scrollbars' => 'yes',
+              'status'     => 'yes',
+              'resizable'  => 'yes',
+              'screenx'    => '0',
+              'screeny'    => '0'
+            );
+
+echo anchor_popup('news/local/123', 'Click Me!', $atts); 新开一个窗口
+redirect是ci的一个URL辅助函数
+redirect('/','location',301);// url重定向  如果写入成功，返回首页
+
+
+
+$this->load->helper('form');       表单辅助函数
+
+生成一个标准的input
+
+
+form_open()  普通form表单头
+
+$attributes = array('class' => 'email', 'id' => 'myform');
+echo form_open('email/send', $attributes);
+
+
+form_open_multipart()  #文件上传表单头
+
+form_close()  form 结束标签 </form>
+
+
+form_hidden()
+
+form_password("表单name","表单value","表单事件")
+
+或者数组方式
+
+$data= array(
+	'name'        => 'userpwd',
+	'id'          => 'regpwd',
+	'value'       => '',
+   	'onblur'=>'checkPwd(this.value)'，
+       'maxlength'   => '100',
+      'size'        => '50',
+      'style'       => 'width:50%',
+);
+
+
+echo form_input($data);
+
+form_upload()
+
+form_textarea()
+
+form_dropdown()  下拉<select></select>
+
+form_checkbox()
+form_radio()
+
+form_submit()
+
+form_label()
+
+$js = 'onClick="some_function()"';
+echo form_button('mybutton', 'Click Me', $js); 
+
+set_radio()
+set_checkbox()
+set_select()
+set_value()
+
+表单安全处理数据：手动创建表单才有用
+<input type="text" name="myform" value="<var<<?php echo form_prep($string); ?></var<" />
+
+ 
+同时加载多个辅助函数
+ $this->load->helper( array('helper1', 'helper2', 'helper3') );
+
+
+6.11 rest路由重定向规则：
+ application/config/routes.php 
+
+$route['product/:num'] = "catalog/product_lookup";
+即将被重定向
+:num 将匹配一个只包含有数字的segment(段).
+:any 将匹配一个包含任何字符的segment.
+  如果你的url是： http://127.0.0.1/myapp/index.php/product/1 那么将自动转向控制器中catalog类中product_lookup方法
+
+$route['product/(:num)'] = "catalog/product_lookup_by_id/$1";
+  当“product”作为 URL 中第一个分段时，如果第二分段是数字，那么将自动转向控制器中catalog类product_lookup_by_id方法，将数字作为参数
+
+$route['blog/joe'] = "blogs/users/34";
+ 如果URL的前两个分段是"blog"和"joe"，那么将会重定向到"blogs"类的"users"方法中处理.并且将ID"34"设为参数.
+
+
+
+6.12 缓存
+ $this->output->cache(n);
+只需将上面的代码放在你的controller的function中的任何位置:
+其中 n 是你希望缓存更新的 分钟 数。
+注意：Benchmark 标签在使用了缓存的页面仍然可用。
+警告: 由于CI存储缓存文件的方式，只有通过 view 文件的输出才能被缓存。
+如果你不再想使用缓存，仅需将上面的代码从你的controller里面删除即可。
+注意: 这样做并不能让缓存文件立即消失，它将会自动过期并被删除。
+如果你想立即删除那些文件，就必须自己动手了。
+
+6.13 安全
+ ------安全---------------------------------------------------------
+1.过滤不良数据. 
+2.验证数据以确保符合正确的类型, 长度, 大小等. 
+3.在提交数据到你的数据库之前将其转换.
+xss 安全数据配置
+  预防跨站式伪造
+  打开你的 application/config/config.php 
+   config['csrf_protection'] = TRUE;
+ 
+   自动过滤xss
+    打开你的 application/config/config.php 
+    $config['global_xss_filtering'] = TRUE;
+
+   手动过滤xss
+     $data = $this->security->xss_clean($data);
+
+   获取表单数据
+   使用 $this->input->post() 获取数据
+
+ 综合使用：
+   $yzm=$this->security->xss_clean($this->input->post('yzmcode')); 
+
+6.14常用功能类：
+  
+ 表单验证类应用：
+    使用表单验证类
+
+控制器部分
+public function test3(){
+   	//加载类
+   	$this->load->library('form_validation');
+   	$data['title']='校内新闻网';
+   	$this->load->view('header',$data);
+   	
+   	//表单验证规则
+   	$this->form_validation->set_rules('username', 'Username', 'required|min_length[5]|max_length[12]');
+   	$this->form_validation->set_rules('password', 'Password', 'required|matches[passconf]');
+   	$this->form_validation->set_rules('passconf', '重复密码', 'required');
+   	$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+     $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
+   	
+   	//如果$this->form_validation->run() 返回false 就表明验证失败
+   	if ($this->form_validation->run() == FALSE)
+   	{
+   		$this->load->view('myform');
+   	}else{
+   		  //如果验证成功 就在这里处理
+   		$this->load->view('formsuccess');
+   	}
+   	$this->load->view('footer');
+   }
+
+模型部分
+ user.php
+<?php
+class user extends CI_Model {
+  public  function __construct(){
+  	 parent::__construct();
+  	 
+  }
+  
+  public function insert($data){
+  	$name=$this->input->post('username');
+  	$password=$this->input->post('password');
+    $email=$this->input->post('email');
+  	$data = array(
+               'username' => $name,
+               'password' => $password,
+               'email' => $email
+            );
+
+     if($this->db->insert('user', $data)){
+     	 return  $this->db->insert_id();
+     } 
+  }
+  
+  public function select(){
+  	 $query=$this->db->get('user');
+  	  $data=array();
+  	 foreach ($query->result_array() as $row)
+  	 {
+  	 	 $data[]=$row;
+  	 }
+  	 return $data;
+  	 
+  }
+    
+  
+  
+}
+
+?>
+
+视图部分
+  
+
+<?php echo form_open('news/test4'); ?>
+<h5>Username</h5>
+<input type="text" name="username" value="<?php echo set_value('username'); ?>" size="50" />
+<?php echo form_error('username'); ?>
+
+<h5>Password</h5>
+
+<input type="text" name="password" value="<?php echo set_value('password'); ?>" size="50" /><?php echo form_error('password'); ?>
+
+<h5>Password Confirm</h5>
+
+<input type="text" name="passconf" value="<?php echo set_value('passconf'); ?>" size="50" /><?php echo form_error('passconf'); ?>
+
+<h5>Email Address</h5>
+
+<input type="text" name="email" value="<?php echo set_value('email'); ?>" size="50" /><?php echo form_error('email')<div><input type="submit" value="Submit" /></div>
+
+</form>
+
+------------------------------
+分页类的应用：
+
+public function to_page(){
+
+   
+ $this->load->library('pagination'); //加载分页类
+
+  设置分页配置
+  $config['base_url'] = base_url().'test/index/1';  #完整的 URL 路径通向包含你的分页控制器类/方法。
+  $config['total_rows'] = '200'; #分页的数据总行数
+  $config['per_page'] = '20';  #每个页面中展示的数量，
+  $config['uri_segment'] = 3; #页数的url分段
+  $config ['num_links'] = 3; #当前页码前后标签个数，默认3
+  $config['suffix'] = '.html'; #追加伪静态
+封装html分页标签：
+               $config ['full_tag_open'] = '<div class="pages">'; // 分页开始样式
+		$config ['full_tag_close'] = '</div>'; // 分页结束样式
+		
+		$config ['first_link'] = '首页'; // 第一页显示
+		$config ['first_tag_open'] = '<span class="sp1">';
+		$config ['first_tag_close'] = '</span>';
+		
+		$config ['last_link'] = '尾页'; // 最后一页显示
+		$config ['last_tag_open'] = '<span class="sp1">';
+		$config ['last_tag_close'] = '</span>';
+		
+		$config ['next_link'] = '下一页 >'; // 下一页显示
+		$config ['next_tag_open'] = '<span class="sp1">';
+		$config ['next_tag_close'] = '</span>';
+		
+		$config ['prev_link'] = '< 上一页'; // 上一页显示
+		$config['prev_tag_open'] = '<span class="sp1">';
+		$config['prev_tag_close'] = '</span>';
+		
+		$config ['cur_tag_open'] = '<span class="sp2"><b>'; // 当前页开始样式
+		$config ['cur_tag_close'] = '</b></span>'; // 当前页结束样式
+		
+		$config['num_tag_open'] = '<span class="sp1">';
+		$config['num_tag_close'] = '</span>';
+
+将配置文件写入
+		$this->pagination->initialize($config); 
+输出链接
+               return $this->pagination->create_links();
+}
+
+在模型中查询数据：
+  通过sql limit或者数组的方式进行分页
+
+
+
+//当我们需要的时候就调用分页函数  
+    $data['page_list']=$this->to_page();  //返回分页链接
+
+
+
+在视图中：
+  分页的css 样式
+ <style>
+.pages {
+	border: 1px;
+	height: 30px;
+}
+
+.pages .sp1 {
+	height: 30px;
+	line-height: 30px;
+	margin-left: 10px;
+}
+
+.pages .sp2 {
+	margin-left: 10px;
+	border: 1px solid #e0e0e0;
+	background: red;
+	color: #fff;
+	padding: 5px 10px 5px 10px;
+}
+
+.pages .sp1 a {
+	border: 1px solid #e0e0e0;
+	background: #ebebeb;
+	padding: 5px 10px 5px 10px;
+}
+</style>
+
+循环数据
+   <?php foreach ($need as $v):?>
+	<li>
+         <span class="rq"><?=$v->addtime?></span> 
+	  <a href="open/show_job_need_info/<?=$v->qzid?>.html"> <?=$v->uname?> </a> 
+	  <a href="open/show_job_need_list/<?=$v->jid?>.html"> <?=$v->typename?> </a> 
+	  <?=$v->free?>
+	</li>
+<?php endforeach;?>
+
+
+	<div><?php  echo $pages; ?></div>  //显示分页的链接
+
+-------------------------------------
+验证码辅助函数的应用：
+
+  ci的验证码是生成图片后需要保存，网页加载保存后的图片，所有我们需要在application的同级目录中创建一个captcha 用来保存验证码图片
+在实际开发过程中，生成验证码的方法应该写在模型里这样可以确保每一个控制器都可以访问到它
+
+
+引用验证码帮助
+$this->load->helper('captcha');
+		$vals = array(
+				//'word' => rand(1000, 10000), #验证码的内容，生成一个随机数  不是必须的
+				'img_path' => './static/captcha/',  #必须的
+				'img_url' => base_url().'static/captcha/', #必须存在该目录
+			    'img_width' =>150,  //是必须的
+				'img_height' =>30,    //是必须的
+				'expiration' => 10//指定了验证码图片的超时删除时间. 默认是2小时. 不是必须的  单位是秒
+				 
+		);
+		$cap = create_captcha($vals);  #返回一个数组格式如下 数组格式为： 
+                   array('image'  生成一个 <img  />标签
+                           'word' 验证码值              
+                     )
+
+		$this->session->set_userdata('capyzm',$cap['word']); #使用sesson保存数据
+
+		 return $cap['image'];
+
+在视图页面使用验证码
+ <?php  echo $cap['image'] ?> 
+
+
+----------------------------
+文件上传下载：
+
+
+
+------------------------
+ajax 验证：
+
+view
+<div id="remind" style="display:none"></div> 错误提示部分
+<form action="/ci/index.php/user/reg" method="post" name="reg_form" id="reg_form">
+用户名：<input type="text" name="username" id="username" value=""><br>
+密码：<input type="password" name="pwd" id="pwd" value=""><br>
+<input type="button" name="zc" id="zc" value="注册">
+</form>
+<script>
+$("#zc").click(function(){
+	var user = $("#username").val();
+	var pwd = $("#pwd").val();
+	$.post("/ci/index.php/user/ajax_check_reg", {user:user,pwd:pwd},function(data){
+        if(data!=='submit'){
+		$("#remind").css('display','block');
+		$("#remind").html(data);
+        }else{
+        $("#reg_form").submit();  //form表单提交
+        }
+	}); 
+});
+</script>
+
+
+controller
+  //验证用户注册的方法
+  public function ajax_check_reg(){
+		$this->load->model('user_model');
+		$this->user_model->check_user_reg($_POST['user'],$_POST['pwd']);
+	}
+
+
+model
+  function check_user_reg($user,$pwd){
+    	if(!trim($user)){
+    		echo '用户名不能为空';
+    		exit();
+    	}elseif(iconv_strlen($user)>7){
+    		echo '用户名最大长度为7';
+    		exit();
+    	}elseif(!trim($pwd)){
+    		echo '密码不能为空';
+    		exit();
+    	}elseif(strlen($pwd)<6){
+    		echo '密码长度最少为6';
+    		exit();
+    	}
+    	$query = $this->db->get_where('user', array('name' => $user));
+    	if($query->num_rows()){
+    	   echo '用户名已经被注册';
+    	}else{
+    	   session_start();
+    	   $_SESSION['login_name']=$user;
+    	   echo 'submit';
+    	}
+    }
+
+
+-----------------------
+补充：
+  扩展自己的类
+
+  在application/libraries/下面创建自己的类
+
+   文件名： My类名.php
+   类名：   class My类名{
+             public function __construct(){
+ 		parent::__construct();
+ 	    }
+             public funcitoin test(){
+
+            }
+
+       }
+
+   在使用需要加载自己的类
+   $this->load->library('My类名');
+
+  使用类的对象调用函数
+    $this->my类名->some_function();  // 对象的实例名永远都是小写的 
+
+
+
+去掉index.php
+
+  apache 重写
+  进入D:\AppServ\Apache2.2\conf找到
+   #LoadModule rewrite_module modules/mod_rewrite.so  去掉#
+
+  找到
+  <Directory />
+    Options FollowSymLinks ExecCGI Indexes
+    AllowOverride None   修改成  AllowOverride All  并且全文修改
+    Order deny,allow
+    Deny from all
+    Satisfy all
+</Directory>
+  
+
+保存重启
+
+进入cmd 运行下面的命令
+  
+D:\>cd AppServ/www/myapp
+
+D:\AppServ\www\myapp>copy con .htaccess
+^Z
+已复制         1 个文件。
+
+
+进入.htaccess文件
+RewriteEngine on  #打开apache重写
+
+#重写配置
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f 
+
+#重写规则
+RewriteRule ^(.*)/(.*)/(.*)\.html$ index.php/$1/$2/$3 [QSA,PT,L]
+RewriteRule ^(.*)/(.*)\.html$ index.php/$1/index/$2 [QSA,PT,L]
+RewriteRule ^(.*)\.html$ index.php/home/index/$1 [QSA,PT,L] 
+  
+
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+

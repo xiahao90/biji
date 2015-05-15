@@ -1,0 +1,91 @@
+网页优化：
+1.关掉compile_check：
+smarty默认的方式是compile_check = true;
+即在每次输出模板的时候检查当前模板是否有过改变,如果有那么重新编译(判断时间戳),这会浪费一些效率,但会保证模板改动后可以正常显示,但在我们的网站上线后,很多时候,是不需要检查这个的,因为模板已经不变了~
+建议:在开发阶段,force_compile = true;产品上线时compile_check = false;
+
+2.去掉你的页面注释,并压缩你的页面
+$smarty->register_prefilter('smarty_prefilter');
+function smarty_prefilter($out_put, &$smarty)
+{
+//保护smarty标签将<-- {xxx} -->替换成 {xxx}
+$out_put = preg_replace('/<!--[^>|\n]*?({.+?})[^<|{|\n]*?-->/', '\1', $out_put);
+// 去掉html注释
+$out_put = preg_replace('/<!--.*?-->/', '', $out_put);
+// 压缩html代码,去掉行首尾空格及换行
+return preg_replace("/\s*[\n\r]+\s*/", '',$out_put);
+}
+提前css并压缩,压缩js
+现在我们要做的是将所有的css提到header里面,类似的方法你可以将某些js扔到页面下面,并且压缩他们,这里我们用到了 csstidy 和 JavaScriptPacker.
+
+代码如下:
+
+// 前置link
+if (preg_match_all('/<link.*?href=[\'"]*([^\'"]+)[\'"]*.*?\/>/', $out_put, $regs))
+{
+$tidy = new csstidy();
+$tidy->set_cfg('remove_last_;', true);
+$tidy->load_template('highest_compression');
+$result = array_unique($regs[0]);
+$all = implode('', $result);
+foreach ($regs[1] as $key => $val)
+{
+if (strpos($val, '.css') !== false)
+{
+$dir = dirname($val);
+$name = basename($val, '.css');
+$css_code = file_get_contents(ROOT_PATH . '/' . $val);
+$tidy->parse($css_code);
+if (file_put_contents(ROOT_PATH . '/' . $dir . '/' . $name . '_tidy.css', $tidy->print->plain()))
+{
+$all = str_replace($val, $dir . '/' . $name . '_tidy.css', $all);
+}
+}
+}
+if (strrpos($out_put, '') !== false)
+{
+$out_put = str_replace($result, '', $out_put);
+$out_put = strtr($out_put, array('' => $all . "\n"));
+}
+}
+// 压缩js
+if (preg_match_all(
+'%<script.*?src=[\'"]*(?!http:)([^\'"]+)[\'"]*.*?></script>%',
+// 这里做了一些处理,只匹配非http开头的script标签
+$out_put, $regs))
+{
+foreach ($regs as $key => $val)
+{
+$regs[$key] = array_unique($val);
+}
+foreach ($regs[0] as $key => $val)
+{
+$dir = dirname($regs[1][$key]);
+$name = basename($regs[1][$key], '.js');
+$js_code = file_get_contents(ROOT_PATH . '/' . $regs[1][$key]);
+$pack = new JavaScriptPacker($js_code);
+if (file_put_contents(ROOT_PATH . '/' . $dir . '/' . $name . '.pack.js', $pack->pack()))
+{
+$out_put = str_replace($regs[1][$key], $dir . '/' . $name . '.pack.js', $out_put);
+}
+}
+}
+
+(四) 处理include标签
+smarty在处理include的时候,是在主页面中做include操作,这样会有一个问题,就是当include标签越多的时候,造成页面运行慢,我的改造是合并所有的include标签,这样不必改变使用习惯,而在编译的时候smarty相当于编译了一个页面,不必执行是再include其他的小页面,当然,也许这只是试用于类似我这样,include只作为引用公共页面的功能,所以你可以自己抉择~;)
+
+要说明的是,这样做得缺点是smarty无法检查include页面的变动,并自动重新编译,你需要自己来进行清空编译文件目录,或者是变动主模板页面来让smarty重新编译模板。
+
+下面是我的做法,聪明的你一定看得懂
+
+
+<?php
+$smarty->register_prefilter('smarty_fix_include');
+function smarty_fix_include($out_put, &$smarty){    // 找出所有的include标签,并找出file    return preg_replace_callback('/\{include\s+.*?file=[\'"]*(.+)[\'"]*\}/i', 'smarty_fix_include_callback', $out_put);
+} 
+function smarty_fix_include_callback($match){    
+$smarty = getInstance('Smarty');   
+$file = $smarty->template_dir . '/' . $match[1];   
+return file_get_contents($file);
+} 
+?>

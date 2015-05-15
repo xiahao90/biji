@@ -1,0 +1,517 @@
+Server Name(e.g.www.appservnetwork.com)： localhost
+Administrator's Eamil Sddress(e.g.webmaster@gamil.com)： localhost
+填写密码: test123
+php 文件命名规则:
+  可以是任意字母数字下划线。 绝对不能是中文
+php 变量命名规则:
+     $ +  任意数字字母下划线 但是绝对不能以数字开头.
+  dos 命令下打开apache :  net start apache2.2
+  dos 命令下关闭apache :  net stop  apache2.2
+php中获取变量的数据类型:  gettype(变量名);
+   常用的输出函数  print_r()  print()  printf  sprintf()  var_dump();
+var_dump($fp); 打印资源
+
+C:\WINDOWS\php.ini   php 的配置文件
+
+
+null 空类型
+
+ 定义一个变量 为赋值  是空类型
+  变量的值=null    是空类型
+  
+  变量的值=0;  是空类型
+
+  变量的值='0';  是空类型
+  变量的值='';  是空类型
+  
+数据类型函数: 在实际的项目应用中我们通常使用函数来转换数据类型
+   intval(变量);  该函数将强制转换变量的数据为 int
+   floatval(变量); 该函数将强制转换变量的数据为 float
+   strval(变量);  该函数将强制转换变量的数据为 string
+判断一个是否被定义  isset(变量);  如果该变量被定义 返回 true  否则返回 false
+
+判断一个变量是否为空： empty(变量);  判断一个判断变量为空  如果为空 返回true  否则返回 false.
+
+销毁一个变量  unset(变量);  php的引擎将该变量在内存中销毁掉.
+
+php 的可变变量。
+
+  $$变量名;  可变变量
+
+header("content-type: text/html; charset=utf-8");
+header() 函数前面不允许有任何输出语句包括中文空格. 
+php header 跳转函数
+  header("location: url地址")
+<script type="text/javascript">alert("图片格式不对");location.href="index.php";</script>
+给服务器添加地址：<base href="http://127.0.0.1/" />家在head里面
+
+
+                  echo '<script>';
+                  echo 'alert("OK")';
+                  echo '</script>';
+onmousemove="style.color='red'" onmouseout="style.color='#000000'"
+onerror="this.onerror=null;this.src='__IMAGES__/enerror.jpg';"//加载默认图片
+<textarea style="overflow:hidden" id="" name=""
+onkeyup="value=value.replace(/[^\d]/g,'')"></textarea>//只能输入数字
+
+_________________________________________________________________
+php 是嵌入式脚本语言
+  注意在嵌套是 单引号包双引号 或者  双引号包单引号
+foreach(数组  as  $key=>$value){
+}
+$array_list = array(10,20);	//为变量array_list赋值一个数组
+2. php嵌入到HTML中有四种方式：
+       *1.标准式：  <?php .... ?>
+	2.长风格：  <script language="php"> .... </script>
+	3.短风格：  <? ... ?> 容易和XML冲突 
+		需要配置php.ini文件，将short_open_tag=On（开启）
+	4.ASP风格： <% ... %>
+		需要配置php.ini文件，将asp_tag=On（开启）
+_______________________________________________________
+php提供数据类型检查函数
+
+is_XXXXX
+
+is_array() — 检测变量是否是数组
+
+is_bool() — 检测变量是否是布尔型 
+
+is_dir() — 判断给定文件名是否是一个目录
+
+is_float()— 检测是否是一个小数
+
+is_file — 判断给定文件名是否为一个正常的文件
+
+is_int — 检测变量是否是整数
+
+is_null — 检测变量是否为 NULL 
+
+is_numeric — 检测变量是否为数字或数字字符串 
+
+is_object — 检测变量是否是一个对象
+
+is_string — 检测变量是否是字符串
+_______________________________________________________
+shtring:
+ceil()向上取整！
+floor ($value ) 向下取整
+explode('a','b')将字符串b以a分割（不含a）返回数组。
+implode('a',$array)  将数组格式为字符串
+ord() 返回字符串 string 第一个字符的 ASCII 码值。
+strpos('a','b')判断b在a中首次出现的位置
+rtrim() 删除字符串末端的空白字符（或者其他字符） 通常用于去除用户输入数据中包含空格 
+str_ireplace('a','b','c')函数返回一个字符串或者数组。该字符串或数组是将 c中全部的 a 都被b替换（忽略大小写）之后的结果。
+str_replace 同上（不忽略大小写）。
+strstr('string','a')返回string字符串从a第一次出现的位置开始到string结尾的字符串
+stristr同上（忽略大小写）
+strrchr('string', 'a')该函数返回string字符串中的一部分，这部分以a的最后出现位置开始，直到string末尾
+stripos strpos('string' 'a')返回在字符串string中 a 首次出现的数字位置。
+strlen (string) 获取字符串长度
+substr(string,start,length)返回字符串 string 由 start 和 length 参数指定的子字符串。
+substr_count('string','a') 返回子字符串a 在字符串 string中出现的次数。注意 a区分大小写。
+ucfirst(str)将 str 的首字符（如果首字符是字母）转换为大写字母，并返回这个字符串。
+strtoupper()  --将字符串全部转化为大写
+strtolower()  --将字符串全部转化为小写
+ucwords — 将字符串中每个单词的首字母转换为大写
+
+substr_count('a','b',c)返回字符串a中b的个数,从位置c开始。
+Trim('a')去掉字符串a两端的空格；
+str_replace('a','b','c')将字符串c中的a替换成b返回新字符串（a可为字符串数组）
+addslashes('a') 使用反斜线引用字符串 (通常用来预防sql 注入)返回字符串
+stripcslashes — 反引用一个使用 addcslashes() 转义的字符串  (addcslashes 的反向)
+htmlentities(a)   将js 或者html代码中  <>   进行转化 &gt; &quot; 通常用于预防跨站式攻击a=网页代码
+htmlspecialchars_decode($str); 将 &gt; &quot; 转化为 <  >
+htmlspecialchars  跟htmlentities 功能类似
+strip_tags (string) 从字符串中去除 HTML 和 PHP 标记,返回新字符串！
+usleep()功能把进程挂起一段时间，单位是微秒（百万分之一秒
+
+_______________________________________________________
+
+数组的常用函数:
+implode(a,b);将数组b 中的值用a连接起来！返回字符串！
+count($array)返回数组个数：
+array_flip(数组) — 交换数组中的键和值
+   array_key_exists($key,$array) — 检查给定的键名或索引是否存在于数组中
+  array_keys($array) — 返回数组中所有的键名
+ array_merge($array1,$array2,......) — 合并一个或多个数组  返回一个新的数组
+  array_pop($array1) — 将数组最后一个单元弹出（出栈）
+  array_rand() 随机取出一个 或者多个单元
+  array_search(str,array) — 在数组中搜索给定的值，如果成功则返回相应的键名 
+array_push($arr,$str...) — 将一个或多个单元压入数组的末尾（入栈） 
+  array_shift — 将数组开头的单元移出数组 
+   arsort — 对数组进行逆向排序并保持索引关系 
+   rsort — 对数组逆向排序
+   count — 计算数组中的单元数目或对象中的属性个数
+   end — 将数组的内部指针指向最后一个单元 
+   in_array — 检查数组中是否存在某个值
+ range — 建立一个包含指定范围单元的数组$number=range(1,9);$lower=range('a','z');$Upper=range('A','Z'); 
+   shuffle — 将数组打乱
+array_chunk($data, $pageList,true);将一个数组变成二位数组！
+array_key_exists($nowPage-1,$datas)检查一个数组是否存在索引
+
+__________________________________________________________
+时间函数：
+ date("格式化字符",unix时间秒) — 格式化一个本地时间／日期
+ date("Y-m-d H:i:s")
+date_default_timezone_set('PRC');  //设置当前时区为 utc+8
+ time();  获取当前的unix时间戳
+
+mktime(时,分,秒,月,日,年)— 取得一个日期的 Unix 时间戳
+strtotime — 将任何英文文本的日期时间描述解析为 Unix 时间戳
+$date = strtotime("-1 day", $start);//加一天
+microtim19:02下午 2012-12-9e(true) — 返回当前 Unix 时间戳和微秒数
+
+
+
+___________________________________________________________
+function();
+
+func_num_args() 函数返回传入的参数的个数。
+function 函数名(形参){
+   语句体
+}
+
+要注意: 在函数内部的变量为局部变量
+
+         将函数内部局部变量转化为全局变量    global $bb;
+
+function 函数名(){
+ 
+   return 结果;
+}
+@cc();  @屏蔽错误的输出，并不代表没有错误.
+___________________________________________________________
+文件加载函数: 
+include ("文件路径")
+include_once("文件路径");
+require("文件路径");
+require_once("文件路径");
+
+一个汉字 在utf-8 脚本中占3个字节 在gbk 脚本中占2个字符
+
+
+mb_ 扩展函数 解决在字符串处理的时候编码的问题
+
+mb_xxxx()
+_____________________________________________________________
+如果要使用session 那么必须要打开session_start(); 并且: session_start(); 前面不能有任何输出语句
+ session 是以数组的格式保存数据 和 $_POST  $_GET 一样是一个全局数组 $_SESSION['sessionName']="值"
+session_id  是一个永不重复 无规则的字符串
+
+_______________________________________________________________
+常量
+__FILE__   php 预定义常量  返回当前php文件的物理文件名
+PHP_VERSION   php 预定义常量  返回当前php 的版本
+
+PHP_OS  php 预定义常量  返回当前服务器操作系统
+
+error_reporting(E_ERROR); 设置php 错误级别
+
+ for($i=0;$i<=10;$i++){
+      $array[]=$i;  //在php5.2 的版本是合法。 但是在php5.3.x 的版本php 会报一个notice 错误
+ }
+常量的定义:
+  
+  define("常量名",常量值);    常量名 大写
+——————————————————————————————————
+php 全局变量
+//获取当前脚本 $_SERVER['SCRIPT_NAME'];
+$_SERVER[]  php 服务器全局变量
+$_SERVER['SERVER_NAME']   服务器名称  www.XXX.xxx  127.0.0.1
+$_SERVER['SERVER_ADDR']    服务器IP 地址   127.0.0.1
+$_SERVER['REMOTE_ADDR']    客户端 ip 地址   127.0.0.1
+$_SERVER['SERVER_PORT']    服务器apach 端口
+$_SERVER['SCRIPT_FILENAME']  当前脚本文件
+$_SERVER['DOCUMENT_ROOT']  当前服务器的根目录
+
+$_SESSION[]
+
+$_POST[]
+$_GET[]
+三目：
+表达式?真:假;
+————————————————————————————————————————
+通过元素的id 查找某个对象
+  document.getElementById();
+  document.getElementsByName('h');  返回 表单属性 name='h' 所有的集合
+onblur=""  失去焦点事件
+onfocus=""  获取焦点事件
+onclick=""  点击事件
+onmouseout="" 鼠标移出事件
+onmouseover="" 鼠标悬停事件
+onmouseup=""   鼠标弹起事件
+onsubmit=""  表单提交事件   onsubmit="return pd()"
+onchange="" value改变事件
+js 正则表达式
+  w  数字字母下划线
+  W  非数字字母下划线
+  d   数字
+  D  非数字
+  s  空格 空白字符
+  S  非空格 空白字符
+  []  包括 匹配[] 里面任意一个字符
+  [a-z0-9]
+  [^ ]  非[] 里面的任意一个字符
+  ()  分组 () 内部的表达式作为单元
+  +   匹配符号前面的一次以上
+  ?   匹配符号前面的一次 或者 0 次
+  {n} 匹配符号前面的n次
+  {n,m} 匹配符号前面的最少n次，最大m次  
+  .  *  贪婪符
+ /[a-z0-9]{6,12}/
+ value
+innerHTML;
+innerHTML="";  设置值
+-_____________________________________________________
+cookie 会话
+php 提供了全局数组
+  setcookie("cookiename",'cookieValue'，'保存时间');
+  注意：保存时间的单位为 秒  cookie 是不安全的   我们通常使用cookie 保存一些不重要的用户信息
+  $_COOKIE[]   cookie 的使用
+  cookie 的保存时间是从当前是开始. time()+需要保存的时间；
+  如果时间为负数 那么则表示销毁该cookie 内容  time()-时间；
+
+php 加密  md5(value); 
+
+--------------------------------
+HTTP  超文本传输协议  http 是一种无状态的传输    cookie get  post  socket   curl 登录
+
+我们互联网的传输基本上都是基于 http
+
+
+如果我们希望服务器自动打开session 会话 那么 php.ini  session.auto_start=0  改成 1 就ok了
+
+
+如果任何修改服务器端的配置 都必须重启apache 否则无效
+
+登录用户权限限制或者保护的一种解决方案:
+
+ 在session 保存一个具体的标志符号 当我们在验证用户的输入时 首先判断是否有session  的标志，如果存在就表示为合法用户登录 或者数据交互  否则就是非法用户的登录或者 数据交互
+____________________________________________________________
+mssql  php 提供的mssql 接口
+
+------------------------
+mssql_connect("服务器地址","用户名","密码");  // 连接数据库
+扩展库：
+ .dll 文件
+
+php.ini 里面打开 php_mssql.dll
+
+; 在php.ini 里面是注释符
+
+改了配置文件后必须重启apache
+
+wamp2.2.x php5.4.x
+
+php5.3 以后php 官方不提供  php_mssql.dll 扩展库.
+----------------------------------
+编码问题:
+mssql_query('set names utf8');
+   从以开始 文件编码 （页面编码  浏览器编码） 数据库编码必须一致  必须一致 
+php 操纵mssql 接口函数
+ $conn=mssql_connect("服务器地址","用户名","密码");  // 连接数据库 返回资源
+ mssql_close($conn);  关闭数据库连接资源
+ $result=mssql_query($sql); 执行一条sql语句, 返回数据结果集
+ mssql_select_db($dbName); 选择数据库
+ mssql_fetch_array($result);  获取数据结果集中的一行数据，返回数据中包含了索引和关联两种数组模式
+ mssql_fetch_assoc($result); 获取数据结果集中的一行数据，返回数据中包含关联数组
+ mssql_fetch_row($result); 获取数据结果集中的一行数据， 返回数据中包含索引
+ mssql_num_rows($result); 获取数据结果集中的总行数
+--------------------
+终止程序：
+die();
+exit();
+---------------------
+数据库操作
+第一步: 连接数据   $conn=mssql_connect("服务器地址","用户名","密码");  // 连接数据库 返回资源
+第二步：选择数据库   mssql_select_db($dbName); 选择数据库
+                     mysql_set_charset(utf8);
+第三步： 准备sql 语句
+第四步： 执行sql语句 mssql_query($sql) 执行一条sql语句, 返回数据结果集
+第五步： 逻辑操作
+mssql_query() 执行添加 修改 删除 返回执行是否成功 (说简单一点： 就是直接使用mssql_query($sql))   
+查询 select
+mssql_query() 执行查询 数据结果集  我们需要从这一堆数据集中取出数据需要使用
+ mssql_fetch_array($result);  获取数据结果集中的一行数据，返回数据中包含了索引和关联两种数组模式
+ mssql_fetch_assoc($result); 获取数据结果集中的一行数据，返回数据中包含关联数组
+ mssql_fetch_row($result); 获取数据结果集中的一行数据， 返回数据中包含索引
+
+__________________________________
+数据库封装
+  
+  添 删 改 查
+ 添加: insert into  表名 values(字段列表);
+ 删除: delete from 表名 where　条件
+ 修改: update 表名 set 字段=值,.. where 条件
+ 查询: select 字段列表 from  表名 where  条件 
+  
+ +_________________________________
+文件部分：
+
+   强大的php 提供了强大的函数
+
+ basename — 返回路径中的文件名部分
+
+
+  unlink() 来删除文件
+
+ dirname — 返回路径中的目录部分
+
+ file_exists — 检查文件或目录是否存在
+
+ file_get_contents — 将整个文件读入一个字符串
+ file_put_contents — 将一个字符串写入文件
+
+file — 把整个文件读入一个数组中
+
+rename(old,new)文件改名
+
+is_dir — 判断给定文件名是否是一个目录
+
+readfile — 输出一个文件
+
+pathinfo — 返回文件路径的信息
+
+    $array=pathinfo($fileName);
+  
+   echo "<pre>"; 
+    print_r($array);
+   echo '</pre>';
+  
+  
+    /**
+     * Array
+(
+    [dirname] => /36_38/20121217
+    [basename] => file_domo2.php
+    [extension] => php
+    [filename] => file_domo2
+)
+
+
+     * 
+     */ 
+
+?>
+
+fopen — 打开文件或者 URL
+
+  fopen("文件名",'打开方式')； 返回资源类型
+　打开方式：　
+'r' 只读方式打开，将文件指针指向文件头。   
+ r+ 读写方式打开，将文件指针指向文件头。 
+ 'w' 写入方式打开，将文件指针指向文件头并将文件大小截为零。如果文件不存在则尝试创建之 
+ 'w+' 读写方式打开，将文件指针指向文件头并将文件大小截为零。如果文件不存在则尝试创建之。  
+  'a' 写入方式打开，将文件指针指向文件末尾。如果文件不存在则尝试创建之。 
+'a+' 读写方式打开，将文件指针指向文件末尾。如果文件不存在则尝试创建之。   
+
+fclose — 关闭一个已打开的文件指针
+  fclose('资源');  
+
+fwrite — 写入文件（可安全用于二进制文件）
+
+
+
+如何实现文件上传
+ autocomplete="off"//设置不记录用户输入数据
+   form 表单    enctype="multipart/form-data"   
+
+   $_FILES
+
+    [upload] => Array
+        (
+            [name] => 20121217.txt   //当前文件上传的名称
+            [type] => text/plain   //当前文件上传类型
+            [tmp_name] => C:\WINDOWS\Temp\phpC1.tmp  //当我文件临时目录
+            [error] => 0   //当前上传文件是否出现错误
+            [size] => 1416  // 当前上传文件的大小
+        )
+
+application/octet-stream
+如果要实现 文件上传必须执行  move_uploaded_file(从哪里，到哪里)
+
+_____________-__------------------------------------------------
+
+
+
+获取一个文件夹下面所有文件名
+
+$imgdata=array();
+if ($handle = opendir('E:\AppServ\www\xiahao2\image')) {
+    while (false !== ($file = readdir($handle))) {
+        if ($file != "." && $file != ".."&& $file != "Thumb.db" && $file != "Thumbs.db") {
+            if(is_file("E:\AppServ\www\xiahao2\image\\".$file)) { //判断是否为正常的文件
+           //top 判断是否为图像文件
+               $datatest=array();
+               $datatest= explode('.',$file);
+               $houzhui=$datatest[count($datatest)-1];//获取文件后缀名
+               if($houzhui=='jpg' || $houzhui=='png' || $houzhui=='gif' || $houzhui=='bmp' ){
+                $imgdata[]=$file;
+               }
+           // top 判断是否为图像文件   
+            }     
+        }
+    }
+    closedir($handle);
+}
+_____________-----------------------------------------------------------------------------
+PHP面向对象：
+class 类名{
+  public 属性;
+  
+  public function 方法(){
+    //方法体
+  }
+}
+php提供了三种访问控制修饰符 
+public 表示全局，本类内部，类外部，子类都可以访问 
+protected 表示受保护的，只有本类或子类可以访问 
+private 表示私有的，只有本类内部可以访问 
+
+$demo5->name='张三';
+$demo5->test(1,2,3,45);
+在类的内部调用静态（static）属性用：
+self::属性
+外部用：类名::属性
+
+consf:常用量的关键字（不适用$）
+method_exists(obj,fangfa)判读是你类中是否存在某方法！
+extends 继承
+
+public function __construct($a){
+   echo '这是构造方法';
+}
+php5魔法方法
+  __set  __get  __call __callstatic
+
+最终类 final   凡是被final 修饰的类 为最终类 最终类不能被继承
+
+  //序列化：将demo7存入1.txt
+  $demo7Str=serialize($demo7);  
+  file_put_contents('1.txt',$demo7Str);
+//反序列化：
+$str=file_get_contents('1.txt');
+$obj=unserialize($str);
+$obj->test();
+
+什么是设计模式:
+  设计模式是一种解决问题的方式，
+资源连接 单例模式：
+  单例模式是为了解决资源的重复使用，在程序中始终保持只有一个资源对象
+注册模式：
+  注册模式是为了解决按需要实例化对象
+工厂模式：
+ 其实：工厂模式就是使用工厂类代替new 实例化
+
+——————
+将对象转换成数组
+function object_to_array($obj) 
+{ 
+$_arr = is_object($obj) ? get_object_vars($obj) : $obj; 
+foreach ($_arr as $key => $val) 
+{ 
+$val = (is_array($val) || is_object($val)) ? object_to_array($val) : $val; 
+$arr[$key] = $val; 
+} 
+return $arr; 
+}

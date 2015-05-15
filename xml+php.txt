@@ -1,0 +1,196 @@
+xml:可扩展标记语言
+
+xml是提供不同平台不同语言之间的通信桥梁.
+
+xml 本质是文本文件.用来描述数据的结构
+
+html:超文本标记语言
+  描述描述数据结构
+
+xml的基本语法:
+xml有严格的语法规则
+xml必须先申明
+  <?xml version="1.0" encoding="utf-8" ?>
+xml必须创建根元素
+xml中所有的元素必须成对出现
+xml对大小写敏感
+xml元素嵌套必须正确
+xml元素的属性必须使用 "" 包含
+$xml=new SimpleXMLElement($data);//将xml字符串装换成xml对象！
+
+<?xml  version="1.0" encoding="utf-8" ?>
+<boot>
+   <stu  name="stu1" id="stu1" for="aa">aa</stu>
+   <stu  name="stu1" id="stu1" for="aa">bb</stu>
+   <stu  name="stu1" id="stu1" for="aa">cc</stu>
+</boot>
+
+
+dom 对象生成xml
+  *   books
+ *     <book1>
+ *         <bookname>10天学懂php</bookname>
+ *         <bookauthor>神人</bookauthor>
+ *         <bookprice>￥100</bookprice>
+ *         <bookcopy>神人出版社</bookcopy>
+ *     </book1>
+ *     <book1>
+ *         <bookname>10天学懂php</bookname>
+ *         <bookauthor>神人</bookauthor>
+ *         <bookprice>￥100</bookprice>
+ *         <bookcopy>神人出版社</bookcopy>
+ *     </book1>
+ *   books
+ * 
+ * 
+ */
+  $dom=new DomDocument("1.0");
+  //创建元素对象""
+  $books=$dom->appendChild($dom->createElement("books"));
+ $book1=$books->appendChild($dom->createElement("book1"));
+ 
+ $bookname=$book1->appendChild($dom->createElement("bookname"));
+ $bookname->appendChild($dom->createTextNode("10天学懂php"));
+ 
+$bookauthor=$book1->appendChild($dom->createElement("bookauthor"));
+ $bookauthor->appendChild($dom->createTextNode("神人"));
+ 
+ 
+ $bookprice=$book1->appendChild($dom->createElement("bookprice"));
+ $bookprice->appendChild($dom->createTextNode("$100"));
+ 
+ $bookcopy=$book1->appendChild($dom->createElement("bookcopy"));
+ $bookcopy->appendChild($dom->createTextNode("神人出版社"));
+
+ $book2=$books->appendChild($dom->createElement("book2"));
+ 
+ $bookname=$book2->appendChild($dom->createElement("bookname"));
+ $bookname->appendChild($dom->createTextNode("10天学懂php"));
+ 
+$bookauthor=$book2->appendChild($dom->createElement("bookauthor"));
+ $bookauthor->appendChild($dom->createTextNode("神人"));
+ 
+ 
+ $bookprice=$book2->appendChild($dom->createElement("bookprice"));
+ $bookprice->appendChild($dom->createTextNode("$100"));
+ 
+ $bookcopy=$book2->appendChild($dom->createElement("bookcopy"));
+ $bookcopy->appendChild($dom->createTextNode("神人出版社"));
+
+
+ //生成xml
+   $dom->formatOutput=true;
+   $xml=$dom->saveXML();
+   $dom->save("books.xml");
+
+
+数据库数据生成xml 文档
+<?php
+
+/**
+ * @author Administrator
+ * @copyright 2013
+ * 
+ CREATE TABLE `zhuce`.`reg` (
+`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+`username` VARCHAR( 30 ) NOT NULL ,
+`userpwd` VARCHAR( 30 ) NOT NULL ,
+`useremail` VARCHAR( 50 ) NOT NULL 
+) ENGINE = MYISAM 
+ */
+ //连接数据库
+  $conn=mysql_connect('127.0.0.1','root','');
+  mysql_select_db('zhuce');
+  mysql_set_charset("utf8");
+ 
+ 
+ 
+ //数据提交
+ if(isset($_POST['zhuce'])){
+     $username=trim($_POST['username']);
+     $userpwd=trim($_POST['userpwd']);
+     $useremail=trim($_POST['useremail']);
+     
+     //写入数据库
+      $sql="insert into reg(`id`,`username`,`userpwd`,`useremail`) values(null,'$username','$userpwd','$useremail')";
+      $res= mysql_query($sql);
+      if($res){
+          
+           //查询数据库
+           $sql="select * from reg";
+            $rest=mysql_query($sql);
+            $users=array();
+            while($rows=mysql_fetch_assoc($rest)){
+                 $users[]=$rows;
+            }
+            //生成xml
+            $str=createXml($users,"reg");
+            $xmlobj=new SimpleXMLElement($str);
+            $xmlobj->asXML('reg.xml');
+      }
+ }
+ 
+ //生成xml 函数
+ 
+ function createXml($data,$boot){
+   $xml="<$boot>";
+      foreach($data as $key=>$value){
+         $xml.='<user id="'.$value['id'].'" email="'.$value['useremail'].'" pwd="'.$value['userpwd'].'">'.$value['username'].'</user>';
+      }
+    $xml.="</$boot>";
+    return $xml;
+ }
+ 
+
+
+
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="author" content="Administrator" />
+
+	<title>注册后将数据写入数据库并将数据生成xml 文档 保存在 api 目录下面</title>
+</head>
+
+<body>
+   <form action="#" method="post" name="reg">
+       用户名:<input type="text" name="username" /><br />
+       密码:<input type="password" name="userpwd" /><br />
+       邮箱:<input type="text" name="useremail" /><br />
+       <input type="submit" value="注册" name="zhuce" />
+   
+   </form>
+
+
+</body>
+</html>
+
+
+
+
+yahoo 查询中国城市id地址
+http://weather.yahoo.com/china/
+
+
+ $xml=simplexml_load_file("http://xml.weather.yahoo.com/forecastrss?w=2158433&u=c");
+ echo '<pre>';
+    //var_dump($xml);
+   $arrobj=$xml->channel->image;
+   //echo $arrobj->url;
+ // print_r($xml->channel);
+ echo '</pre>';
+ 
+ echo '<img src="'.$arrobj->url.'">';
+ 
+ echo '<a href="'.$arrobj->link.'">'.$arrobj->title.'</a>';
+
+
+
+sian weather天气预报xml
+ header("content-type: text/html;charset=utf-8");
+$content=file_get_contents("http://php.weather.sina.com.cn/xml.php?password=DJOYnieT8234jlsK&day=0&city=成都");
+ file_put_contents('sina_weather.xml',$content);
+

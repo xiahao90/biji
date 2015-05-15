@@ -1,0 +1,217 @@
+ajax: 局部数据更新：
+
+2005年 google---
+
+
+ajax 由 html css Dhtml  js xml json dom 的一种结合.
+
+ajax 是一种技术，它是一种解决方案。  具有一些互动性的不需要页面刷新，减少用户的心理等待时间，并能够及时响应数据的一种解决方案
+
+ajax 的特点：
+
+    ajax 是基于标准的html css xml的构造
+    使用dom对象动态的显示和交互数据 
+	它的数据交互格式 文本格式 xml  json
+    使用基于浏览器的xmlHTTPRquest 对象进行数据同步的
+    使用js 进行任意的绑定数据
+
+
+不能使用ajax 的地方：  数据及时性的部分  大量的文本替换  导航部分
+
+new XMLHttpRequest();  ie8以上 Firefox等其他符合w3c标准浏览器的xmlhttpRequest对象
+
+new ActiveXObject("Msxml2.XMLHTTP");  ie7 ie6
+
+产生ajax所需的xmlhttp 对象
+  var xmlhttp;
+        function ajax(){
+            try{
+                xmlhttp=new XMLHttpRequest()
+            }catch(e){
+                try{
+                   xmlhttp=new ActiveXObject("Msxml2.XMLHTTP");  
+                } catch(e){
+                    alert("你的浏览器是骨灰级，请升级");
+                    return false;
+                }
+            }
+        }
+
+xmlhttp.open("数据传递方式",url,true);打开一个异步数据传送
+
+如果需要服务器返回数据那么调用xmlhttp的onreadystatechange设置一个回调函数.
+xmlhttp.onreadystatechange=回调函数;
+
+
+xmlhttp.send()； 发送
+
+如果数据传递方式 是 get  send(null)
+post  send(数据)
+
+get较为简单  post较为复杂
+
+xmlhttp实现ajax数据异步传输的5种状态
+ 
+  0---创建 xmlhttpRequest 对象
+	1---调用open 方法
+	2. ---发送send
+	3.---服务器正在接受和处理但是没有完成
+	4.--服务器处理完成，客户端完成整个流程
+
+所以我们在处理回调函数的时候需要判断 当前的xmlhttRequest 对象是否已经完成了它的5种状态.
+
+  xmlhttp.readState==4 
+
+ xmlhttp.status 表示当前浏览器状态  http 协议规定 浏览器状态是 200  
+
+  xmlhttp.status==200
+
+
+xmlhttp.responseText 以文本的方式接收服务器端的返回.
+
+401 未授权
+
+403  禁止访问
+
+404  访问的文件未找到
+
+500 服务器内部发生错误
+encodeURIComponent()//对所传字符串进行编码！防止乱码！
+_________________________________________
+  <script type="text/javascript">
+      //  var xmlhttp=new XMLHttpRequest(); 
+    function getVal(){
+       ajax();
+       var url='11.php?username=zhangsan&'+Math.random();
+        xmlhttp.open('GET',url,true);
+        xmlhttp.onreadystatechange=test;
+        xmlhttp.send(null);
+     }
+     function test(){
+         if(xmlhttp.readyState==4 && xmlhttp.status==200){
+              //  alert(xmlhttp.responseText);
+                var myspan=document.getElementById('myspan');
+               var text=xmlhttp.responseText;
+                if(text=='1'){
+                    myspan.innerHTML='请重新换一个用户名，该用户名已经被注册';   
+                }else{
+                     myspan.innerHTML='该用户名允许注册';   
+              
+         }
+     }
+     
+  </script>
+
+-----------------------------------------
+post方式
+<script type="text/javascript">
+     function dj(id){
+         ajax();
+         var data="id="+id+"&type=x";
+         var url='12.php';
+         xmlhttp.open("POST",url,true);
+         xmlhttp.onreadystatechange=callback;
+         // 告诉浏览器当前数据发送长度 以及类型  header  
+         xmlhttp.setRequestHeader("content-length",data.length);
+         xmlhttp.setRequestHeader("content-type","application/x-www-form-urlencoded");
+          xmlhttp.send(data);
+     }
+     
+     function callback(){
+         if(xmlhttp.readyState==4 && xmlhttp.status==200){
+              alert(xmlhttp.responseText);
+         }
+     }
+  </script>
+
+----------------------------------------------
+mysql：
+
+appserv 集成了mysql  apache php 
+
+net start mysql
+
+net stop mysql
+
+-----------------------------------------
+进入mysql 平台
+
+mysql -u用户名 -p密码
+
+mysql -uroot -ptest123
+
+
+\q 退出平台
+
+大部分mssql命令都适用于mysql
+
+create database 数据库名；
+
+show databases; 显示所有数据库；
+
+use  数据库名;
+
+ 在mysql dos 平台中mysql 的命令以 ; 结束符
+
+drop database 数据库名；
+
+create table 表名(
+ 字段  类型  约束
+
+
+)；
+没有check约束
+自动增长   auto_increment
+mysql> create table test_user(
+    -> id int primary key auto_increment,
+    -> name varchar(20) not null,
+    -> pwd char(20) not null
+    -> );
+
+insert into 表名(字段列表) values (值列表)；
+
+update 表名 set 字段列="新值",.... where 字段列=条件值；
+
+delete from 表名 where 字段列=条件值；
+
+
+select 字段列表 from 表名 where .....
+
+php链接mysql
+
+mssql_xxx函数改成 mysql_xxxx
+
+mysql_connect();
+mysql_query();
+mysql_fetcth_array();
+mysql_query("set names gbk");  
+mysql_set_charset($charset)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+ 
+
+
+  
+

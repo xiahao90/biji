@@ -1,0 +1,720 @@
+1.什么是php框架?
+  PHP框架提供了一个用以构建web应用的基本框架，从而简化了用PHP编写web应用程序的流程。
+通过确保适当的数据库交换和在表现层编码，框架还可以帮助初学者建立更稳定的应用服务
+
+
+2.为什么应该使用框架开发?
+   开发人员使用PHP框架的好处很多，其中之一是加快开发进程。开发人员可以把时间花在实际应用的开发上，而不是每一个项目都重新构建基础功能。
+稳定是开发者使用框架的另一个重要原因。虽然简单是PHP最大的优点，很多人也因为这一点喜欢使用这个脚本语言，但它同时也是PHP最大的缺点，使用框架的另外一个重要目的是分工合作。
+
+3.在什么情况下使用框架?
+  决定是否使用框架的主要因素是项目的大小。
+  如果你想开发一个只有5到10个网页的简单网站，少量的数据库访问，并且不需要保证速度或者提供文档，那么你只要用PHP就够了。这种情况下使用web开发框架并没有太大的价值，而且面向对象或者MVC模型会使开发速度变慢。
+  如果你要开发一个更复杂的有更多业务逻辑的web应用程序，那么单独使用PHP是不够的。如果你打算以后维护或扩展你的应用程序，那么你的代码需要是简洁，易读和高效的。如果你打算在用户界面中方便的使用最新的技术(例如Ajax)，你不能只是写几百行Javascript代码。如果你想愉快而且快速的开发，那么单独使用PHP可能会令你失望。上面这些，就是框架适合你的原因。
+
+4.环境要求：
+确认你安装了Web服务器（如Apache、Nginx）和5.3.2以上版本的PHP。
+
+
+5.下载
+http://symfony.com/download
+
+5.1 symfony2的优点：
+   Symfony2集成了许多技术的优点，包括工具和概念，你将学到大多数人多年来努力的方向。换句话说，你不只是在学习Symfony2，你还学习Web基础、最佳开发实践以及在Symfony2内部或单独使用的那些新的、令人惊喜的PHP库
+
+6.目录结构介绍：
+   www/ <- 你的Web服务器根目录
+    Symfony/ <- 解压后的文件
+        app/ <- 存放symfony的核心文件的目录
+            cache/  <- 存放缓存文件的目录
+            config/ <- 存放应用程序全局配置的目录
+            logs/   <- 存放日志的目录
+            Resources/
+        bin/   <- 批处理文件 (用于命令行或者cron的脚本)
+        src/  <- 应用程序源代码
+            Acme/
+                DemoBundle/
+                    Controller/
+                    Resources/
+                    ...
+        vendor/   <- 供应商或第三方的模组和插件
+            symfony/
+            doctrine/
+            ...
+        web/   <- Web入口
+            app.php  <-程序统一入口
+            ...
+
+7.安装
+将php5.3.24里面的php.ini-development重命名为php.ini 复制到 c:\windows\下面，并修改如下内容
+
+短标记
+short_open_tag = Off 改为 short_open_tag = On
+
+7.1打开如下扩展
+extension=php_mbstring.dll
+extension=php_curl.dll
+extension=php_gd2.dll
+extension=php_mysql.dll
+extension=php_mysqli.dll
+extension=php_pdo_mysql.dll
+
+7.2修改时间
+date.timezone = PRC
+
+7.3 指定php扩展目录
+; On windows:
+; extension_dir = "ext"改为 extension_dir = "D:/AppServ/php5/ext"
+
+在D:\AppServ\Apache2.2\conf\httpd.conf 打开apache重写
+
+ symfony检查安装环境
+  http://localhost/Symfony/web/config.php
+
+  symfony自带的欢迎页面
+  http://127.0.0.1/Symfony/web/app_dev.php/
+
+  symfony数据库配置
+  http://127.0.0.1/Symfony/web/app_dev.php/_configurator/step/0
+
+8、运行程序
+  symfony的应用程序的统一入口是 app.php 但是框架本身为我们提供开发环境与生产环境的的区别
+  如果是开发环境那么应用程序的统一入口是 app_dev.php ,生产环境是 app.php
+
+
+  输入地址：http://localhost/Symfony/web/app.php 大家会发现没有内容
+
+            http://127.0.0.1/Symfony/web/app_dev.php   欢迎页面   
+
+分析程序：
+   从上面的过程我们可以看出，symfony是没有默认输出页面的，但是它是有统一入口脚本文件的。
+     app_dev.php  应用程序的统一入口，这是一个前端控制器 front controller 用来响应用户的各种需求
+
+
+9、理解symfony的运行机制：
+      D:\AppServ\www\Symfony\app\config 是配置文件
+      路由配置
+      routing.yml  <----生产环境配置 
+      routing_dev.yml <---开发环境配置，所以我们进入该配置文件
+
+我们来了解一下路由规则：
+_welcome:   <---定义模块名 
+    pattern:  / <---路由配置 这里代表根目录，也就是说在:http://127.0.0.1/Symfony/web/app_dev.php 不追加其他控制器的默认控制这时候就会是默认
+    defaults: { _controller: AcmeDemoBundle:Welcome:index } <--- _controller： 定义控制器这是语法格式后面要根一个完整的路径名
+
+如果是下面的路由
+http://localhost/Symfony/web/app_dev.php/demo/hello/Fabien 
+通过这个路由我们知道 控制器是  demo  方法是 hello  参数是 fabien
+
+
+我们来看一下它的路由配置
+_demo:
+    resource: "@AcmeDemoBundle/Controller/DemoController.php"  <---源文件目录 @代表当前项目
+    type:     annotation  <--anno会自动替换url中的hello
+    prefix:   /demo   <---指向根目录的前缀
+
+ @Route("/hello/{name}", name="_demo_hello")  注意这是规则
+
+我们来输出一个hello  word
+  找到D:\AppServ\www\Symfony\src\Acme\DemoBundle\Controller\WelcomeController.php  下面的  indexAction() 我们输出一个helloword  
+
+我们再来回顾一下symfony2的mvc的机制; 参考;http://symfony.com/doc/current/book/routing.html
+   
+应用程序从 /                                                                                                     homepageAction()------>返回结果 response
+         
+
+
+            /contact  -->     front controoler(前端控制器)  ---->symfony2 kerner(symfony2核控制器)--->分发某个动作contactAction()----->response
+         
+
+
+
+            /blog                                                                                                 bolgAction()-------->response
+
+
+
+
+
+
+10. 了解基本概念
+  YAML：
+YAML是一种直观的能够被电脑识别的数据序列化格式，并且它容易被人类阅读，容易与脚本语言交互的。换种说法，YAML是一种非常简单的类似于XML的数据描述语言，语法比XML简单很多。他在描述可以被转化成数组或者hash的数据是非常有用
+
+ 比如下面的数组
+$house = array(
+  'family' => array(
+    'name'     => 'Doe',
+    'parents'  => array('John', 'Jane'),
+    'children' => array('Paul', 'Mark', 'Simone')
+  ),
+  'address' => array(
+    'number'   => 34,
+    'street'   => 'Main Street',
+    'city'     => 'Nowheretown',
+    'zipcode'  => '12345'
+  )
+);
+ 
+用yaml来描述
+  house:
+  family:
+    name:     Doe
+    parents:
+      - John
+      - Jane
+    children:
+      - Paul
+      - Mark
+      - Simone
+  address:
+    number: 34
+    street: Main Street
+    city: Nowheretown
+    zipcode: 12345
+
+
+YAML这种格式大约是2001年出现的，目前为止已经有多种语言的YAML解析器。不过它很直观，你用不着更深入地研究YAML。
+
+MVC模式
+MVC架构包含三层，这是web设计的经典应用模式：
+模型(model)代表程序操作的信息--业务逻辑。 
+视图(view)将模型用网页的形式展现出来从而与用户进行交互。 
+控制器(controller)通过调用合适的模型或者视图来回应用户的动作
+MVC架构的原理是把代码根据类型分成三层。数据逻辑代码放在模型里，表现代码放在视图里，应用逻辑代码放在控制器里。
+
+
+应用程序、模块与动作
+  什么是网站中的应用程序：
+  在一个项目里，操作按照逻辑划分成不同的应用程序。同一个项目里面的不同应用程序相互独立。大多数情况，一个项目会包含两个应用程序:一个是前台，一个后台，它们共享同一个数据库。
+
+  什么是模块：
+   每个应用程序由一个或更多模块组成，模块就是功能相近的一个页面或者一组页面。
+
+  什么是动作：
+   模块包含动作，也就是说一个模块可以包含多个动作。
+   
+在实际的开发中，如果你的项目过于复杂那么我们需要重构代码（也就是说通过重写代码来改善结构与可读性(同样保留功能)被称为重构）  
+
+
+  代码包：
+      bundle这个词的使用频率很高。在Symfony2框架里编写的代码，都需要按照代码包的形式来组织。根据Symfony2里的定义，一个代码包是指用来实现一个独立功能的符合一定目录结构的一系列文件（包括PHP文件、样式表文件，JavaScript文件，图片，等等）。代码包使得代码的复用变得更容易。
+
+
+9.symfony核心类
+symfony的MVC核心的几个类：
+   sfController 控制器类。它解析请求并交给动作处理。 
+   sfRequest 保存所有的请求元素(参数，cookie，请求的头 等)。 
+  sfResponse 包含回应的头和内容。它的内容最终会转化为HTML传给用户。 
+ 
+
+
+10.编码规范
+   在symfony的编码规范中：
+      控制器： 驼峰命名法多个单词首字母大写、文件名与类名相同
+      方法:    方法名 + Action（）
+
+
+
+
+11.创建自己的hello word
+  在routing.yaml里面
+    _home:
+    pattern:  /  <--正则
+    defaults: { _controller: AcmeDemoBundle:Home:index }  <--映射到这个控制器下面的方法
+
+在D:\AppServ\www\Symfony\src\Acme\DemoBundle\Controller 下面创建 HomeController.php 控制器
+
+<?php
+namespace Acme\DemoBundle\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response
+
+class HomeController extents Controller{
+   
+    public  function indexAction(){
+       return new Response('Hello world!'); //返回一个response
+    }
+
+}
+?>
+
+12、创建自己的bundle（模块或者功能）
+
+bundle目录包含跟实现内容有关的所有东西，包括PHP文件，模板，样式表，javascript文件，测试内容以及其它任何相关的东西。要实现的内容的各方面都保存在一个bundle中。 
+
+一个应用程序是由在AppKernel类中registerBundles()方法里定义的所有bundle组成
+D:\AppServ\www\Symfony\app\AppKernel.php
+
+public function registerBundles()
+    {
+        $bundles = array(
+            new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+            new Symfony\Bundle\SecurityBundle\SecurityBundle(),
+            new Symfony\Bundle\TwigBundle\TwigBundle(),
+            new Symfony\Bundle\MonologBundle\MonologBundle(),
+            new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
+            new Symfony\Bundle\AsseticBundle\AsseticBundle(),
+            new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
+            new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
+            new JMS\AopBundle\JMSAopBundle(),
+            new JMS\DiExtraBundle\JMSDiExtraBundle($this),
+            new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
+        );
+
+        if (in_array($this->getEnvironment(), array('dev', 'test'))) {
+            $bundles[] = new Acme\DemoBundle\AcmeDemoBundle();
+            $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
+            $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
+            $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
+        }
+
+        return $bundles;
+    }
+
+现在我们来手动创建 AcmeTestBundle并让它能够在我们的应用程序中工作。注意，这里的Acme是一个虚假的提供商名字，你完全可以替换它为你自己组织或公司的名字
+
+ 第一步： 首先，创建一个src/Eduask/TestBundle/ 目录并添加新文件EduaskTestBundle.php
+
+D:\AppServ\www\Symfony\src\Eduask\TestBundle\EduaskTestBundle.php
+
+
+<?php
+namespace Eduask\TestBundle; <-命名空间 必须以供应商名开始
+use Symfony\Component\HttpKernel\Bundle\Bundle;
+class EduaskTestBundle  extends  Bundle{
+
+}
+
+?>
+/**
+namespace 开头使用提供商名，接着是分类段（可以省略），最后是命名空间的简写名字，而且该名字必须以Bundle作为后缀。
+*/
+
+
+
+第二步： 注册你的Bundle应用
+命令创建项目：
+php app/console generate:bundle --namespace=Acme/TestBundle　　如果你使用上面的命令行工具，则创建的bundle会自动的注册到appKernel类中
+说明：在我的pc上运行命令没有成功，所以我是手动创建bundle应用
+
+D:\AppServ\www\Symfony\app\AppKernel.php
+ 注册你的应用Bundle
+  
+  $bundles[] = new Eduask\TestBundle\EduaskTestBundle();
+
+
+第三步:创建应用目录结构(我们这里复制symfony2给的Acm示例，并把内容清空)
+D:\AppServ\www\Symfony\src\Eduask\TestBundle\
+  Controller/ 包含Bundle的所有控制器文件
+  Dependencylnjection/  该目录不是必须的，功能是： 保存了特定的依赖注入扩展类，该类可能会导入服务配置，注册编译器传输或者更多其它 
+  Resources / 项目资源目录
+  -----------config  存放配置文件
+  -----------public  存放公共文件比如 css/js/images
+  -----------------css
+  -----------------images
+  -----------------js
+  -----------views  存放视图模板文件 格式： 控制器/action.html.twig
+  Tests / 保存bundle所有的测试
+
+第四步：配置路由
+D:\AppServ\www\Symfony\app\config\routing.yml
+
+_welcome:
+    pattern:  /
+    defaults: { _controller: EduaskTestBundle:Welcome:index }
+
+
+第五步：控制器
+  D:\AppServ\www\Symfony\src\Eduask\TestBundle\Controller\WelcomeController.php
+
+<?php
+
+namespace Eduask\TestBundle\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
+
+class WelcomeController extends Controller{
+    public function indexAction(){
+    	  return new Response('hello Eduask work!');
+    }
+}
+
+?>
+
+
+第六步 运行：
+http://127.0.0.1/Symfony/web/app_dev.php/
+
+
+13、研究路由规则（注意路由格式与规则---不要想当然的哦）
+ 
+_welcome_user:
+    pattern:  /user/{name}
+    defaults: { _controller: EduaskTestBundle:Welcome:user }
+
+对应url: http://127.0.0.1/Symfony/web/app_dev.php/user/aaa
+
+<?php
+
+namespace Eduask\TestBundle\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
+
+class WelcomeController extends Controller{
+    public function indexAction(){
+    	  return new Response('hello Eduask work!');
+    }
+    
+    public function userAction($name){
+    	  return new  Response($name);  //输出：aaa
+    }
+}
+
+?>
+
+路由配置是给参数设置默认值
+_welcome_user:
+    pattern:  /user/{name}
+    defaults: { _controller: EduaskTestBundle:Welcome:user,name: zhanghua }
+如果对应的url没有参数那么将输出默认值： http://127.0.0.1/Symfony/web/app_dev.php/user/  输出 zhanghua
+
+
+路由配置多个参数
+_welcome_user:
+    pattern:  /user/{name}/{year}/{month}/{type}{_id}
+    defaults: { _controller: EduaskTestBundle:Welcome:user }
+
+注意：在控制器的方法里面获取参数值的变量名必须同正则的变量名相同
+   public function userAction($name,$year,$month,$type,$_id){
+    	   $getStr=$name.$year.$month.$type.$_id;
+    	   return new  Response($getStr);
+    }
+
+****************************************************************************************
+*
+*如果你觉得手动创建麻烦的， 你可以通过命令行来创建：
+*C:\Documents and Settings\Administrator>d:
+*D:\>cd AppServ\www\Symfony\
+*D:\AppServ\www\Symfony>php  app/console generate:bundle --namespace=Acme/StoreBundle 
+*****************************************************************************************
+14、控制器调用视图，并传递参数给视图
+   
+  在这里我们再一次重申控制器的视图的后缀名必须是 .twig
+  视图是存放在D:\AppServ\www\Symfony\src\Eduask\TestBundle\Resources\views下面的
+  并且控制器类名就是目录名称，方法名就是视图文件名；
+
+   _welcome_show:
+   pattern:  /show
+   defaults: { _controller: EduaskTestBundle:Welcome:show }
+
+
+
+ public function showAction(){
+    	$view='EduaskTestBundle:Welcome:show.html.twig';
+    	 return $this->render($view);
+    }
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title></title>
+</head>
+<body>
+    欢迎你：symfony 2 我来了
+</body>
+</html>
+
+
+参数传递：
+  $view='EduaskTestBundle:Welcome:show.html.twig';
+    	 return $this->render($view,array('name'=>'zh','year'=>'2012','month'=>'12','type'=>，'a','id'=>1));
+
+
+视图：
+ {{ name }} 最好是两边打空格，这是标准写法
+  {{year}} 也可以不打空格哦
+
+
+
+在控制器中进行路由跳转：
+symfony2 的路由基本上都是基于配置来访问，所以我们在配置跳转时也是基于路由规则，比如：当路由进入 http://127.0.0.1/Symfony/web/app_dev.php/blog的时候进行相应的业务逻辑处理-->处理完成后需要页面跳转到相应的控制器和方法
+
+控制器：
+   public function blogAction(){
+
+    	return $this->redirect($this->generateUrl('_homepage'));
+    }
+    
+    public function homepageAction(){
+      return new Response('hello，欢迎你从blog方法过来');
+    }
+
+路由yml：
+
+_homepage:
+   pattern:  /homepage
+   defaults: { _controller: EduaskTestBundle:welcome:homepage }
+
+如果我们改变 路由yaml 让他跳转到bolg控制器下面的index方法
+_homepage:
+   pattern:  /index
+   defaults: { _controller: EduaskTestBundle:blog:index }
+
+那么，它将自动跳转到  BlogController.php 控制器中index
+大家注意url的变化：http://127.0.0.1/Symfony/web/app_dev.php/index
+
+<?php
+namespace Eduask\TestBundle\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
+
+class BlogController extends Controller {
+     public function indexAction(){
+     	return new Response('欢迎你进入 blog ');
+     } 
+}
+
+?>
+
+
+在控制器中进行路由跳转的时候需要传递参数：
+在bolg控制器中有login 方法
+
+
+
+public function loginAction($name){
+        $response = $this->forward('EduaskTestBundle:blog:reg', array(
+     			'name'  => $name,
+     			'color' => 'green',
+     	));
+        return $response;
+     }
+
+ public function regAction($name,$color)
+     { 
+     	  return new Response('<font color="'.$color.'">'.$name.'</font>');
+     	
+     }
+
+路由yaml
+_blog_login:
+   pattern:  /login/{name}
+   defaults: { _controller: EduaskTestBundle:blog:login,name:aa }
+
+
+在控制器中获取视图的内容不输出，而是做其他处理
+
+$content = $this->renderView( 'EduaskTestBundle:blog:login.html.twig', array('name' => $name));
+ return new Response($content);
+
+
+控制器使用session
+$session = $this->getRequest()->getSession();
+$session->set('foo', 'bar');
+$val=$session->get('foo');
+return new Response($val);
+
+
+15、视图模板
+{{ page_title }}  ====》 array('page_title'=>'这是标题');
+
+
+for...in 循环
+<ul>
+ {% for 循环因子 in 数组 %}
+     <li><a href="{{ 循环因子.字段列 }}">{{ 循环因子.字段列 }}</a></li>
+ {% endfor %}
+</ul>
+
+
+<ul id="navigation">
+            {% for item in navigation %}
+                <li><a href="{{ item.href }}">{{ item.caption }}</a></li>
+            {% endfor %}
+</ul>
+要注意书写格式哦
+
+对应的数组格式：
+
+  array('navigation'=>array(
+         array( 'href'=>'http://xxxx.com','caption'=>'aaaa'),
+         array( 'href'=>'http://xxxx.com','caption'=>'bbb')
+     ))
+
+
+如果是索引数组：
+  {% for i in 0..10 %}
+         <div calss="{{ cycle(['odd','even'],i) }}">
+        <!--一些其它HTML -->
+       </div>
+  {% emdfor %}
+
+
+生成绝对url路由地址
+<a href="{{ url('_welcome') }}">Home</a>
+
+生成带参数的url地址
+<a href="{{ path('_blog_login', { 'name': 'aaa' }) }}"> 链接到博客登陆,并把参数传递个login登陆方法
+
+
+
+链接到资源：
+  模板通常也需要一些图片，Javascript，样式文件和其它资产。当然你可以硬编码它们的路径。比如/images/logo.png。 但是Symfony2 提供了一个更加动态的Twig函数 asset()。
+注意：前端渲染层 css / js / images 存放在web\bundles\css等目录下面
+
+
+
+<img src="{{ asset('bundles/eduask/images/logo.png') }}" alt="Symfony!" />
+<link rel="stylesheet" href="{{ asset('bundles/eduask/css/main.css') }}" />
+<script  type="text/javascript" src="{{ asset('/js/main.js') }}" ></script>
+
+关于模板特性--模板继承和布局：
+  在项目中，我们的页面样式有可能大部分都是一样的，这时候我们就需要设置的一个简易的模板，其他模板如果和该简易模板的样式相同，
+或者在网页中的位置相同，那么这时我们就只需要替换数据，这是一个非常伟大的理念:页面组件化
+
+这里有一个基本的布局视图：
+  <!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>{% block title %}{% endblock %}</title>
+    </head>
+    <body>
+          <!---这里是导航--->
+        <div id="sidebar">
+            {% block sidebar %}
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/blog">Blog</a></li>
+            </ul>
+            {% endblock %}
+        </div>
+          <!--- 这里是某个内容--->
+        <div id="content">
+            {% block body %}{% endblock %}
+        </div>
+
+   <div id="mydiv">
+    {% block mydiv %}
+    这个是父类的内容
+    {% endblock %}
+ </div>
+    </body>
+</html>
+
+下面是一个子模板:
+{% extends "EduaskCmsBundle::layout.html.twig" %}
+
+{% block title %}这是新的标题{% endblock %}
+
+<!-----这里是新的内容部分---->
+{% block body %}
+    {% for entry in blog_entries %}
+        <h2>{{ entry.title }}</h2>
+        <p>{{ entry.body }}</p>
+    {% endfor %}
+{% endblock %}
+
+
+如果你需要从父模板中获取一个block的内容，你可以使用{{ parent() }}函数。
+{% block mydiv %}
+       {{ news_list }}
+       <b>{{ parent() }}</b>  如果加了这个函数就会显示 “这个是父类的内容，否则不会显示
+{% endblock %}
+
+基础模板中{% block %}越多越好，你父模板中block定义的越多，你的布局就越灵活。
+
+16.数据库操作 
+
+ 16.1 在开始之前，首先需要配置数据库连接信息。根据惯例，这些信息通常会配置在app/config/parameters.yml 文件中。
+
+D:\AppServ\www\Symfony\app\config\parameters.yml
+
+parameters:
+    database_driver:   pdo_mysql
+    database_host:     127.0.0.1
+    database_port:     3306
+    database_name:     symfony2
+    database_user:     root
+    database_password: test123
+
+    mailer_transport:  smtp
+    mailer_host:       smtp@163.com
+    mailer_user:       lyle_zhang
+    mailer_password:   test123
+
+    locale:            en
+    secret:            ThisTokenIsNotSoSecretChangeIt
+
+
+这些配置定义信息将会被主配置文件app\config\config.yml 中的Doctrine时引用。
+
+
+ 16.2 数据持久化配置  orm
+D:\AppServ\www\Symfony\app\config\config.yml 
+
+doctrine:
+    dbal:
+        driver:   %database_driver%
+        host:     %database_host%
+        port:     %database_port%
+        dbname:   %database_name%
+        user:     %database_user%
+        password: %database_password%
+        charset:  UTF8
+        # if using pdo_sqlite as your database driver, add the path in parameters.yml
+        # e.g. database_path: %kernel.root_dir%/data/data.db3
+        # path:     %database_path%
+
+    orm:
+        auto_generate_proxy_classes: %kernel.debug%
+        auto_mapping: true
+
+ 16.3 创建数据库
+mysql> create database symfony2;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use symfony2;
+Database changed
+mysql> create table user(
+    -> id int primary key auto_increment,
+    -> name varchar(30) not null,
+    -> pwd varchar(30) not null,
+    -> utime datetime not null
+    -> );
+Query OK, 0 rows affected (0.08 sec)
+
+
+16.4  使用pdo 操作数据库
+  $conn = $this->get('database_connection');  返回pdo数据库链接对象
+使用pdo链接对象执行数据库操作--这是我们大家所熟悉的模式
+
+
+
+
+ 
+  
+
+
+
+ 
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+

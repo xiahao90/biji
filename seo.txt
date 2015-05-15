@@ -1,0 +1,118 @@
+三期课程体系：
+第一阶段:
+html  div+css 大排版     浏览器兼容性   *****
+javascript 基本语法     dom节点对象  javascript 面向对象编程
+js框架 jquery    ******
+jquery ui    ****
+jquery 插件 ***
+json ***
+xml    ***
+mysql   ****
+php连接mysql  mysql  mysqli  ****
+smarty模板技术  *****
+
+
+企业宣传门户网站 或者 团购
+
+第二阶段:
+linux操作系统 centos  unbuntu
+lamp 环境配置
+mysql 服务器环境优化
+php 面向对象 oop 封装 继承 多态 抽象 接口 静态
+php 设计模式
+mvc框架  zhphp ---参考 disczu  thinkpphp  ci  phpcms---构建自己的框架---入门框架
+ci
+thinkphp
+yii
+企业级中级项目： 分类 婚庆 bbs 
+
+第三阶段：
+企业级快速开发：
+
+dedecms
+phpcms
+ecshop
+ecmall
+---------
+curl
+webservice
+email
+
+-----------------------------------------------------------------------------------------
+seo:  搜索爬虫   yahoo    google   baidu  搜索引擎
+
+seo: 节约企业推广成本  绿色 环保
+
+微博推广 qq推广 bbs 推广  搜索引擎
+
+网页： 如何做 才能实现seo 的最大化?
+
+网页必须符合 w3c 标准
+
+seo 主要是针对 搜索引擎优化
+
+百度爬虫：  2-4  6-8  1-2
+
+关键词 文章 图片
+
+
+    <meta name="keywords" content="Leo,HEnT Studio,LAMP,PHP,MySQL" />
+
+设置关键词：
+   关键词 体现系统网站核心词语  最好关键词 6-8个之间  关键词长度  最好是2个字 4个字  最好不要超过6个字
+      <meta name="DEscription" content="HEnT Studio" />
+
+设置网页简介：
+     
+
+黑色seo
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+文章seo:
+  文章内含 关键词 比例 3% %5 以内 
+    文章开头 100字  2-5个关键词
+
+图片：title
+
+导航条尽量使用文本 不要使用 flash 图片
+
+seo 网页页尾： 网站地图
+-------------------------------------------
+seo: 内容为王 外链为皇
+
+
+-------------------------------------------------
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

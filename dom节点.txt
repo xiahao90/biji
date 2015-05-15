@@ -1,0 +1,91 @@
+  document.createElement('元素节点名');  返回一个对象 该对象默认是存储在内存中.
+   
+   docuement.createTextNode("文本内容");创建文本节点：
+给对象追加属性
+元素的css 属性：
+    对象.style.css属性='css属性的值';
+元素本身的属性：
+    对象.setAttribute('属性名','属性值');
+ duix.getAttribute('属性名')；  返回该属性的值
+
+对象.value;
+
+对象.innnerHTML;
+
+对象.innerText;
+
+cloneNode(boolean)；复制对象： 如果boolean  = true 表示复制所有的内容  否则 只复制该对象
+
+document.body.appendChild(_input); 将一个对象追加到 某个对象中_from.insertBefore(new_mk,zh)
+
+insertBefore 插入某个对象的前面: (被插入的的节点,目标节点);
+
+removeChild(节点对象);删除节点：
+
+replaceChild(替换对象,被替换对象);替换节点对象：
+
+childNodes; 返回数组,已知父节点查找子节点：
+
+nodeName 获取元素的名称
+
+parentNode;  查找父节点
+
+nextSibling; 返回下一个兄弟节点   ,    
+
+previousSibling;上一个兄弟节点：
+
+hasChildNodes() 这是一个方法  返回 true　或者false 已知父节点判断是否存在子节点对象
+
+firstChild;查找父节点对象下面的第一个子节点 
+
+lastChild;查找父节点对象下面的最后一个子节点
+
+
+
+
+
+
+
+js动态的添加事件：
+   浏览器的差异化：
+
+ie:  element.attachEvent("事件名",响应的函数名);
+on.....
+  注意：不打括号。
+
+firefox:  element.addEventListener("事件名",响应的函数名)；
+
+注意：  事件名没有 on
+
+
+js 判断浏览器：
+   js 在dom中内嵌了navigator 对象 ,该对象主要是包含浏览器的信息
+
+    if(navigator.userAgent.indexOf('MSIE') > 0){
+                        _input.attachEvent("onblur",sq);  //ie
+                 }else{
+                      _input.addEventListener('blur',sq); //非 ie
+                    
+                 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

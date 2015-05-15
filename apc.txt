@@ -1,0 +1,195 @@
+php 代码缓存APC 
+    PHP语言是一个功能强大的嵌入式HTML脚本语言，很多程序员都在使用这一语言来进行网站的创建。PHP APC,全称是Alternative PHP Cache,官方翻译叫”可选PHP缓存”,但我个人觉得应该叫”另一个PHP缓存”。
+  PHP APC提供两种缓存功能，即缓存Opcode(目标文件)，我们称之为apc_compiler_cache。同时它还提供一些接口用于PHP开发人员将用户数据驻留在内存中，我们称之为apc_user_cache。
+
+PHP APC的安装:
+  下载php_apc.dll
+打开php.ini.搜索;extension=php_zip.dll 在这一行下面加上
+extension=php_apc.dll
+apc.enabled = 1
+apc.shm_segments = 1
+apc.shm_size = 64
+apc.optimization = 0
+apc.num_files_hint = 1000
+apc.ttl = 0
+apc.gc_ttl = 3600
+apc.cache_by_default = On
+apc.slam_defense = 0
+apc.file_update_protection = 2
+apc.enable_cli = 0
+apc.stat=0
+apc.rfc1867 = on
+
+保存php.ini,重新启动你的IIS或者Apache.就安装成功了..
+ 
+打开phpinfo.php 如果看到 apc那么就安装成功了．
+
+PHP APC的使用：
+  PHP APC的使用：
+APC的使用其实倒说不上.APC是个优化器,自安装之日起,就默默地在后台为您的PHP应用服务了.您的所有PHP代码会被缓存起来. 另外,APC可提供一定的内存缓存功能.但是这个功能并不是十分完美,有报告说如果频繁使用APC缓存的写入功能,会导致不可预料的错误.如果想使用这个功能,可以看看apc_fetch,apc_store等几个与apc缓存相关的函数. APC引入了一个小甜饼,解决了困扰大家已久的大文件上传的进度条问题.
+
+ PHP APC的高级使用
+
+1.缓存期限: APC的缓存分两部分:系统缓存和用户数据缓存.
+系统缓存 是自动使用的,是指APC把PHP文件源码的编译结果缓存起来,然后在再次调用时先对比时间标记。如果未过期,则使用缓存代码运行。默认缓存 3600s(一小时).但是这样仍会浪费大量CPU时间.因此可以在php.ini中设置system缓存为永不过期(apc.ttl=0).不过如果这样设置,改运php代码后需要restart一下您的web服务器(比如apache…).目前对APC的性能测试一般指的是这一层cache;
+
+
+用户数据缓存 由用户在编写php代码时用apc_store和apc_fetch函数操作读取、写入的.如果量不大的话我建议可以使用一下.如果量大,我建议使用memcache会更好.
+
+
+2.状态控制和分析: PHP APC的源码包自带了一个apc.php;您可以将这个文件上传到web服务器的某个目录下,用浏览器访问,这会显示当前的状态.我们可以从这里的表格分析当前的缓存状况,作出进一步优化. apc-info-clublocalhost2.png 这是某test站点的状态.您可以慢慢分析,这个工具会提供很多有用的工具.比如您可以看到哪些文件经常被包含(访问),您缓存的哪个变量经常被读取,或经常被更新等. 最后顺便提一句,有独立报告说,PHP APC的代码缓存、优化效果要高出zend优化器.
+
+注意:在不久的将来, 此加速器可能变得更好,据说PHP6.X版本中要整合此加速器.
+pc的用法比较简单,只有几个函数,列举如下
+
+
+apc_clear_cache() 清除apc缓存内容默认(无参数)时,只清除系统缓存,要清除用户缓存,需用’user’参数
+apc_define_constants ( string key, array constants [, bool case_sensitive] )将数组constants以常量加入缓存
+apc_load_constants (string Key)取出常量缓存
+apc_store ( string key, mixed var [, int ttl] )在缓存中保存数据
+apc_fetch ( string key )获得apc_store保存的缓存内容
+apc_delete ( string key )删除apc_store保存的内容
+
+以常量加入缓存 并取出缓存
+<?php
+  $constants = array('APC_FILE' => 'apc.php', 'AUTHOR' => 'tim');
+  apc_define_constants('numbers', $constants);
+  apc_load_constants('numbers');
+  echo 'APC_FILE='.APC_FILE;
+  echo 'AUTHOR='.AUTHOR;
+?>
+
+添加和取出缓存
+
+<?php
+if(!apc_fetch('time1')){  //判断是否存储缓存  如果fei 的话那么就添加缓存
+    apc_store('time1', time());
+}
+if(!apc_fetch('time2')) {
+    apc_store('time2', time(),2); //添加过期时间
+}
+//取出
+echo 'time1:'.apc_fetch('time1');
+echo 'time2:'.apc_fetch('time2');
+?>
+
+缓存对象并取出，取出后可以访问对象的属性和方法
+<?php
+class a{
+function b(){
+    return '你访问了a类的b方法';
+    
+    }
+}
+header('content-type: text/html;charset=utf-8');
+apc_store('obj',new a());
+$a = apc_fetch('obj');
+echo $a->b();
+?>
+
+数组缓存
+<?php
+$arr = array('a'=>'i am a','b'=>'i am b');
+apc_store('arr',$arr);
+$apc_arr = apc_fetch('arr');
+print_r($apc_arr);
+?>
+
+提示:如果设置了缓存时间 那么可以刷新一下,看ttl设置是否生效
+     在 PHP Cache 层，Facebook 采用了 APC。
+     与PHP中其他的机制不同，使用 apc_store() 存储的变量 在不同的请求之间一直持久存在（直到从缓存系统中移除）。
+
+其他常用apc 函数
+
+apc_exists — 检查APC中是否存在某个或者某些key
+<?php 
+$fruit  = 'apple';
+apc_store('foo', $fruit);
+if (apc_exists('foo')) {
+    echo "Foo exists: ";
+    echo apc_fetch('foo');
+} else {
+    echo "Foo does not exist";
+}
+?>
+
+apc_clear_cache();  自动清除系统缓存
+
+apc_clear_cache('user');  自动用户缓存
+
+class apcInit { 
+     
+    /**
+     * Apc缓存-设置缓存
+     * 设置缓存key，value和缓存时间
+     * @param  string $key   KEY值
+     * @param  string $value 值
+     * @param  string $time  缓存时间
+     */ 
+    public function set_cache($key, $value, $time = 0) {  
+        if ($time == 0) $time = null; //null情况下永久缓存 
+        return apc_store($key, $value, $time);; 
+    } 
+     
+     
+    /**
+     * Apc缓存-获取缓存
+     * 通过KEY获取缓存数据
+     * @param  string $key   KEY值
+     */ 
+    public function get_cache($key) { 
+        return apc_fetch($key); 
+    } 
+     
+    /**
+     * Apc缓存-清除一个缓存
+     * 从memcache中删除一条缓存
+     * @param  string $key   KEY值
+     */ 
+    public function clear($key) { 
+        return apc_delete($key); 
+    } 
+     
+    /**
+     * Apc缓存-清空所有缓存
+     * 不建议使用该功能
+     * @return
+     */ 
+    public function clear_all() { 
+        apc_clear_cache('user'); //清除用户缓存 
+        return apc_clear_cache(); //清楚缓存 
+    } 
+     
+    /**
+     * 检查APC缓存是否存在
+     * @param  string $key   KEY值
+     */ 
+    public function exists($key) { 
+        return apc_exists($key); 
+    } 
+     
+    /**
+     * 字段自增-用于记数
+     * @param string $key  KEY值
+     * @param int    $step 新增的step值
+     */ 
+    public function inc($key, $step) { 
+        return apc_inc($key, (int) $step); 
+    } 
+     
+    /**
+     * 字段自减-用于记数
+     * @param string $key  KEY值
+     * @param int    $step 新增的step值
+     */ 
+    public function dec($key, $step) { 
+        return apc_dec($key, (int) $step); 
+    } 
+     
+    /**
+     * 返回APC缓存信息
+     */ 
+    public function info() { 
+        return apc_cache_info(); 
+    } 
+} 

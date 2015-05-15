@@ -1,0 +1,1053 @@
+yii 备课：
+
+下载：http://www.yiiframework.com/  下载最新的稳定版本
+
+ 检测环境： pdo 必须打开
+
+解压：
+
+在www下创建 项目名:myapp 将framework拷贝到项目名下面。
+
+基础： 
+Yii是什么: 
+Yii 是一个基于组件的高性能 PHP 框架，用于快速开发大型 Web 应用。它使Web开发中的可复用度最大化，可以显著提高你的Web应用开发速度。
+Yii 这个名字（读作易Yee） 简单（easy）高效（efficient）可扩展（extensible）
+Yii 是一 个纯 OOP 的框架。
+
+Yii 最适合用来做什么:
+Yii 是一个通用的 Web 编程框架，可以用于开发几乎所有的 Web 应用。由于它是轻量级且具备了成熟的缓存解决方案，它特别适用于开发高流量的应用，例如门户，论坛，内容、管理系 统（CMS），电子商务系统等等。	
+
+为什么Yii如此之快:
+Yii如此快速是因为它广泛地使用lazy loading技术。比如, 直到第一次使用到这个类，才会包含进来；直到对象第一次访问，才会创造这个对象。
+和多数PHP框架类似，Yii 是一个 MVC 框架。
+Yii 以其优异的性能，丰富的功能和清晰的文档胜出其他框架。
+Yii 从一开始就仔细设计以 适合严谨的 Web 应用开发。
+
+了解mvc:
+MVC的目标是将业务逻辑从用户界面的考虑中分离，这样开发者就可以更容易地改变每一部分而不会影响其他。 在 MVC中，模型代表信息（数据）和业务规则；视图包含了用户界面元素，例如文本，表单等； 控制器则管理模型和视图中的通信。
+
+目录分析：
+  在framework下面 
+base  所有底层类库文件，包含应用类 CApplication 组建类 CComponent  行为类CBehavior 模型类,CModel
+caching 所有缓存类 比如memcache  APc 数据缓存等
+cli YII项目生成脚本
+collections  用php 语言构造的传统数据存储单位，比如栈、队列 哈希等
+console YII 控制台
+db 数据库操作类
+gii  YII代码生成器 脚手架
+il8n  YII语言国际化
+logging  日志组件
+test  YII 提供的单元和功能测试组件
+utils   常用的格式化方法
+validators  提供的各种验证方法
+verdors   第三方类库文件目录
+views   YII 提供的多语言错误 日志 配置文件的视图
+web  YII所有应用开发的方法
+actions 控制器操作类
+auth 权限认证类
+filters 过滤器
+form YII 提供的表单生成方法
+helpers 视图助手
+js  YII 提供的js 库
+renderers 视图渲染组件
+services  YII 封装的webservice
+widgets  YII提供的小零件
+
+创建第一个应用项目：
+cmd
+d:
+D:\>AppServ\www\myapp\framework\yiic webapp D:\AppServ\www\myapp
+
+
+安装完成后输入：http://127.0.0.1/myapp/   将显示一个默认的项目
+
+注意了： 如果有同学不能运行yiic,dos系统命令报告php.exe 不是有效的命令时，我们需要配置环境变量
+
+配置环境变量步骤：
+  我的电脑-->右键--->属性--->高级--->环境变量--->选择Administrator用户变量项--->选择path变量--->点击编辑-->添加php.exe  和 yiic 路径
+ ;D:\AppServ\php5\php.exe;D:\AppServ\www\myblog\framework\yiic
+---->完成后一路确定
+
+在浏览器中输入： http://127.0.0.1/myapp/  测试一下
+
+
+yii 项目目录结构：
+	myapp
+	----assets  ---yii 公共资源
+	----css     ---css文件
+	----framework  ---框架目录 
+	----images     ----图片文件
+	----protected  ----应用目录(我们主要是针对这样一个目录 控制器 模型 视图)
+	----themes     ----主题目录
+        ----index.php
+
+
+yii 应用流程：
+  比如我们点击用户登录 login,那么在浏览器地址栏：http://127.0.0.1/myblog/index.php?r=site/login
+
+   首先入口文件index.php在服务器中执行用户请求。--->依据protected/config/mian.php的配置文件创建一个应用实例---->将用户的请求分配到一个控制器 controller 和一个控制器动作 controller action 也就是
+应用实例 siteController 创建 site对象调用actionLogin动作--->actionLogin动作里面实例化了一个登陆表单并且渲染了一个（render）login视图--->最终呈现给用户一个登陆界面。
+  
+ 
+
+
+
+
+分析项目代码：
+
+index.php(入口文件)
+<?php
+// change the following paths if necessary
+$yii=dirname(__FILE__).'/framework/yii.php';  #框架文件
+$config=dirname(__FILE__).'/protected/config/main.php';#配置文件
+
+// remove the following lines when in production mode
+defined('YII_DEBUG') or define('YII_DEBUG',true);  #打开调试模式，在正式环境部署是设为false 或者去掉
+// specify how many levels of call stack should be shown in each log message
+defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);#日志详细程度
+
+require_once($yii); #加载框架文件
+Yii::createWebApplication($config)->run(); #启动框架   yii类静态调用createWebApplication方法, 将项目中的protected/congfig/main.php 配置数组传递进去 生成对象 执行 run方法.
+?>
+
+main.php(配置文件)
+'name'=>'My Web Application',  网站标题
+'defaultController'=>'site', 默认控制器
+'language'=>'zh_cn', #设置文件本地化
+'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',  #系统根目录
+'charset' => 'utf-8', #网站编码
+'timeZone' => 'Asia/Chongqing', #时间区域
+'preload'=>array('log','session'),
+
+'db'=>array(
+			'connectionString' => 'mysql:host=localhost;dbname=myblog',
+			'emulatePrepare' => true,
+			'username' => 'root',
+			'password' => 'test123',
+			'charset' => 'utf8',
+                       'tablePrefix'=>'my_', #表前缀
+		),
+
+
+
+'urlManager'=>array( URL路由管理器
+			'caseSensitive'=>false, #caseSensitive的值是true false  路由是否区分大小写。
+			'urlFormat'=>'path',//URL格式，共支持两种格式
+                                                    	'path'格式（如：/path/to/EntryScript.php/name1/value1/name2/value2...）
+							'get'格式（如:/path/to/EntryScript.php?name1=value1&name2=value2...）
+                    'showScriptName'=>false,//注意false不要用引号括上, 这一步是将代码里链接的index.php隐藏掉。…
+	            'urlSuffix'=>'.html',  //伪静态后缀名
+			'rules'=>array(  <参数名:正则表达式>
+                                ''=>'',
+				'<controller:\w+>/<id:\d+>'=>'<controllerName>/viewName',
+				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controllerName>/<actionName>',
+				'<controller:\w+>/<action:\w+>'=>'<controllerName>/<actionName>',
+			),
+			例如 
+				'rules'=>array(
+    					'articles'=>'article/list',  #如果用户访问 '/path/to/index.php/articles'，则解析为'/path/to/index.php/article/list' 
+   					'article/<id:\d+>/*'=>'article/read',  //如果用户访问'/path/to/index.php/article/13'，则解析为'/path/to/index.php/article/read?id=13' 
+					) 
+
+
+		),
+
+'cache'=>array( #缓存组件
+		'class'=>'CMemCache',    //缓存组件类
+		'servers'=>array(      //MemCache缓存服务器配置
+		array('host'=>'server1', 'port'=>11211, 'weight'=>60), //缓存服务器1
+		#array('host'=>'server2', 'port'=>11211, 'weight'=>40), //缓存服务器2
+),
+
+使用Yii::app()->params['参数名']可以访问应用层的参数
+
+'params'=>array(
+		'adminEmail'=>'webmaster@example.com',
+       ),
+或者
+'params'=>require(dirname(__FILE__).'/params.php'),
+
+/yii/protected/config/params.php
+return array(
+	'domain'=>'www.yiipin.com',
+        'webmaster'=>'lonestone@qq.com',
+		'careers'=>explode(',', '公关,媒体,模特,设计师,市场/营销,创意/文案,广告,法律,贸易,公务员,教育,互联网,计算机,自由职业,学生,非盈利机构,保险,财务,餐饮,电子/微电子,翻译,房地产/建筑,航空航天,家电业,家居/室内设计,教育/培训,酒店,会计,科研/院校,快速消费品,零售,旅游,其他'),
+        'mail_index'=>array(  #邮件首页地址
+            '163.com'=>'http://mail.163.com',        
+            '126.com'=>'http://mail.126.com',        
+            'sina.com'=>'http://mail.sina.com.cn',        
+            'sina.cn'=>'http://mail.sina.com.cn',        
+            'yahoo.com.cn'=>'http://mail.cn.yahoo.com',        
+            'yahoo.cn'=>'http://mail.cn.yahoo.com',        
+            'sohu.com'=>'http://mail.sohu.com',        
+            'yeah.net'=>'http://mail.yeah.net',        
+            '139.com'=>'http://mail.10086.cn/',        
+            'tom.com'=>'http://mail.tom.com',        
+            '21cn.com'=>'http://mail.21cn.com',        
+            'gmail.com'=>'http://www.gmail.com',        
+            'vip.163.com'=>'http://vip.163.com',        
+            'vip.sina.com'=>'http://vip.sina.com.cn',        
+            'chinaren.com'=>'http://mail.chinaren.com',        
+            'hotmail.com'=>'http://www.hotmail.com',        
+            'msn.com'=>'http://mail.msn.com',        
+            'qq.com'=>'http://mail.qq.com',        
+        ),
+     );
+
+如果你的配置是分开写的那么需要多个配置文件整合
+$custom = require dirname(__FILE__).'/custom.php';  #加载路由rest 配置
+$config = new CMap($main);  //当前配置文件数组
+$config->mergeWith($custom); //路由配置文件数组
+return $config->toArray();
+
+yii 的脚手架(gii)的应用：
+
+  什么是脚手架： 辅助(类似于建筑搭架子)--那么我们可以把他理解成代码自动生成的脚本
+
+在使用脚手架之前必须先配置数据信息： /protected/config/main.php/下面的
+'db'=>array(
+	'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
+	),
+
+那么这里需要注意：yii 的数据库配置采用pdo数据库连接方式。
+'db'=>array(
+			'connectionString' => 'mysql:host=localhost;dbname=myblog',
+			'emulatePrepare' => true,
+			'username' => 'root',
+			'password' => 'test123',
+			'charset' => 'utf8',
+                       'tablePrefix'=>'my_',#表前缀
+		),
+
+打开gii
+'import'=>array(
+		'application.models.*',
+		'application.components.*',
+	),
+
+	'modules'=>array(
+		// uncomment the following to enable the Gii tool
+		
+		'gii'=>array(
+			'class'=>'system.gii.GiiModule',
+			'password'=>'test123',
+			// If removed, Gii defaults to localhost only. Edit carefully to taste.
+			'ipFilters'=>array('127.0.0.1','::1'),//通常我们需要指定ip
+		),
+	
+	),
+
+完成后创建数据库: create database myblog;
+选择数据库:  use myblog;
+创建表: create table my_user(
+	id int primary key auto_increment,
+	username varchar(30) not null,
+	userpwd  varchar(30) not null,
+	useremail varchar(50) not null
+	)engine=myisam charset=utf8;
+
+在浏览器输入：http://127.0.0.1/myapp/index.php?r=gii
+系统会提示你输入密码： test123
+点击: model Generator 
+点击：curd Generator  实现curd 操作 yii 会自动依据model类生成controll和view
+
+
+命名规则：
+	控制器文件：首字母大写;驼峰命名规则：　控制名Controller.php 
+	模型文件：  首字母大写;驼峰命名规则：   模型名From.php
+	视图文件:   控制器名就是文件目录名，方法名就是文件名。
+	控制器文件中的方法:  首字母小写，方法名首字母大写 ：action方法名
+	控制器类文件保存位置: protected/controllers/
+	控制器ID 是一种 '父目录/子目录/控制器名' 的格式，对应相应的控制器类文件 protected/controllers/父目录/子目录/大写首字母的控制器名Controller.php；
+	动作ID 是除去 action 前缀的动作方法名。
+        私有类成员变量来说，我们推荐以下划线作为其名字前缀（例如： $_actionList）。
+
+路由
+用户以路由的形式请求特定的控制器和动作。路由是由控制器 ID 和动作 ID 连接起来的，两者以斜线分割。
+例如，路由 post/edit 代表 PostController 及其 edit  动作。默认情况下，URL http://hostname/index.php?r=post/edit 即请求此控制器和动作。
+默认情况下，路由是大小写敏感的。可以通过设置应用配置中的 CUrlManager::caseSensitive  为 false
+
+
+
+url 规则：
+ 默认Yii框架的URL规则是 http://hostname/index.php?r=controllerName/actionName&id=1
+ 
+  比如：http://127.0.0.1/myblog/index.php?r=mytest/test&id=2
+
+　　public function actionTest($id){
+         echo $id;
+   }
+
+去掉index.php
+1.开启apache的mod_rewrite模块
+     去掉LoadModule rewrite_module modules/mod_rewrite.so前的“#”符号
+     确保<Directory "..."></Directory>中有“AllowOverride All”
+2.在项目中的/protected/config/main.php中添加代码：
+3. 'components'=>array(
+	...
+	'urlManager'=>array(
+	'urlFormat'=>'path',
+	'showScriptName'=>false,//注意false不要用引号括上, 这一步是将代码里链接的index.php隐藏掉。…
+	'urlSuffix'=>'.html',
+		'rules'=>array(
+		'sites'=>'site/index',
+	 	),
+	),
+		 ...
+	),
+4.创建  .htaccess 文件 放到index.php同级目录
+RewriteEngine on 
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d 
+RewriteRule .*  index.php
+
+
+核心应用组件：
+Yii 预定义了一系列核心应用组件，提供常见 Web 应用中所用的功能。
+例如， request  组件用于解析用户请求并提供例如 URL，cookie 等信息。
+通过配置这些核心组件的属性，我们可以几乎任意的修改Yii 的默认行为。
+
+下面我们列出了由 CWebApplication 预定义的核心组件:
+
+CAuthManager - 管理基于角色的访问控制 (RBAC).
+CCache - 提供数据缓存功能。注意，你必须指定实际的类（例如CMemCache, CDbCache）。否则，当你访问此组件时将返回 NULL。
+CClientScript - 管理客户端脚本 (java scripts 和 CSS).
+CDbConnection - 提供数据库连接。注意，使用此组件你必须配置其 connectionString 属性。
+CErrorHandler - 处理未捕获的 PHP 错误和异常。
+CHttpRequest - 提供关于用户请求的信息。
+CSecurityManager - 提供安全相关的服务，例如散列，加密。
+CHttpSession - 提供session相关的功能。
+CWebUser - 提供当前用户的识别信息。
+CThemeManager - 管理主题。
+
+
+控制器(controller):
+  
+    public $defaultAction='play';  #手动指定默认方法
+
+    $this->render('index',array('a'=>"123")); 控制器调用视图 (渲染)
+
+   YiiBase::getPathOfAlias('webroot') ; h获取网站物理路径
+
+动作（action）
+动作 就是被定义为一个以 action 单词作为前缀命名的方法。而更高级的方式是定义一个动作类并让控制器在收到请求时将其实例化。这使得动作可以被复用，提高了可复用度。
+
+定义一个动作类，基本格式如下：
+class UpdateAction extends CAction{
+	public function run(){
+		// place the action logic here
+	}
+}
+
+使用动作类：为了让控制器注意到这个动作，我们要用如下方式覆盖控制器类的actions()  方法：
+ class PostController extends CController{
+	public function actions(){
+		return array(
+			'edit'=>'application.controllers.post.UpdateAction',
+		//使用“应用程序文件夹/controllers/post/UpdateAction.php”文件中的类来处理edit动作
+		);
+	}
+}
+ 
+如上所示，我们使用了路径别名“application.controllers.post.UpdateAction”指定动作类文件为“protected/controllers/post/UpdateAction.php”。
+通过编写基于类的动作，我们可以将应用组织为模块的风格。例如，如下目录结构可用于组织控制器相关代码：
+protected/
+controllers/
+PostController.php
+UserController.php
+post/
+CreateAction.php
+ReadAction.php
+UpdateAction.php
+user/
+CreateAction.php
+ListAction.php
+ProfileAction.php
+UpdateAction.php
+
+
+
+模型（Model）
+模型是 CModel 或其子类的实例。模型用于保持数据以及与其相关的业务逻辑。
+模型是单独的数据对象。它可以是数据表中的一行，或者一个用户输入的表单。
+数据对象的每个字段对应模型中的一个属性。每个属性有一个标签（label），并且可以通过一系列规则进行验证。
+Yii 实现了两种类型的模型：表单模型和 Active Record。二者均继承于相同的基类 CModel。
+表单模型是 CFormModel  的实例。表单模型用于保持从用户的输入获取的数据。这些数据经常被获取，使用，然后丢弃。例如，在一个登录页面中，我们可以使用表单模型用于表示由最终用户提供的用户名和密码信息。
+Active Record (AR) 是一种用于通过面向对象的风格抽象化数据库访问的设计模式。每个 AR 对象是一个 CActiveRecord  或其子类的实例。代表数据表中的一行。行中的字段对应 AR 对象中的属性。
+
+如果用户输入被收集、使用然后丢弃，我们应该创建一个表单模型 from;
+如果用户的输入被收集后要保存到数据库，我们应使用一个Active Record。
+定义模型类
+例如创建为一个表单模型：
+class LoginForm extends CFormModel{
+/*LoginForm类中定义了三个属性: $username, $password 和$rememberMe。
+      	他们用于保存用户输入的用户名和密码，还有用户是否想记住他的登录的选项。
+	由于 $rememberMe 有一个默认的值false，相应的选项在初始化显示在登录表单中时将是未勾选状态。
+          我们将这些成员变量称为特性（attributes）而不是属性（properties），以区别于普通的属性（properties）。
+       特性（attribute）是一个主要用于存储来自用户输入或数据库数据的属性（propertiy）。
+*/
+	public $username;
+	public $password;
+	public $rememberMe=false;
+	private $_identity;
+
+ /*   
+#声明验证规则:一旦用户提交了他的输入，模型被填充，我们就需要在使用前确保用户的输入是有效的。
+#这是通过将 用户的输入和一系列规则执行验证实现的。我们在 rules() 方法中指定这些验证规则，此方法应返回一个规则配置数组。 
+#rules() 返回的每个规则必须是以下格式：array('AttributeList', 'Validator', 'on'=>'ScenarioList', ...附加选项) 
+
+AttributeList（特性列表）是需要通过此规则验证的特性列表字符串，每个特性名字由逗号分隔;
+Validator（验证器） 指定要执行验证的种类；
+on 参数是可选的，它指定此规则应被应用到的场景列表；
+附加选项 是一个名值对数组，用于初始化相应验证器的属性值。
+  特性如果出现在相应场景的一个验证规则中，即被认为是安全的。例如：
+
+array('username, password', 'required', 'on'=>'login, register'),
+array('email', 'required', 'on'=>'register'),
+username 和 password 特性在 login 场景中是必填项。而 username, password 和 email
+特性在 register 场景中是必填项。于是，如果我们在 login 场景中执行块赋值，就只有 username 和 password
+会被块赋值。因为只有它们出现在 login 的验证规则中。另一方面，如果场景是 register ，这三个特性就都可以被块赋值。
+
+在登录场景中
+$model=new User('login');
+if(isset($_POST['User']))
+$model->attributes=$_POST['User'];
+// 在注册场景中
+$model=new User('register');
+if(isset($_POST['User']))
+$model->attributes=$_POST['User'];
+
+
+Validator 可以是一个预定义的验证器类的别名：
+
+boolean: CBooleanValidator 的别名，确保特性有一个 CBooleanValidator::trueva lue 或 CBooleanValidator::falseva lue 值。
+captcha: CCaptchaValidator 的别名，确保特性值等于 CAPTCHA 中显示的验证码。
+compare: CCompareva lidator 的别名，确保特性等于另一个特性或常量。
+email: CEmailValidator 的别名，确保特性是一个有效的Email地址。
+default: CDefaultValueva lidator 的别名，指定特性的默认值。
+exist: CExistValidator 的别名，确保特性值可以在指定表的列中可以找到。
+file: CFileva lidator 的别名，确保特性含有一个上传文件的名字。
+filter: CFilterValidator 的别名，通过一个过滤器改变此特性。
+in: CRangeva lidator 的别名，确保数据在一个预先指定的值的范围之内。
+length: CStringValidator 的别名，确保数据的长度在一个指定的范围之内。
+match: CRegularExpressionValidator 的别名，确保数据可以匹配一个正则表达式。
+numerical: CNumberValidator 的别名，确保数据是一个有效的数字。
+required: CRequiredValidator 的别名，确保特性不为空。
+type: CTypeva lidator 的别名，确保特性是指定的数据类型。
+unique: CUniqueva lidator 的别名，确保数据在数据表的列中是唯一的。
+url:boolean: CBooleanValidator 的别名，确保特性有一个 CBooleanValidator::trueva lue 或 CBooleanValidator::falseva lue 值。
+captcha: CCaptchaValidator 的别名，确保特性值等于 CAPTCHA 中显示的验证码。
+compare: CCompareva lidator 的别名，确保特性等于另一个特性或常量。
+email: CEmailValidator 的别名，确保特性是一个有效的Email地址。
+default: CDefaultValueva lidator 的别名，指定特性的默认值。
+exist: CExistValidator 的别名，确保特性值可以在指定表的列中可以找到。
+file: CFileva lidator 的别名，确保特性含有一个上传文件的名字。
+filter: CFilterValidator 的别名，通过一个过滤器改变此特性。
+in: CRangeva lidator 的别名，确保数据在一个预先指定的值的范围之内。
+length: CStringValidator 的别名，确保数据的长度在一个指定的范围之内。
+match: CRegularExpressionValidator 的别名，确保数据可以匹配一个正则表达式。
+numerical: CNumberValidator 的别名，确保数据是一个有效的数字。
+required: CRequiredValidator 的别名，确保特性不为空。
+type: CTypeva lidator 的别名，确保特性是指定的数据类型。
+unique: CUniqueva lidator 的别名，确保数据在数据表的列中是唯一的。
+url: CUrlValidator 的别名，确保数据是一个有效的 URL。确保数据是一个有效的 URL。
+
+
+Validator 可以是模型类中一个方法的名字，就像上面示例中的 authenticate 。验证方法必须是下面的结构：
+/**
+* @param string 所要验证的特性的名字
+* @param array 验证规则中指定的选项
+*/
+public function 验证器名称($attribute,$params) { ... }
+
+*/
+	public function rules(){
+		return array(
+			array('username, password', 'required'), //username 和 password 为必填项
+			array('rememberMe', 'boolean'), //rememberMe 应该是一个布尔值
+			array('password', 'authenticate'), //password 应被验证（authenticated 方法里面验证）
+		);
+	}
+   
+   
+public function authenticate($attribute,$params){
+	$this->_identity=new UserIdentity($this->username,$this->password);
+	if(!$this->_identity->authenticate())
+		$this->addError('password','错误的用户名或密码。');
+	}
+}
+
+在控制器中安全的特性赋值
+  在一个类的实例被创建后，我们通常需要用最终用户提交的数据填充它的特性。这可以通过如下块赋值（massive assignment）方式轻松实现：
+$model=new LoginForm;
+if(isset($_POST['LoginForm']))
+$model->attributes=$_POST['LoginForm'];
+
+
+触发验证
+一旦模型被用户提交的数据填充，我们就可以调用 CModel::validate() 触发数据验证进程。此方法返回一个指示验证是否成功的值。对
+CActiveRecord  模型来说，验证也可以在我们调用其 CActiveRecord::save() 方法时自动触发。
+我们可以通过设置scenario属性来设置场景属性，这样，相应场景的验证规则就会被应用。
+验
+证是基于场景执行的。 scenario属性指定了模型当前用于的场景和当前使用的验证规则集。例如，在 login 场景中，我们只想验证用户模型中的
+username 和 password 输入；而在 register 场景中，我们需要验证更多的输入，例如 email, address,
+等。下面的例子演示了如何在 register 场景中执行验证：
+// 在注册场景中创建一个  User 模型。等价于：
+// $model=new User;
+// $model->scenario='register';
+$model=new User('register'); //给模型类添加参数，该参数就是要触发的验证场景
+// 将输入的值填充到模型
+$model->attributes=$_POST['User'];
+// 执行验证
+if($model->validate())   // 如果输入有效
+...
+else
+...
+规则关联的场景可以通过规则中的 on 选项指定。如果 on 选项未设置，则此规则会应用于所有场景。
+例如：
+public function rules()
+{
+return array(
+array('username, password', 'required'),
+array('password_repeat', 'required', 'on'=>'register'),
+array('password', 'compare', 'on'=>'register'),
+);
+}
+第一个规则将应用于所有场景，而第二个将只会应用于 register 场景。
+
+
+提取验证错误验
+证完成后，任何可能产生的错误将被存储在模型对象中。我们可以通过调用 CModel::getErrors()
+和CModel::getError()  提取这些错误信息。这两个方法的不同点在于第一个方法将返回 所有 模型特性的错误信息，而第二个将只返回
+第一个 错误信息。
+
+
+有了模型，我们就可以开始编写用于操作此模型的逻辑了。我们将此逻辑放在一个控制器的动作中。对登录表单的例子来讲，相应的代码就是：
+public function actionLogin()
+{
+$model=new LoginForm;
+if(isset($_POST['LoginForm']))
+{
+// 收集用户输入的数据
+$model->attributes=$_POST['LoginForm'];
+// 验证用户输入，并在判断输入正确后重定向到前一页
+if($model->validate())
+$this->redirect(Yii::app()->user->returnUrl); //重定向到之前需要身份验证的页面URL
+}
+// 显示登录表单
+$this->render('login',array('model'=>$model));
+}
+
+视图
+视图是一个包含了主要的用户交互元素的PHP脚本.
+视图有一个名字，当渲染(render)时，名字会被用于识别视图脚本文件。视图的名称与其视图脚本名称是一样的。例如:视图 edit
+的名称出自一个名为 edit.php 的脚本文件。要渲染时，需通过传递视图的名称调用。
+
+$this->render('edit', array('var1'=>$value1,'var2'=>$value2,));
+在以上的方式中, render() 方法将提取数组的第二个参数到变量里。其产生的结果是,在视图脚本里,我们可以直接访问变量 $var1 和 $var2。
+
+使用render()时,布局被隐式应用。视图脚本 protected/views/layouts/main.php是默认的布局文件。
+这可以通过改变 CWebApplication::layout 进行自定义。要渲染一个不带布局的视图，则需调用renderPartial() 。
+
+
+小物件
+小物件是 CWidget 或其子类的实例。它是一个主要用于表现数据的组件。小物件通常内嵌于一个视图来产生一些复杂而独立的用户界面。例如,一个日历小物件可用于渲染一个复杂的日历界面。小物件使用户界面更加可复用。
+我们可以按如下视图脚本来使用一个小物件:
+
+beginWidget('小物件类的路径别名'[,'包含属性初始化值的数组']); ?>
+...可能会由小物件获取的内容主体...
+endWidget(); ?>
+
+在视图中使用控制器的变量
+   echo $a;  //输出 123
+
+在form表单中action
+<form action="/host/yemmys/index.php?r=site/login" method="post">
+
+<input name="LoginForm[username]" id="LoginForm_username" type="text" value="" />  //name最好以双重数组
+
+
+控制器调用视图:
+  直接实例化模型名  
+    $mylogin=new MyloginFrom();
+    var_dump($mylogin);
+            
+
+$host=Yii::app()->request->hostInfo;
+echo $host;  //输出 http://127.0.0.1
+
+ dirname(Yii::app()->BasePath);  //D:\AppServ\www\myblog
+
+页面跳转
+$this->redirect('index.php?r=admin/manage');
+
+
+视图中使用yii 助手
+1-from 表单
+ 原生方式:
+ <form name=”myform” action=”yii/index.php/test/edit” method=”post”></form>
+yii方式:
+<?php echo CHtml::beginForm(‘edit’,‘post’,array(‘name’=>‘myform’)) ?>
+//some code
+<?php echo Chtml::endForm(); ?>
+
+
+2-创建input type=”text”:
+原生方式: <input type=”text” id=”original” value=”" name=”user”/>
+yii方式:   <?php echo CHtml::textField(‘user’); ?>
+
+3-创建提交按钮 input type=”submit”:
+原生方式: <input type=”submit” name=”sub” value=”登录”/>
+yii方式: <?php echo CHtml::submitButton(’submit’,array(‘name’=>’sub’,‘value’=>‘登录’)); ?>
+
+
+4-下拉菜单  select
+$idcs = array( 
+    '1' => 'JX', 
+    '2' => 'TC', 
+    '3' => 'YF' 
+); 
+<?php echo CHtml::dropDownList('idcs','',$idcs) ?> 
+
+
+5-单选按钮 radio     
+$time_scale = array( 
+    '0' => '周', 
+    '1' => '月', 
+    '2' => '季度', 
+    '3' => '年' 
+); 
+<?php echo CHtml::radioButtonList('time_scale','1',$time_scale,array('separator'=>'')) ?> 
+批注1：第二项是默认值。直接填1即可。 
+批注2：第四项是参数选型，这里选择各个radio直接用''隔开。还有其他选项。 
+批注3：取其选中值。与jquery获取普通表单的值一样。 
+批注4：监听其值变化 
+方式一： 
+<?php echo CHtml::radioButtonList( 'cars','4', array(4 => 'GM', 5 => 'FORD'), array('separator' => '', 
+        'onChange'=>CHtml::ajax(array('type'=>'GET', 'url'=>array("editProfile/UpdateAjax"), 
+'update'=>'#data')))); 
+
+
+6--CHtml::link应用 
+Html代码  
+<?php echo CHtml::link(CHtml::encode($data->title), array('view', 'id'=>$data->id,'news_type'=>$data->news_type)); ?>  
+  
+//例如：  
+<?php echo CHtml::link('Link Text', array('controller/action','param1'=>'value1'));?>  
+html输出是<a href="index.php?r=controller/action&param1=value1">Link Text</a>  
+  
+//多参数  
+<?php echo CHtml::link('Link Text', array('controller/action','param1'=>'value1','param2'=>'value2'));?>  
+html输出是<a href="index.php?r=controller/action&param1=value1&param2=value2">Link Text</a>  
+  
+//额外参数：  
+<?php echo CHtml::link('Link Text', array('controller/action','param1'=>'value1'), array('target'=>'_blank'));?>  
+html输出是<a target="_blank" href="index.php?r=controller/action&param1=value1">Link Text</a>  
+  
+//绝对路径：  
+<?php echo CHtml::link('Link Text', array('/controller/action'));?>  
+  
+//指定模块下的路径  
+<?php echo CHtml::link('Link Text', array('/module-id/controller/action'));?>  
+  
+//无效链接：  
+<?php echo CHtml::link('Link Text', array('href'=>'javascript:void(0)'));?>  
+<a href="javascript:void(0)">Link Text</a>  
+
+7--提交 submit
+ 原生方式: <input type="submit" name="sub" value="登录"/>
+yii方式:   <?php echo CHtml::submitButton('submit',array('name'=>'sub','value'=>'登录')); ?>
+
+
+8-使用form 对象
+ <?php $form=$this->beginWidget('CActiveForm', array(
+	'id'=>'login-form',
+	'enableClientValidation'=>true,
+	'clientOptions'=>array(
+		'validateOnSubmit'=>true,
+	),
+)); ?>
+
+<?php echo $form->labelEx($model,'username'); ?>
+<?php echo $form->textField($model,'username'); ?>
+<?php echo $form->error($model,'username'); ?>
+
+
+
+
+数据访问对象 (DAO)
+YiiDAO 基于 PHP Data Objects (PDO) 构建。它是一个为众多流行的DBMS提供统一数据访问的扩展，这些 DBMS 包括
+MySQL， PostgreSQL 等等。因此，要使用 Yii DAO，PDO 扩展和特定的 PDO 数据库驱动(例如 PDO_MYSQL)必须安装。
+
+Yii DAO 主要包含如下四个类：
+CDbConnection: 代表一个数据库连接。
+CDbCommand: 代表一条通过数据库执行的 SQL 语句。
+CDbDataReader: 代表一个只向前移动的，来自一个查询结果集中的行的流。
+CDbTransaction: 代表一个数据库事务。
+
+要
+建立一个数据库连接，创建一个 CDbConnection
+实例并将其激活。连接到数据库需要一个数据源的名字（DSN）以指定连接信息。用户名和密码也可能会用到。当连接到数据库的过程中发生错误时
+(例如，错误的 DSN 或无效的用户名/密码)，将会抛出一个异常。
+$connection=new CDbConnection($dsn,$username,$password);
+// 建立连接。你可以使用  try...catch 捕获可能抛出的异常
+$connection->active=true;
+......
+$connection->active=false;  // 关闭连接
+DSN 的格式取决于所使用的 PDO 数据库驱动。总体来说， DSN 要含有 PDO 驱动的名字，跟上一个冒号，再跟上驱动特定的连接语法。可查阅 PDO 文档 获取更多信息。下面是一个常用DSN格式的列表。
+
+* MySQL: mysql:host=localhost;dbname=testdb
+* SQL Server: mssql:host=localhost;dbname=testdb
+* Oracle: oci:dbname=//localhost:1521/testdb
+
+
+由于 CDbConnection 继承自 CApplicationComponent，我们也可以将其作为一个 应用组件 使用。要这样做的话，请在 应用配置 中配置一个 db （或其他名字）应用组件如下：
+array(
+......
+'components'=>array(
+......
+'db'=>array(
+'class'=>'CDbConnection',
+'connectionString'=>'mysql:host=localhost;dbname=testdb',
+'username'=>'root',
+'password'=>'password',
+'emulatePrepare'=>true,  // needed by some MySQL installations
+),
+),
+)
+
+然后我们就可以通过 Yii::app()->db 访问数据库连接了。它已经被自动激活了，除非我们特意配置了 CDbConnection::autoConnect 为 false。通过这种方式，这个单独的DB连接就可以在我们代码中的很多地方共享。
+
+	
+
+执行SQL语句
+数据库连接建立后，SQL 语句就可以通过使用 CDbCommand  执行了。你可以通过使用指定的SQL语句作为参数调用 CDbConnection::createCommand() 创建一个 CDbCommand 实例。
+
+$connection=Yii::app()->db;   // 假设你已经建立了一个 "db" 连接
+
+$command=$connection->createCommand($sql);
+
+$rowCount=$command->execute();   // 执行无查询SQL
+$dataReader=$command->query();   // 执行一个SQL查询
+$rows=$command->queryAll();      // 查询并返回结果中的所有行
+$row=$command->queryRow();       // 查询并返回结果中的第一行
+$column=$command->queryColumn(); // 查询并返回结果中的第一列
+$value=$command->queryScalar();  // 查询并返回结果中第一行的第一个字段
+
+
+
+使用表前缀
+要
+使用表前缀，配置 CDbConnection::tablePrefix  属性为所希望的表前缀。然后，在 SQL 语句中使用
+{{TableName}} 代表表的名字，其中的 TableName  是指不带前缀的表名。例如，如果数据库含有一个名为 tbl_user
+的表，而 tbl_ 被配置为表前缀，那我们就可以使用如下代码执行用户相关的查询：
+$sql='SELECT * FROM {{user}}';
+$users=$connection->createCommand($sql)->queryAll();
+
+
+
+获取查询结果
+在
+CDbCommand::query()  生成 CDbDataReader  实例之后，你可以通过重复调用
+CDbDataReader::read()  获取结果中的行。你也可以在 PHP 的 foreach 语言结构中使用
+CDbDataReader  一行行检索数据。
+$dataReader=$command->query();
+// 重复调用 read() 直到它返回 false
+while(($row=$dataReader->read())!==false) { ... }
+// 使用 foreach 遍历数据中的每一行
+foreach($dataReader as $row) { ... }
+// 一次性提取所有行到一个数组
+$rows=$dataReader->readAll();
+注意: 不同于query(), 所有的queryXXX()方法会直接返回数据。例如，queryRow()会返回代表查询结果第一行的一个数组。
+
+
+使用事务
+事务，在 Yii 中表现为 CDbTransaction  实例，可能会在下面的情况中启动：
+* 开始事务.
+* 一个个执行查询。任何对数据库的更新对外界不可见。
+* 提交事务。如果事务成功，更新变为可见。
+* 如果查询中的一个失败，整个事务回滚。
+上述工作流可以通过如下代码实现：
+$transaction=$connection->beginTransaction();
+try
+{
+$connection->createCommand($sql1)->execute();
+$connection->createCommand($sql2)->execute();
+//.... other SQL executions
+$transaction->commit();
+}
+catch(Exception $e) // 如果有一条查询失败，则会抛出异常
+{
+$transaction->rollBack();
+}
+
+绑定参数
+要避免 SQL 注入攻击 并提高重复执行的 SQL 语句的效率，你可以 "准备（prepare）"一条含有可选参数占位符的 SQL 语句，在参数绑定时，这些占位符将被替换为实际的参数。
+参
+数占位符可以是命名的 (表现为一个唯一的标记) 或未命名的 (表现为一个问号)。调用 CDbCommand::bindParam() 或
+CDbCommand::bindValue()
+以使用实际参数替换这些占位符。这些参数不需要使用引号引起来：底层的数据库驱动会为你搞定这个。参数绑定必须在 SQL 语句执行之前完成。
+// 一条带有两个占位符 ":username" 和 ":email"的 SQL
+$sql="INSERT INTO tbl_user (username, email) VALUES(:username,:email)";
+$command=$connection->createCommand($sql);
+// 用实际的用户名替换占位符 ":username"
+$command->bindParam(":username",$username,PDO::PARAM_STR);
+// 用实际的 Email 替换占位符 ":email"
+$command->bindParam(":email",$email,PDO::PARAM_STR);
+$command->execute();
+// 使用新的参数集插入另一行
+$command->bindParam(":username",$username2,PDO::PARAM_STR);
+$command->bindParam(":email",$email2,PDO::PARAM_STR);
+$command->execute();
+方法 bindParam() 和 bindValue() 非常相似。唯一的区别就是前者使用一个PHP变量绑定参数，而后者使用一个值。对于那些内存中的大数据块参数，处于性能的考虑，应优先使用前者。
+
+
+绑定列
+当获取查询结果时，你也可以使用PHP变量绑定列。这样在每次获取查询结果中的一行时就会自动使用最新的值填充。
+$sql="SELECT username, email FROM tbl_user";
+$dataReader=$connection->createCommand($sql)->query();
+// 使用 $username 变量绑定第一列 (username)
+$dataReader->bindColumn(1,$username);
+// 使用 $email 变量绑定第二列 (email)
+$dataReader->bindColumn(2,$email);
+while($dataReader->read()!==false)
+{
+// $username 和 $email 含有当前行中的
+
+}
+
+
+Active Record
+虽然Yii DAO可以处理几乎任何数据库相关的任务，但很可能我们会花费 90% 的时间以编写一些执行普通 CRUD（create, read,
+update 和 delete）操作的SQL语句。而且我们的代码中混杂了SQL语句时也会变得难以维护。要解决这些问题，
+我们可以使用Active  Record。
+Active Record(AR)是一个流行的对象-关系映射(ORM)技术。每个 AR类代表一个数据表（或视图），数据表（或视图）的列在 AR 类中体现为类的属性，一个AR实例则表示表中的一行。常见的 CRUD 操作作为 AR的方法实现。
+因此，我们可以以一种更加面向对象的方式访问数据。例如，我们可以使用以下代码向tbl_post表中插入一个新行。
+
+
+$post=new Post;
+$post->title='sample post';
+$post->content='post body content';
+$post->save();
+注意: AR并非要解决所有数据库相关的任务。它的最佳应用是模型化数据表为PHP结构和执行不包含复杂SQL语句的查询。 
+对于复杂查询的场景，应使用Yii DAO。
+
+
+定义AR类
+要访问一个数据表，我们首先需要通过集成CActiveRecord定义一个AR类。每个AR类代表一个单独的数据表，一个AR实例则代表那个表中的一行。
+如下例子演示了代表tbl_post表的AR类的最简代码：
+class Post extends CActiveRecord
+{
+public static function model($className=__CLASS__)
+{
+return parent::model($className);
+}
+
+public function tableName()
+{
+return 'tbl_post';
+}
+}
+提示: 由于 AR 类经常在多处被引用，我们可以导入包含 AR 类的整个目录，而不是一个个导入。 例如，如果我们所有的 AR 类文件都在 protected/models 目录中，我们可以配置应用如下：
+return array(
+'import'=>array(
+'application.models.*',
+),
+);
+默认情况下，AR类的名字和数据表的名字相同。如果不同，请覆盖tableName()方法。
+要使用表前缀功能，AR类的 tableName() 方法可以通过如下方式覆盖
+public function tableName()
+{
+return '{{post}}';
+}
+这就是说，我们将没有前缀的表名用双大括号,这就是说，我们将没有前缀的表名用双大括号括起来，这样Yii就能自动添加前缀，从而返回完整的表名。
+
+
+如果一个表没有主键，则必须在相应的AR类中通过如下方式覆盖 primaryKey() 方法指定哪一列或哪几列作为主键。
+public function primaryKey()
+{
+return 'id';
+// 对于复合主键，要返回一个类似如下的数组
+// return array('pk1', 'pk2');
+}
+
+AR插入记录
+要向数据表中插入新行，我们要创建一个相应 AR 类的实例，设置其与表的列相关的属性，然后调用 save()  方法完成插入：
+$post=new Post;
+$post->title='sample post';
+$post->content='content for the sample post';
+$post->create_time=time();
+$post->save();
+如果表的主键是自增的，在插入完成后，AR实例将包含一个更新的主键。在上面的例子中，id属性将反映出新插入帖子的主键值，即使我们从未显式地改变它。
+如果一个列在表结构中使用了静态默认值（例如一个字符串，一个数字）定义。则AR实例中相应的属性将在此实例创建时自动含有此默认值。改变此默认值的一个方式就是在AR类中显示定义此属性：
+class Post extends CActiveRecord
+{
+public $title='please enter a title';
+......
+}
+$post=new Post;
+echo $post->title;  // 这儿将显示: please enter a title
+记录在保存（插入或更新）到数据库之前，其属性可以赋值为 CDbExpression 类型。例如，为保存一个由MySQL的 NOW() 函数返回的时间戳，我们可以使用如下代码：
+$post=new Post;
+$post->create_time=new CDbExpression('NOW()'); //CDbExpression类就是计算数据库表达式的值
+// $post->create_time='NOW()'; 不会起作用，因为
+// 'NOW()' 将会被作为一个字符串处理。
+$post->save();
+
+
+
+AR读取记录
+要读取数据表中的数据，我们可以通过如下方式调用 find 系列方法中的一种：
+// 查找满足指定条件的结果中的第一行
+$post=Post::model()->find($condition,$params);
+// 查找具有指定主键值的那一行
+$post=Post::model()->findByPk($postID,$condition,$params);
+// 查找具有指定属性值的行
+$post=Post::model()->findByAttributes($attributes,$condition,$params);
+// 通过指定的SQL语句查找结果中的第一行
+$post=Post::model()->findBySql($sql,$params);
+如上所示，我们通过 Post::model() 调用 find 方法。请记住，静态方法 model() 是每个AR类所必须的。
+
+如果find方法找到了一个满足查询条件的行，它将返回一个Post实例，实例的属性含有数据表行中相应列的值。然后我们就可以像读取普通对象的属性那样读取载入的值，例如 echo $post->title;。
+如果使用给定的查询条件在数据库中没有找到任何东西， find 方法将返回null。
+
+$post=Post::model()->find(array(
+'select'=>'title',
+'condition'=>'postID=:postID',
+'params'=>array(':postID'=>10),
+));
+
+
+查找满足指定条件的所有行
+$posts=Post::model()->findAll($condition,$params);
+// 查找带有指定主键的所有行
+$posts=Post::model()->findAllByPk($postIDs,$condition,$params);
+// 查找带有指定属性值的所有行
+$posts=Post::model()->findAllByAttributes($attributes,$condition,$params);
+// 通过指定的SQL语句查找所有行
+$posts=Post::model()->findAllBySql($sql,$params);
+如果没有任何东西符合查询条件，findAll 将返回一个空数组。这跟 find 不同，find 会在没有找到什么东西时返回 
+
+
+除了上面讲述的 find 和 findAll 方法，为了方便，（Yii）还提供了如下方法：
+// 获取满足指定条件的行数
+$n=Post::model()->count($condition,$params);
+// 通过指定的 SQL 获取结果行数
+$n=Post::model()->countBySql($sql,$params);
+// 检查是否至少有一行复合指定的条件
+$exists=Post::model()->exists($condition,$params);
+
+
+更新记录
+在 AR 实例填充了列的值之后，我们可以改变它们并把它们存回数据表。
+$post=Post::model()->findByPk(10);
+$post->title='new post title';
+$post->save(); // 将更改保存到数据库
+正
+如我们可以看到的，我们使用同样的 save() 方法执行插入和更新操作。如果一个 AR 实例是使用 new 操作符创建的，调用 save()
+将会向数据表中插入一行新数据；如果 AR 实例是某个 find 或 findAll 方法的结果，调用 save()
+将更新表中现有的行。实际上，我们是使用 CActiveRecord::isNewRecord 说明一个 AR 实例是不是新的。
+直接更新数据表中的一行或多行而不首先载入也是可行的。 AR 提供了如下方便的类级别方法实现此目的：
+// 更新符合指定条件的行
+Post::model()->updateAll($attributes,$condition,$params);
+// 更新符合指定条件和主键的行
+Post::model()->updateByPk($pk,$attributes,$condition,$params);
+// 更新满足指定条件的行的计数列
+Post::model()->updateCounters($counters,$condition,$params);
+在上面的代码中， $attributes 是一个含有以 列名作索引的列值的数组； $counters 是一个由列名索引的可增加的值的数组；$condition 和 $params 在前面的段落中已有描述。
+
+
+
+
+删除记录
+如果一个 AR 实例被一行数据填充,我们也可以删除此行数据。
+$post=Post::model()->findByPk(10); // 假设有一个帖子，其 ID 为 10
+$post->delete(); // 从数据表中删除此行
+注意，删除之后， AR 实例仍然不变，但数据表中相应的行已经没了。
+使用下面的类级别代码，可以无需首先加载行就可以删除它。
+// 删除符合指定条件的行
+Post::model()->deleteAll($condition,$params);
+// 删除符合指定条件和主键的行
+Post::model()->deleteByPk($pk,$condition,$params);
+
+
+使用AR处理事务
+
+
+每个 AR 实例都含有一个属性名叫 dbConnection  ，是一个 CDbConnection 的实例，这样我们可以在需要时配合 AR 使用由 Yii DAO 提供的 事务 功能:
+$model=Post::model();
+$transaction=$model->dbConnection->beginTransaction();
+try
+{
+// 查找和保存是可能由另一个请求干预的两个步骤
+// 这样我们使用一个事务以确保其一致性和完整性
+$post=$model->findByPk(10);
+$post->title='new post title';
+$post->save();
+$transaction->commit();
+}
+catch(Exception $e)
+{
+  $transaction->rollBack();
+}
+
+
+视图层
+
+ <?php   引入css 文件
+   Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl . "/css/main.css");  
+   ?>
+
+页面缓存：
+  html页面静态化
+
+config/main.php  配置文件
+'components'=>array(
+            'cache'=>array(
+               'class'=>'system.caching.CFileCache',
+              'keyPrefix'=>Yii::app()->getId(),
+              'directoryLevel' => 2,
+              'cachePath'=>YiiBase::getPathOfAlias('webroot').'/protected/runtime/cache/',
+            ),
+           ................
+),
+
+
+
+
+
+
+
+
+
+
+编辑器的应用：
+把编辑器拷贝在根目录下面
+##D:\AppServ\www\myblog\editor\ckeditor\ckeditor.php
+
+        $ckeditorurl=dirname(Yii::app()->BasePath).'/editor/ckeditor/ckeditor.php';
+         $ckfinderurl=dirname(Yii::app()->BasePath).'/editor/ckfinder/ckfinder.php';
+         require_once($ckeditorurl);
+         require_once($ckfinderurl);
+ 
+         $ckeditor = new CKEditor();
+         $ckeditor->basePath = '/ckeditor/';
+         CKFinder::SetupCKEditor($ckeditor, '/ckfinder/');
+         $ckeditor->editor('Msg[content]',$model->content);
+             
+
+
+
+ 
+
+
+
+
+
+  
+  
+ 
+
+
+
+

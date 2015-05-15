@@ -1,0 +1,799 @@
+PHP 是一个被广泛使用的来进行Web开发的脚本语言。虽然有很多其它可供选择的Web开发语言，像：ASP 和Ruby，但是PHP是目前为止世界上最为流行的。
+
+那么，是什么让PHP如此流行？PHP 如此之流行是因为比起别的语言来，它更容易学习，网上有一大堆相当相当不错的PHP教程可以让你快速地马上就可以进行Web程序的开发。虽然PHP是是简单的，而且是容易上手的，但用它编程还是有点麻烦，尤其是一些反复在用的功能。并且要达到一定程度也是需要下一番功夫才可以的。
+
+为了解决反复功能，很多开发团队早就注意到了这点，现在在网上，PHP有许多的可以信任的PHP Framework 可以缩短我们的开发时间。这些框架被一个巨大的社区所支持。
+
+目前应用较多的框架有:
+Zend Framework 是一个面向对象的，由PHP5写成的框架。其基于一个简洁和友好的许可证协议，并基于了一个经过了相当严酷测试的代码库开发而来。这是一个松散的几乎没有耦合架构设计，你可以方便地把其和其它框架混合使用。
+
+Symfony 是一个基于PHP 5 的框架，其提供了一个架构，组件和工具集，可以让你更快地创造你的应用。
+
+CodeIgniter 这个框架有一个wiki可以让你容易的查找相关的文档。其支持的是PHP4。
+
+CakePHP框架使用了一些流行的设计模式比如： MVC  和ORM  ， CakePHP 可以有效地减少开发成本和帮助开发人员少写代码。
+
+Yii 是一个高性能的组件式的PHP框架，对于那些大型的Web应用来说，这是最好的框架，全面的功能。
+
+thinkphp 国产php框架适合国人的开发思维，并且是轻量级的。开发文本详细齐全。
+
+如何选择框架:
+没有最好，只有最适合，
+
+如何学习框架：
+ php框架都是把一些基础性的常用性的功能给集成好了的，便于开发者直接调用、使用；简化了许多基础性代码的自我开发；比如：文件上传、ajax服务端处理、mysql数据库调用、模板化显示等等；你自己用php开发这些代码当然是可以的，但是使用框架了的话，这些工作框架里的代码就可以替你完成，你只需要按照框架的相应的调用方法调用即可.
+
+入口文件:
+<?php 
+//前端 入口文件
+define('APP_NAME', 'home');//定义项目名称
+define('APP_PATH', './'.APP_NAME.'/');//定义项目录地址
+define('APP_DEBUG','1');//开发设为调试模式
+require_once './ThinkPHP/ThinkPHP.php';
+?>
+
+
+<?php
+//后台入口文件
+define('APP_NAME', 'admin');//定义项目名称
+define('APP_PATH', './'.APP_NAME.'/');//定义项目录地址
+define('APP_DEBUG','1');//开发设为调试模式
+require_once './ThinkPHP/ThinkPHP.php';
+?>
+
+配置文件
+$array=array(
+//'配置项'=>'配置值'
+    'DB_TYPE'=>'mysql',
+    'DB_HOST'=>'127.0.0.1',
+    'DB_NAME'=>'test',
+    'DB_USER'=>'root',
+    'DB_PWD'=>'test123',
+    'DB_PROT'=>3306,
+    'DB_PREFIX'=>'news_',//数据库表名前缀
+);
+$array2=require_once './config.ini.php';  //在根目录下面的公共配置
+return array_merge($array, $array2);
+?>
+
+config.ini.php
+return array(
+    //'配置参数'=>'值'
+   'DEFAULT_MODULE'=>'index',  #设置默认类
+   'URL_PATHINFO_DEPR'=>'-',   #改变url分割符号
+   'SESSION_AUTO_START'=>true, #自动打开session
+ );
+
+读取配置文件
+//访问配置文件 C('配置参数‘)
+    public function readConf(){
+        echo   C('DB_TYPE');
+        echo   C('DEFAULT_MODULE');
+ }
+
+url模式：
+ 'URL_MODEL'=>'1',
+   url访问: http://127.0.0.1/thinkapp/index.php/Index/readConf/id/1
+
+ 'URL_MODEL'=>'0',
+   url访问: http://127.0.0.1/thinkapp/index.php?m=Index&a=readConf&id=1
+
+ 'URL_MODEL'=>'2',REWRITE  模式 去掉index.php
+ 在入口文件的同级添加.htaccess文件，内容如下：
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
+</IfModule>
+ url访问: http://127.0.0.1/thinkapp/Index/readConf/id/1/ (pathinfo格式 好像有问题)
+          http://127.0.0.1/thinkapp/?s=Index/test2
+
+读取url参数
+//接收url 参数传递
+    public function getargs($id2){
+          echo $_GET['id']; //有效
+          echo $id;//无效
+          echo $id2;//有效
+    }
+
+url伪静态：
+ 'URL_HTML_SUFFIX'=>'.html',
+ url访问: http://127.0.0.1/thinkapp/Index/readConf/id/1.html
+
+控制器调用视图:
+//控制器调用视图
+    public function  home(){
+         $this->assign('title', 'thinkphp 我来了！其实也就那么一回事');
+         $this->display();
+    }
+
+项目目录结构:
+	admin
+	api
+	caches
+	editor
+	home
+	public
+		---css
+		---js
+		---images
+	uploads
+	index.php
+	config.ini.php
+	index.php
+
+在配置文件里面,依据项目实际目录更改替换常量:
+'TMPL_PARSE_STRING'  =>array(
+     '__PUBLIC__' => '/thinkapp/public', // 更改默认的__PUBLIC__ 替换规则
+     '__JS__' => '/thinkapp/public/js', // 增加新的JS类库路径替换规则
+     '__UPLOAD__' => '/thinkapp/uploads', // 增加新的上传路径替换规则	
+)
+在视图层调用css js images	
+  <css href="__PUBLIC__/css/main.css" />	
+  <js href="__PUBLIC__/js/main.js" />
+
+
+控制器调用模型:
+创建数据库: create database mynews;
+选择数据库: use mynews;
+创建表：
+CREATE TABLE `news_user ` (
+`id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+`u_name` CHAR( 30 ) NOT NULL ,
+`u_pwd` CHAR( 30 ) NOT NULL ,
+`u_sex` ENUM( "f", "m" ) NOT NULL ,
+`u_email` CHAR( 30 ) NOT NULL,
+`u_time`  datetime  NOT NULL
+) ENGINE = MYISAM ;
+
+链接数据库：
+ $user=M('user'); //效率高 一般用于快速纯数据模型操作
+ $user=D('User'); //效率低 一般用于逻辑复杂的数据模型操作比如：数据验证，操纵model 类,注意：如果需要连接model类那么必须大写模型名 User
+
+表单自动验证：
+
+  
+控制器类：
+ class RegistryAction extends Action {
+    public  function index(){
+         $this->assign('title','用户注册');
+         $this->display();
+     }
+
+     public function insert(){
+         header("content-type: text/html;charset=utf-8");
+         $user=D('User');
+        if($user->create()){
+            $data['u_name']=$this->_post('u_name');
+            $data['u_pwd']=$this->_post('u_pwd');
+            $data['u_sex']=$this->_post('u_sex');
+            $data['u_email']=$this->_post('u_email');
+            $data['u_time']=date('Y-m-d H:i:s',time());
+           $uid =$user->add($data); //add方法会返回新添加的记录的主键值
+            if($uid){
+              $this->success("注册成功!跳转到登陆页面", __APP__.'/Login/index');
+            }
+         }else{
+            echo  $user->getError();
+         }
+      }
+/**
+  建议使用手动验证
+ $User=D('User');  //模型类
+if($User->check($this->_post('u_email'),'email')){
+    	  	  echo 'ok';
+   }else{
+    echo  $User->getError();
+ }
+    	  
+if($User->check($this->_post('u_name'),'3,12','length')){
+    echo 'ok';
+  }else{
+    echo  'no';
+   }
+    	 
+ if($User->check($this->_post('u_pwd'),'/\d{3,6}/','regex')){
+    echo 'ok';
+ }else{
+   echo  'no';
+}
+
+*/
+
+
+
+}
+?>
+
+模型类:
+class UserModel extends Model {
+    //自动验证
+    protected $_validate = array(
+        array('u_name','require','用户名必须必须填写！',1),
+        array('u_pwd','require','密码必须填写！',1), 
+        array('u_sex','require','必须现在性别！',1),
+        array('u_email','email','必须填写email！',1), 
+  );
+  
+  //自动填充
+ protected $_auto = array ( 
+         array('u_pwd','md5',3,'function') , // 对u_pwd字段在新增和编辑的时候使md5函数处理
+         array('u_time','createTime',3,'callback'), // 对u_time字段在更新的时候写入当前时间戳
+    );
+    
+    //实现函数createTime
+    public function createTime(){
+         return date("Y-m-d H:i:s");
+  }
+}
+?>
+
+视图文件:
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+       <css href="__PUBLIC__/css/main.css" />
+    </head>
+    <body>
+        <div class="registryFrom">
+            <form action="__URL__/insert" method="post" name="registryFrom">
+                用户名: <input type="text" name="u_name" ></input><br></br>
+                密码: <input type="password" name="u_pwd"></input><br></br>
+                性别: <input type="radio" name="u_sex" value="f">女</input><input type="radio" name="u_sex" value="m">男</input><br></br>
+                邮件: <input type="text" name="u_email"></input><br></br>
+                 <input type="submit" value="提交" >
+            </form>
+            </div>
+    </body>
+</html>
+
+
+rest 重定向路由：
+REST(Representational State Transfer表述性状态转移)是一种针对网络应用的设计和开发方式，可以降低开发的复杂性，提高系统的可伸缩性。REST提出了一些设计概念和准则：
+1、网络上的所有事物都被抽象为资源（resource）；
+2、每个资源对应一个唯一的资源标识（resource identifier）；
+3、通过通用的连接器接口（generic connector interface）对资源进行操作；
+4、对资源的各种操作不会改变资源标识；
+5、所有的操作都是无状态的（stateless）。
+
+需要重定向路由必须打开 pathinfo
+   'URL_MODEL'=>'1', //支持pathinfo
+   'URL_ROUTER_ON'=> true, //开启路由
+   'URL_ROUTE_RULES' => array( //定义路由规则 
+    'new/:year\d/:month\d'  => 'News/test',//http://127.0.0.1/thinkapp/index.php/new/2013/2
+    'news/:id\d'    => 'News/read',//http://127.0.0.1/thinkapp/index.php/news/2
+    'new/:name'    => 'News/read',//http://127.0.0.1/thinkapp/index.php/new/abc
+   ),
+
+class NewsAction extends Action {
+    
+          public  function create(){
+              header("content-type: text/html; charset=utf-8");
+                 echo '你访问的是 create 方法';
+            }
+            
+            
+            public function read(){
+                  header("content-type: text/html; charset=utf-8");
+                 if(isset($_GET['id'])) {
+                        echo '将读取第'.$_GET['id'].'条新闻';
+                    }elseif(isset($_GET['name'])){
+                       echo '将读取名称为'.$_GET['name'].'的新闻';
+                  }
+            }
+            
+            
+            public function test(){
+                $year=$_GET['year'];
+                $month=$_GET['month'];
+                echo $year.'年';
+                echo $month.'月';
+            }
+       }
+?>
+
+curd: 注意数据必须是数组，并且键值必须是字段名
+   $user->create() 通常用于数据验证
+
+
+ 添加(add)
+
+   $user->add($data);
+    或者使用data方法连贯操作
+   $user->data($data)->add();
+如果你的主键是自动增长类型，并且如果插入数据成功的话，Add方法的返回值就是最新插入的主键值，可以直接获取。 
+
+
+读取数据(Read)
+
+$list = $user->where('status=1')->order('create_time')->limit(10)->select();
+相当于： select  * from  表名 where status=1 order by create_time limit 10;
+
+$thinklist=$user->where('status=1 AND name="think"')->find();
+相当于： select * from 表名 where status=1 AND name="think
+
+
+$nickname = $user->where('id=3')->getField('nickname');
+相当于： select nickname from 表名 where id=3;
+
+$list = $User->getField('id,nickname');
+相当于： select id,nickname from 表名;
+
+
+
+
+
+
+更新数据（Update）
+$user->where('id=5')->save($data); // 根据条件保存修改的数据
+或者
+$data['id'] = 5;
+$data['name'] = 'ThinkPHP';
+$data['email'] = 'ThinkPHP@gmail.com';
+$user->save($data); // 根据条件保存修改的数据
+
+$User->where('id=5')->data($data)->save(); // 根据条件保存修改的数据
+相当于： update 表名 set name="ThinkPHP",email="ThinkPHP@gmail.com" where id=5;
+
+
+删除数据（Delete）
+删除所有状态为0的5 个用户数据 按照创建时间排序
+$User->where('status=0')->order('create_time')->limit('5')->delete(); 
+相当于： delete from 表名 where status=0 oreder by create_time limit 5;
+
+sql查询：
+
+查询操作：
+$Model = new Model() // 实例化一个model对象 没有对应任何数据表
+$Model->query("select * from think_user where status=1");
+
+
+添加、修改、删除操作
+$Model->execute("update think_user set name='thinkPHP' where status=1");
+
+自动获取表名：
+ $model = M("user");
+ $model->query('select * from __TABLE__ where status>1');
+
+其他高级方法
+
+查询锁定
+ThinkPHP支持查询或者更新的锁定，只需要在查询或者更新之前使用lock方法即可。
+查询锁定使用：
+$list = $User->lock(true)->where('status=1')->order('create_time')->limit(10)->select();
+
+更新锁定使用：
+$list = $User->lock(true)->where('status=1')->data($data)->save();
+
+
+事物支持：
+
+ 启动事务：$User->startTrans() 
+
+ 提交事务：$User->commit() 
+
+ 事务回滚：$User->rollback()
+
+比如:在user模型中启动事物，向info表插入用户数据如果成功就提交否则就回滚
+
+//  在User模型中启动事务
+$User->startTrans() 
+// 进行相关的业务逻辑操作
+$Info = M("Info"); // 实例化Info对象
+$Info->save($User); // 保存用户信息
+if (操作成功){
+// 提交事务
+$User->commit() 
+}else{
+// 事务回滚
+$User->rollback() 
+}
+其他模型参见手册
+
+
+使用session
+  ThinkPHP 封装了 Session 类，可以直接使用。
+
+Session::set('username',$_POST['username']); //设置session
+在模板中使用 session
+<present name="_SESSION['username']">{$_SESSION['username']} 你好！
+检测是否存在session
+if(Session::is_set('username')){
+    echo Session::get('username').' 你好';
+ }
+
+session 无效（无法传递）
+ThinkPHP 中可能出现 session 无效（无法传递至其他页面）的情况，可能的原因如下：
+使用 Session 类头字母未大写，如：session::set。
+页面有信息输出，如入口文件有空行等。
+服务器上（Linux/Unix）的 session 存储路径(session.save_path)权限不正确导致无法将 session 信息正确存储。
+作用域问题。
+建议
+ThinkPHP 的 Session 类只是对 session 做了简单的包装，实际可以在操作中直接使用 PHP 原生的 session 函数，官方亦是如此建议。
+
+重定向
+$this->redirect("index");
+
+成功与错误
+$this->success("数据写入成功"); 定义了这个，就需要创建 ./Tpl/default/Public/success.html 模版
+$this->error("数据写入失败");
+header("Content-Type:text/html; charset=utf-8");
+exit($Form->getError().' [ <A HREF="javascript:history.back()">返 回</A> ]');
+主要变量：{$msgTitle} {$message} {$error} {$waitSecond} {$jumpUrl}
+
+常用变量、常量
+.   网站根目录地址 
+： 当前项目（入口文件）地址 
+__URL__    ：  <form method="post" action="__URL__/insert">
+__PUBLIC__  ：   网站公共目录，而非主题下的目录 <link href='__PUBLIC__/Css/common.css'>
+__CURRENT__  ： 当前模块的模板目录
+APP_PATH ： 当前项目目录 
+LIB_PATH ： 项目类库目录
+LANG_PATH ： 项目语言文件目录
+COMMON_PATH ： 项目公共文件目录
+APP_PUBLIC_PATH ：项目公共文件目录
+APP_TMPL_PATH ： 项目模板目录
+TEMPLATE_PATH ：当前模版路径
+WEB_PUBLIC_PATH ：网站公共目录
+__URL__     当前模块
+__APP__     当前项目
+
+
+
+视图：
+模板赋值
+$array['name']    =    'thinkphp';
+$array['email']    =    'liu21st@gmail.com';
+$array['phone']    =    '12335678';
+$this->assign($array);
+
+输出：
+
+  $this->display('login');
+ 
+  $content = $this->fetch(); 加载模块不输出返回字符串
+
+模板引擎：
+  thinkphp默认提供类似于smarty的thinkTemplate,除此以外还支持phpTempalte,smartyTemplate获取其他模板引擎
+
+输出变量：
+   注意：{ 和 $ 符号之间不能有空格 ，后面参数的空格就没有问题
+
+$name = 'ThinkPHP';
+$this->assign('name',$name);
+使用内置的模板引擎输出变量，只需要在模版文件使用：
+{$name}
+
+$User = M('user');
+$this->assign('oneUser',$oneUser);
+//数组结构：
+array(6) {"id"=>'1',"u_name"=>"test","u_pwd"=>"test123","u_sex"=>"m","u_email"=>"lyle_zhang@163.com", 
+   "u_time"=>"2013-02-26 13:48:15"
+}
+
+在模板中输出：
+ 用户id: {$oneUser.id}
+ 用户email: {$oneUser.u_email}
+
+索引数组结构：
+  $arr=array('aaa','bbb','ccc','dddd');
+  $this->assign('myarr',$arr);
+在模板中输出:
+  {$myarr[0]}  {$myarr[1]}  {$myarr[2]}
+
+数组结构二维数组 那么就需要循环了:
+ $userName=$user->field('u_name ')->where('id=1')->select();
+ $this->assign('userName',$userName);
+
+array(1) {
+  [0]=>
+  array(1) {
+    ["u_name"]=>
+    string(4) "test"
+  }
+}
+
+在模板中输出：
+ <foreach name="userName" item="vo">
+      <empty name="vo.u_name">没有查询到你的姓名<else />你的姓名是: {$vo.u_name}</empty>
+</foreach>
+
+默认值输出
+
+{$变量|default="默认值"}
+比如：
+{$myarr[0]|default="默认值"}
+
+包含文件
+<include file="./Tpl/default/Public/header.html" />
+
+<include file="Public:header" />
+
+导入文件
+<js href="__PUBLIC__/Js/Common.js" />
+<css href="../Public/Css/common.css" />
+
+
+
+循环：  通常用于二维数组
+
+foreach循环:
+  foreach 标签是没有id属性的，只有item属性，这个标签是和smarty一致的用法
+属性
+ name（必须）：要输出的数据模板变量 assign所发送的数组
+
+item（必须）：循环单元变量
+
+key（可选）：循环的key变量，默认值为key
+ 
+
+示例：
+
+<foreach name="list" item="vo">
+ {$vo.id}
+{$vo.name}
+</foreach>
+
+<foreach name="smsArrays[$vo['id']]" item='sub'>
+       <if condition="$sub['sms_price'] gt '0'">
+         单价：{$sub.sms_price}元
+       </if>
+</foreach>
+
+volist循环
+name（必须）：要输出的数据模板变量 assign 发送的变量
+
+id（必须）：循环变量
+
+offset（可选）：要输出数据的offset
+
+length（可选）：输出数据的长度
+
+key（可选）：循环的key变量，默认值为i
+
+mod（可选）：对key值取模，默认为2
+
+empty（可选）：如果数据为空显示的字符串
+
+
+
+ volist标签主要用于在模板中循环输出数据集或者多维数组。
+ 通常模型的select和findall方法返回的结果是一个二维数组，可以直接使用volist标签进行输出。
+
+$User = M('User'); 
+$list = $User->select(); 
+$this->assign('list',$list);
+
+<volist name="list" id="vo">
+   {$vo.id} {$vo.u_name}
+</volist>
+
+Volist标签的name属性表示模板赋值的变量名称，因此不可随意在模板文件中改变。
+id表示当前的循环变量，可以随意指定，但确保不要和name属性冲突.
+
+
+支持输出部分数据，例如输出list数组中的第5～15条记录
+
+<volist name="list" id="vo" offset="5" length='10'> 
+    {$vo.name}
+</volist>
+
+输出偶数记录 当前的循环索引 % 2 == 0的数据
+
+<volist name="list" id="vo" mod="2" > 
+   <eq name="mod" value="1">{$vo.name}</eq>
+ </volist>
+
+Mod属性还用于控制一定记录的换行.
+<volist name="list" id="vo" mod="5" > 
+  {$vo.name} <eq name="mod" value="4"><br/></eq> 
+</volist>
+
+输出key
+
+<volist name="list" id="vo" key="k" > 
+     {$k}.{$vo.name} 
+</volist>
+
+比较标签 注意name的值不加 $ 符号
+<eq name="name" value="value">value</eq> // name 变量的值等于 value 就输出  
+<neq name="name" value="value">value</neq> // name 变量的值不等于 value 就输出
+<gt name="name" value="5">value</gt> // name 变量的值大于 5 就输出
+<egt name="name" value="5">value</egt> // name 变量的值大于等于 5 就输出
+<lt name="name" value="5">value</lt> // name 变量的值小于 5 就输出
+<elt name="name" value="5">value</elt> // name 变量的值小于等于 5 就输出
+
+其实上面的所有标签都是 compare 标签的别名 
+// 其中 type 属性的值就是上面列出的判断标签名称
+<compare name="name" value="5" type="eq">value</compare> // name 变量的值等于 5 就输出
+
+比如：
+<volist name="userName" id="vo">
+     <compare name="vo.u_name" value="test" type="eq">你的名字是test</compare> 
+</volist>
+
+
+If标签
+<if condition="$name eq 1 "> value1
+<elseif condition="$name eq 2" />value2
+<else /> value3
+</if>
+
+使用分页类：
+import("ORG.Util.Page");// 导入分页类
+$count      = $user->count();// 查询满足要求的总记录数
+$Page       = new Page($count,5);// 实例化分页类 传入总记录数和每页显示的记录数
+$show       = $Page->show();// 分页显示输出
+// 进行分页数据查询 注意limit方法的参数要使用Page类的属性
+$list = $user->order('id')->limit($Page->firstRow.','.$Page->listRows)->select();
+$this->assign('userList',$list);// 赋值数据集
+$this->assign('page',$show);// 赋值分页输出
+$this->display();
+
+
+在模板层
+<div>
+        <table  border="1">
+          <volist name="userList" id="vo">
+              <tr><volist name="vo" id='my'><td>{$my}</td></volist></tr>
+         </volist>
+        </table>
+</div>
+<div>{$page}</div>
+
+U 方法
+  注意： 在控制器中直接使用U('User/add') // 生成User模块的add操作地址
+         在模板中 {:U('Blog/cate',array('cate_id'=>1,'status'=>1))}
+
+
+分组配置：
+
+index.php 设定项目
+<?php
+define('APP_DEBUG',TRUE);//调试模式
+// 加载框架入口文件
+require_once 'ThinkPHP/ThinkPHP.php';
+?>
+
+进入项目配置文件 conf/config.php
+ /**
+ * 公共配置文件
+ */
+return array (
+		'URL_MODEL' => 1, // 如果你的环境不支持PATHINFO 请设置为3
+		/* --------------数据库配置----------------------------- */
+		'DB_TYPE' => 'mysql',
+		'DB_HOST' => 'localhost',
+		'DB_NAME' => 'news_db',
+		'DB_USER' => 'root',
+		'DB_PWD' => 'test123',
+		'DB_PORT' => '3306',
+		'DB_PREFIX' => 'news_',
+	    /*--------------分组配置-----------------------------*/
+               'APP_GROUP_LIST' => 'Home,Admin',
+		'DEFAULT_GROUP' => 'Home',
+		'APP_GROUP_MODE' => 1,
+		'SHOW_PAGE_TRACE' => 1, // 显示调试信息
+		
+		/*---------------------URL 伪静态-----------------------------*/
+		'URL_HTML_SUFFIX'=>'html'
+		
+);
+
+目录结构：
+/myapp
+------Common
+------Conf
+------Lang
+------Lib
+------Modules
+---------Admin
+------------Action
+--------------IndexAction.class.php
+------------Conf
+------------Model
+------------ORG
+------------Tpl
+---------Home
+-----------Action
+--------------IndexAction.class.php
+-----------Common
+-----------Conf
+-----------Model
+-----------ORG
+-----------Tpl
+------Public
+--------js
+--------css
+--------images
+------Runtime
+------ThinkPHP
+------Tpl
+------index.php
+
+
+url: http://127.0.0.1/news_sys/index.php/Module/model/action/参数
+http://127.0.0.1/fzapp/index.php/Home/Index/index
+
+常见错误：
+Fatal error: Allowed memory size of 8388608 bytes exhausted (tried to allocate 16 bytes) in D:\AppServ\www\fzapp\ThinkPHP\Common\common.php on line 508
+解决方案：在ThinkPHP\Common\common.php文件前面加上如下代码。
+ ini_set ('memory_limit', '128M');
+
+
+  
+
+
+
+  
+         
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+

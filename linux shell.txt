@@ -1,0 +1,319 @@
+从程序员的角度来看， Shell本身是一种用C语言编写的程序，从用户的角度来看，Shell是用户与Linux操作系统沟通的桥梁。用户既可以输入命令执行，又可以利用 Shell脚本编程，完成更加复杂的操作。在Linux GUI日益完善的今天，在系统管理等领域，Shell编程仍然起着不可忽视的作用。深入地了解和熟练地掌握Shell编程，是每一个Linux用户的必修 功课之一。
+
+下面我们来认识shell脚本
+
+shell脚本执行命令权限目录是在 /bin/sh  
+1.sh  文件名 文件的后缀名是 .sh
+#!/bin/sh    文件头文件 告诉当前脚本 执行脚本的权限目录在哪里
+
+
+
+首行中的符号#!告诉系统其后路径所指定的程序即是解释此脚本文件的Shell程 序。
+如果首行没有这句话，在执行脚本文件的时候，将会出现错误。后续的部分就是主程序，
+Shell脚本像高级语言一样，也有变量赋值，也有控制语句。除第 一行外，以#开头的行就是注释行，直到此行的结束。
+
+文件名后缀sh表明这是一个Bash脚本文件。执行脚本的时候，要先将脚本文件的属性改为可执行的： chmod +x 1.sh
+
+执行脚本的方法是：
+
+./filename.sh
+
+
+从经典的“hello world”入手，看一看最简单的Shell脚本的模样。
+
+2.sh
+
+#!/bin/sh
+a = "hello world"
+echo $a
+
+Shell Script是一种弱类型语言，使用变量的时候无需首先声明其类型。新的变量会在本地数据区分配内存进行存储，这个变量归当前的Shell所有，任何子进 程都不能访问本地变量。
+
+变量赋值的方式是：variable_name = variable_value , 如果对一个已经有值的变量赋值，新值将取代旧值。
+
+取值的时候要在变量名前加$
+
+$variable_name可以在双引号中使用，如果出现混淆的情况，可以使用花括号来区分：
+
+
+echo "Hi,$as"
+
+就不会输出“Hi, hello worlds”，而是输出“Hi，”。这是因为Shell把$as当成一个变量，而$as未被赋值，其值为空。
+
+正确的方法是：
+
+echo "Hi, ${a}s"
+
+单引号中的变量不会进行变量替换操作。那么跟php 的单双引号的用法一样
+
+销毁变量: unset a
+
+ 在 BASH 中读取用户输入
+BASH 中通过 read 函数来实现读取用户输入的功能，如下面这段程序：
+#!/bin/bash
+echo "请输入你的名字"
+read NAME 
+echo "Hi! $NAME !"
+exit 0
+
+Shell命令和流程控制:
+    mkdir
+    cp sourcefile destfile: 文件拷贝 
+　　mv oldname newname : 重命名文件或移动文件 
+　　rm file: 删除文件 
+　　grep 'pattern' file: 在文件内搜索字符串比如：grep 'searchstring' file.txt
+    cut -b colnum file: 指定欲显示的文件内容范围，并将它们输出到标准输出设备
+              比如：输出每行第5个到第9个字符  cut -b 5-9 file.txt
+    cat file.txt: 输出文件内容到标准输出设备（屏幕）上 
+    find . -mtime -1 -type f -print 
+　　   用来查找过去24小时（-mtime –2则表示过去48小时）内修改过的文件。如果您想将所有查找到的文件打一个包，则可以使用以下脚本： 
+             #!/bin/sh 
+               tar -zcvf lastmod.tar.gz `find . -mtime -2 -type f -print`
+    expr 2 "+" 3
+
+关于整数变量计算，有如下几种：" + - * / % "，他们的意思和字面意思相同。整数运算一般通过 let 和 expr 这两个指令来实现，如对变量 x 加 1 可以写作：let "x = $x + 1" 
+
+#!/bin/sh
+x=2013
+let "a=$x+1"
+echo $a
+
+
+
+相等 -eq  =
+不等 -ne !=
+大于 -gt >
+小于 -lt <
+大于或等于 -ge
+小于或等于-le
+为空 -z
+不为空 -n
+
+逻辑程序：
+if [....]; then
+
+…
+
+elif [....] …; then
+
+…
+
+else
+
+…
+
+fi
+
+#!/bin/sh
+a=100
+if [ $a -lt  90 ];then
+  echo 'ddd';
+   elif [ $a -eq 100 ];then
+    echo $a;
+   else
+   exit 0;
+fi
+
+逻辑表达式=========================================
+
+    逻辑非 !                   条件表达式的相反
+if [ ! 表达式 ]
+if [ ! -d $num ]                        如果不存在目录$num
+
+
+    逻辑与 –a                    条件表达式的并列
+if [ 表达式1  –a  表达式2 ]
+
+
+    逻辑或 -o                    条件表达式的或
+if [ 表达式1  –o 表达式2 ]
+
+
+ 满足下面要求时返回 TRUE 
+
+-e file  文件 file 已经存在
+-f file 文件 file 是普通文件
+-s file 文件 file 大小不为零
+-d file 文件 file 是一个目录
+-r file 文件 file 对当前用户可以读取
+-w file 文件 file 对当前用户可以写入
+-x file 文件 file 对当前用户可以执行
+
+
+Shell Script中if语句的条件部分要以分号来分隔.。[....]表示条件测试.
+
+常用的条件测试有下面几种：
+
+[ -f "$file" ] 判断$file是否是一个文件
+
+[ $a -lt 3 ] 判断$a的值是否小于3，同样-gt和-le分别表示大于或小于等于
+
+[ -x "$file" ] 判断$file是否存在且有可执行权限，同样-r测试文件可读性
+
+[ -n "$a" ] 判断变量$a是否有值，测试空串用-z
+
+[ "$a" = "$b" ] 判断$a和$b的取值是否相等
+
+#!/bin/sh
+file='/home/1.sh'
+
+if [ -e $file ];then
+  echo 'yes'
+fi
+
+注意：条件测试部分中的空格。在方括号的两侧都有空格，在-f、-lt、=等符号两侧同样也有空格。如果没有这些空格，Shell解释脚本的时候就会出错。
+
+
+
+
+
+
+Bash提供了一种用于交互式应用的扩展select，用户可以从一组不同的值中进行选择。
+
+select var in …; do
+
+break;
+
+done
+
+例:
+#!/bin/sh
+  echo '请选择安装的环境'
+ select soft  in "lamp"  "lnmp";do
+break
+done
+echo 'you select is ' $soft
+
+
+#!/bin/sh 
+ echo "请选择操作系统?" 
+    select var in "Linux" "Gnu Hurd" "Free BSD" "Other"; do 
+　　break 
+    done 
+    echo "你选择的是 $var" 
+　下面是该脚本运行的结果： 
+       What is your favourite OS? 
+         1) Linux 
+         2) Gnu Hurd 
+         3) Free BSD 
+         4) Other 
+         # 1 
+        你选择的是 Linux
+
+
+
+在下面的例子中，将分别打印ABC到屏幕上： 
+#!/bin/sh 
+    for var in A B C ; do 
+　    echo "var is $var" 
+    done
+
+ for (( 条件一; 条件二; 条件三 ));do
+     ...
+  done 
+      例：
+ #!/bin/sh  
+ for ((i=1;i<10;i=$[$i+1]));do
+     echo "a"
+ done
+输出：aaaaaaaaa
+
+apache 安装shell 脚本:
+#!/bin/sh
+cd /home/
+tar zvxf httpd-2.2.21.tar.gz
+cd httpd-2.2.21
+rm -rf /opt/lamp/apache
+mkdir -p /opt/lamp/apache
+./configure --prefix=/opt/lamp/apache
+make
+make install
+
+
+函数：
+1. 关于局部变量
+在 BASH 程序中如果一个变量被使用了，那么直到该程序的结尾，该变量都一直有效。为了使得某个变量存在于一个局部程序块中，就引入了局部变量的概念。BASH 中，在变量首次被赋初值时加上 local 关键字就可以声明一个局部变量，如下面这个例子：
+#!/bin/bash 
+HELLO=Hello 
+function hello { 
+local HELLO=World 
+echo $HELLO 
+} 
+echo $HELLO  // 全局变量
+hello        //执行函数
+echo $HELLO  //在执行全局变量
+
+该程序的执行结果是：Hello     World      Hello
+
+#!/bin/bash
+# file name "function.sh"
+function nihao() {
+   echo -n "nice to meet you ! "
+}
+function mingzi() {
+   echo "小桥流水人家"
+}
+function out(){
+   echo "即将退出..."
+      echo "3秒后退出!"
+      sleep 1
+      echo -n "."
+      sleep 1
+      echo -n "."
+      sleep 1
+      echo  "."
+   exit
+}
+执行函数
+nihao
+mingzi
+out
+
+./function.sh
+
+
+testfun1.sh
+#!/bin/sh
+  function fSum()
+ {
+     echo $1,$2;
+     return $(($1+$2));
+ }
+
+ total=$(fSum 3 2);
+ echo $total,$?;
+
+$?表示获取返回值
+./testfun1.sh
+
+lamp 安装shell 脚本
+#!/bin/sh
+select var in "lamp" "lnmp";do
+break
+done
+  echo '请输入源码目录地址'
+  read  softdir
+  if [ -n $softdir ];then
+      echo '请选择安装目录地址'
+     select installdir in "/opt/lamp" "/usr/local/lamp";do
+      break
+      done
+       rm -rf $installdir
+       newinstalldir=${installdir}/apache
+        cd /home/
+       tar zvxf httpd-2.2.21.tar.gz
+        cd httpd-2.2.21
+        rm -rf /opt/lamp/apache
+        mkdir -p  /opt/lamp/apache
+       ./configure --prefix=/opt/lamp/apache
+       make
+       make install
+
+  fi
+
+
+
+
+
+
+

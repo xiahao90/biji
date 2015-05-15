@@ -1,0 +1,26 @@
+提到zend产品，我们再来了解一下zend 公司，zend公司也就是php公司，成立与1999年，zend公司推动php走向企业级应用，依据权威发布，php已经超过asp成为最流行的web开发应用脚本,目前超过4000万的网站使用zend engine, zend公司的投资商包括 ibm  oracle sun Microsoft，并且 ibm 与 oracle 公司达成战略合作伙伴关系，共同推动php的发展。
+
+
+
+zend core集成环境:
+自带了apache 
+
+mysql安装
+
+zend optimizer 优化器:
+  zend optimizer 是一个代码优化工具，通过代码优化来提高php 应用程序的执行速度，同时它也是一个代码解密工具，使用zend optimizer 能提高应用程序的执行速度的40% -100%，在提高速度的同时还能降低服务器的cpu 负载，增强用户体验，对于应用程序而言，更快的反应意味着更少的硬件投资
+
+
+ zend optimizer 的工作原理：
+      
+   原理是将客户端可以访问的代码在编译之前进行优化处理。
+
+zend optimizer 优化：
+zend_optimizer.optimization_level=1023  ;必须是1023
+zend_optimizer.encoder_loader=0 ;是否允许处理zend encoder加密的文件，该设置项的值 只有 0 和 1 如果您不使用加密过的代码 建议设为关闭，否则，由于该功能牵涉到解包反码的过程所以系统的符合会加重
+
+zend studio 开发集成环境
+
+
+
+

@@ -1,0 +1,722 @@
+触发器：
+MySQL数据库创建触发器的格式如下:
+
+create trigger <触发器名称>
+{ before | after}
+{insert | update | delete} on <表名>
+for each row
+BEGIN 
+  ..........
+END;
+
+触发器与表的关系：
+
+触发器是属于一个表的，当在这个表上执行insert, update, delete操作时，就会导致相应的触发器被激活；
+
+不能给同一个表的同一个操作创建两个不同的触发器
+
+显示所有的触发器信息
+Show triggers 
+
+删除触发器：
+drop trigger 触发器名称
+
+举例：
+现有tab1表，tab2表，需要在tab1表插入一条记录的时候去查询tab2表中是否有和tab1表中id一致的记录，若无，在tab2 中插入一条新记录;
+
+DELIMITER $$
+mysql> create table tab1(
+    -> id int primary key auto_increment,
+    -> name varchar(30) not null,
+    -> a_time varchar(30) not null
+    -> );$$
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> create table tab2(
+    -> id int not null,
+    -> name varchar(30) not null,
+    -> b_time varchar(30) not null
+    -> );$$
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> create trigger test_insertEvent
+    -> after insert on tab1
+    -> for each row
+    -> begin
+    -> if not exists(select id from b where id=new.id) then
+    -> 	insert into b values(new.id,new.name,new.a_time);
+    -> end if;
+    -> end;
+    -> $$
+Query OK, 0 rows affected (0.00 sec)
+
+对tab1表执行
+mysql> insert into a values(null,'aaa',now());$$
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from b;$$
++----+------+---------------------+
+| id | name | b_time              |
++----+------+---------------------+
+|  1 | aaa  | 2013-02-21 11:44:43 |
++----+------+---------------------+
+1 row in set (0.00 sec)
+
+
+删除tab1表记录后自动将tab2表中对应的记录删去
+
+mysql> create trigger test_deleteEvent
+    -> after delete on tab1
+    -> for each row
+    -> begin
+    -> 	delete from tab2 where tab2_id=old.tab1_id;
+    -> end;
+    -> $$
+Query OK, 0 rows affected (0.00 sec)    
+  
+
+修改a表age字段后自动将b表中对应的age字段修改
+
+mysql> create trigger test_updateEvent
+    -> after update on tab1
+    -> for each row
+    -> begin
+    -> 	update b set age=NEW.age where id=NEW.id;
+    -> end;
+    -> $$
+Query OK, 0 rows affected (0.00 sec) 
+
+
+需要注意以下几点：
+1.MySQL触发器针对行来操作，因此当处理大数据集的时候可能效率很低。
+2.触发器不能保证原子性，例如在MYISAM中，当一个更新触发器在更新一个表后，触发对另外一个表的更新，若触发器失败，不会回滚第一个表的更新。
+3.InnoDB中的触发器和操作则是在一个事务中完成，是原子操作。
+
+
+
+
+
+
+存储过程
+语法：
+CREATE PROCEDURE 存储过程名 (参数列表)
+BEGIN
+   SQL语句代码块
+END
+
+in 数据输入
+out 数据输出
+inout 
+
+删除
+DROP PROCEDURE IF EXISTS 存储过程名;
+
+查看一个已存在的存储过程
+SHOW CREATE PROCEDURE 存储过程名
+
+
+列出所有的存储过程  
+SHOW  PROCEDURE  STATUS
+
+SELECT ... INTO语句
+
+DELIMITER $$
+mysql> create procedure print_name(out userName char(30))
+    -> begin
+    ->   select name from tab1 where id=1 into userName;
+    -> end;
+    -> $$
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call print_name(@userName);
+    -> $$
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select @userName;$$
++-----------+
+| @userName |
++-----------+
+| aaa       |
++-----------+
+1 row in set (0.00 sec)
+
+mysql>
+
+注意：通过 begin end 可以来包含多个语句，每个语句以“;”结尾。
+
+创建插入
+mysql> create procedure insert_in(in  id int(11),in name varchar(30),in a_time varchar(30))
+    -> begin
+    -> 	insert into a values(id,name,a_time);
+    -> end;
+    -> $$
+Query OK, 0 rows affected (0.00 sec)
+
+调用
+mysql> call insert_in(null,'rrr',now());$$
+Query OK, 1 row affected (0.02 sec)
+
+mysql> select * from a;$$
++----+------+---------------------+
+| id | name | a_time              |
++----+------+---------------------+
+|  1 | aaa  | 2013-02-21 11:44:43 |
+|  2 | rrr  | 2013-02-21 12:02:07 |
++----+------+---------------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from b;$$
++----+------+---------------------+
+| id | name | b_time              |
++----+------+---------------------+
+|  1 | aaa  | 2013-02-21 11:44:43 |
+|  2 | rrr  | 2013-02-21 12:02:07 |
++----+------+---------------------+
+2 rows in set (0.00 sec)
+
+存储过程调用触发器并输出结果:
+mysql> create procedure print_name2(in u_id int(11),in u_name varchar(30),in u_t
+ime varchar(50),out userName char(30))
+    -> begin
+    -> insert into tab1 values(u_id,u_name,u_time);
+    -> select name from tab2 where id=5 into userName;
+    -> end;$$
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call print_name2(null,'abc',now(),@aaa);$$
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select @aaa;$$
++------+
+| @aaa |
++------+
+| rrr  |
++------+
+1 row in set (0.00 sec)
+
+mysql>
+
+设置变量：
+CREATE PROCEDURE proc_employee_findById(in n int)
+BEGIN
+   SELECT * FROM employee where id=n;
+END
+--定义变量
+SET @n=1;
+--调用存储过程
+CALL proc_employee_findById(@n);
+
+php调用存储过程：
+<?php
+$sql = "call myproce3(@score);";
+mysql_query($sql);//调用myproce3的存储过程
+$result = mysql_query('select @score;');
+$array = mysql_fetch_array($result);
+echo '<pre>';print_r($array);
+?>
+
+
+
+事物：
+
+什么是事物呢？
+  几个步骤要么同时完成，要么同时都没完成。对于我们SQL来说，则是几个查询语句，要么同时都执行，要么同时都不执行，他们要做一个原子操作，是不可分的。
+事物最典型的应用就是在银行里转账。比如A有2000，B有10000，B要转给A3000元。如果刚转走，钱还没到A的时候，银行停电了，这时A还没有加钱，但是B的钱已经减掉了……这时怎么办呢？为了免除这样的差错。事物就出现了。
+而事物对于这样的结果处理的方式是：将这3000退回B，让其重新转账。但是对于大型数据库，里面的事物可能含有上万条，所以如果执行到最后出错了，那么回退就要重新完成这上万条的指令。为了避免回退的过长，还可以对事物做“快照”，而这样的“快照”，就叫做Save Point，事物的保存点。
+ 
+MyISAM是不支持事物的的
+ 
+支持事物的引擎：InnoDB
+
+只有当一个引擎完全支持ACID的时候，我们才说这个引擎支持事物。所谓ACID是Atomic（原子性），Consistent（一致性），Isolated（隔离性），Durable（持续性）四个词的首字母所写，下面以“银行转帐”为例来分别说明一下它们的含义：
+如：银行转帐过程中，必须同时从一个帐户减去转帐金额，并加到另一个帐户中，只改变一个帐户是不合理的。
+
+一致性：在事务处理执行前后，数据库是一致的。
+比如：银行转帐过程中，要么转帐金额从一个帐户转入另一个帐户，要么两个帐户都不变，没有其他的情况。
+
+隔离性：一个事务处理对另一个事务处理没有影响。
+比如说，银行转帐过程中，在转帐事务没有提交之前，另一个转帐事务只能处于等待状态。
+
+
+持续性：事务处理的效果能够被永久保存下来。反过来说，事务应当能够承受所有的失败，包括服务器、进程、通信以及媒体失败等等。
+
+比如：银行转帐过程中，转帐后帐户的状态要能被保存下来
+
+再来看看怎么利用事务来解决这个问题，
+其实很简单，基本就是三个语句：开始，提交，回滚。
+开始：START TRANSACTION或BEGIN语句可以开始一项新的事务
+
+提交：COMMIT可以提交当前事务，是变更成为永久变更
+
+回滚：ROLLBACK可以回滚当前事务，取消其变更
+
+set autocommit=0   禁止自动提交
+注意当你用 set autocommit=0 的时候，你以后所有的SQL都将做为事务处理，直到你用commit确认或rollback结束
+set autocommit=1 开启自动提交
+
+set autocommit=0
+ begin;
+SELECT * FROM knight;    查看发现有13行
+ 
+INSERTINTO knight SET Name=’Shi Zhongyu’,Age=37;    在事物中插入一行；
+ 
+SELECT* FROM knight    ;发现已经插入了一行变为了14行。
+ 
+ROLLBACK;     回滚操作，直接退回插入前
+ 
+SELECT* FROM knight;     则发现，又变成了13行
+ 
+COMMIT;     结束事物，保存结果至表中。
+
+下面是一个简单的事物
+mysql> use test;
+Database changed
+mysql> CREATE TABLE `dbtest`(
+     -> id int(4)
+     -> ) TYPE=INNODB;
+Query OK, 0 rows affected, 1 warning (0.05 sec)
+
+mysql> select * from dbtest
+     -> ;
+Empty set (0.01 sec)
+
+mysql> begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> insert into dbtest value(5);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into dbtest value(6);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> commit;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select * from dbtest;
++------+
+| id    |
++------+
+|     5 |
+|     6 |
++------+
+2 rows in set (0.00 sec)
+
+mysql> begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> insert into dbtest values(7);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> rollback;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select * from dbtest;
++------+
+| id    |
++------+
+|     5 |
+|     6 |
++------+
+2 rows in set (0.00 sec)
+
+mysql>
+
+
+
+<?php
+$handler=mysql_connect("localhost","root","");
+mysql_select_db("task");
+mysql_query("SET AUTOCOMMIT=0");//设置为不自动提交，因为MYSQL默认立即执行
+mysql_query("BEGIN");//开始事务定义
+if(!mysql_query("insert into trans (id) values('2')"))
+{
+mysql_query("ROOLBACK");//判断当执行失败时回滚
+}
+if(!mysql_query("insert into trans (id) values('4')"))
+{
+mysql_query("ROOLBACK");//判断执行失败回滚
+}
+mysql_query("COMMIT");//执行事务
+mysql_close($handler);
+?>
+
+
+
+说一个大家实际更容易遇到的“网上购书”的例子。先假设一下问题的背景：网上购书，某书（数据库编号为123）只剩最后一本，而这个时候，两个用户对这本书几乎同时发出了购买请求，让我们看看整个过程：
+在具体分析之前，先来看看数据表的定义：
+
+-------------------------------------------------------------------------------
+
+create table book
+(
+    book_id unsigned int(10) not null auto_increment,
+    book_name varchar(100) not null,
+    book_price float(5, 2) not null, #我假设每本书的价格不会超过999.99元
+    book_number int(10) not null,
+    primary key (book_id)
+)type = innodb; #engine = innodb也行
+
+-------------------------------------------------------------------------------
+
+对于用户甲来说，他的动作稍微比乙快一点点，其购买过程所触发的动作大致是这样的：
+
+-------------------------------------------------------------------------------
+1. SELECT book_number FROM book WHERE  book_id = 123;
+
+book_number大于零，确认购买行为并更新book_number
+
+2. UPDATE book SET book_number = book_number - 1 WHERE  book_id = 123;
+
+购书成功
+
+
+-------------------------------------------------------------------------------
+而对于用户乙来说，他的动作稍微比甲慢一点点，其购买过程所触发的动作和甲相同：
+
+-------------------------------------------------------------------------------
+
+1. SELECT book_number FROM book WHERE  book_id = 123;
+
+这个时候，甲刚刚进行完第一步的操作，还没来得及做第二步操作，所以book_number一定大于零
+
+2. UPDATE book SET book_number = book_number - 1 WHERE  book_id = 123;
+
+购书成功
+
+--------------------------------------------------------------------------------------
+表面上看甲乙的操作都成功了，他们都买到了书，但是库存只有一本，他们怎么可能都成功呢？
+再看看数据表里book_number的内容，已经变成“-1”了，这当然是不能允许的
+（实际上，声明这样的列类型应该加上unsigned的属性，以保证其不能为负，这里是为了说明问题所以没有这样设置）
+------------------------------------------------------------------------------------------------------------
+SET AUTOCOMMIT=0;
+BEGIN;
+
+SELECT book_number FROM book WHERE  book_id = 123 FOR UPDATE;
+
+// ...
+
+UPDATE book SET book_number = book_number - 1 WHERE  book_id = 123;
+
+COMMIT;
+
+
+视图
+CREATE VIEW view_name AS SELECT 语句;
+创建视图的目的就是为了避免某些字段被某些用户查看的
+注意：视图并不是真正的表，他没有保存数据，所以在处理数据的速度上，肯定是慢于真正的基表的。而当我们的基表改变之后，视图创建出来的虚表会立刻改变。
+
+查询视图
+mysql> select * from mybank;
+
+删除视图：
+DROP VIEWview_name
+
+索引入门
+对于任何DBMS，索引都是进行优化的最主要的因素。对于少量的数据，没有合适的索引影响不是很大，但是，当随着数据量的增加，性能会急剧下降。
+如果对多列进行索引(组合索引)，列的顺序非常重要，MySQL仅能对索引最左边的前缀进行有效的查找。例如：
+
+
+索引的类型
+
+B-Tree索引
+假设有如下一个表：
+CREATE TABLE People (
+
+   last_name varchar(50)    not null,
+
+   first_name varchar(50)    not null,
+
+   dob        date           not null,
+
+   gender     enum('m', 'f') not null,
+
+   key(last_name, first_name, dob)  #B-Tree索引
+
+);
+ 
+
+Hash索引
+
+MySQL中，只有Memory存储引擎显示支持hash索引，是Memory表的默认索引类型
+
+
+高性能的索引策略
+
+主键索引(聚集索引、第一索引)，
+非主键索引(非聚集索引、第二索引)
+
+注意 在mysql 中索引是依据引擎而存在的 myisam 不支持聚集索引 而innodb 支持聚集索引，造成这样的原因是这两个引擎数据存储方式所决定的
+
+
+比如 primary key 在其他数据库服务器中是聚集索引， 但是在mysql 中要分辨表引擎来决定但是可以肯定的是这是主键索引
+
+在执行CREATE TABLE语句时可以创建索引，也可以单独用CREATE INDEX或ALTER TABLE来为表增加索引。
+-----------------------
+索引作用：
+ 
+在索引列上，mysql 对数据的有效的有序列的排列，数据库利用各种各样的快速定位技术，能够大大提高查询效率。特别是当数据量非常大，查询涉及多个表时，使用索引往往能使查询速度加快成千上万倍。
+例如，有3个未索引的表t1、t2、t3，分别只包含列c1、c2、c3，每个表分别含有1000行数据组成，指为1～1000的数值，查找对应值相等行的查询如下所示。
+
+SELECT c1,c2,c3 FROM t1,t2,t3 WHERE c1=c2 AND c1=c3
+
+此查询结果应该为1000行，每行包含3个相等的值。在无索引的情况下处理此查询，必须寻找3个表所有的组合，以便得出与WHERE子句相配的那些行。而可能的组合数目为1000×1000×1000（十亿），显然查询将会非常慢。
+如果对每个表进行索引，就能极大地加速查询进程。利用索引的查询处理如下。
+（1）从表t1中选择第一行，查看此行所包含的数据。
+（2）使用表t2上的索引，直接定位t2中与t1的值匹配的行。类似，利用表t3上的索引，直接定位t3中与来自t1的值匹配的行。
+（3）扫描表t1的下一行并重复前面的过程，直到遍历t1中所有的行。
+在此情形下，仍然对表t1执行了一个完全扫描，但能够在表t2和t3上进行索引查找直接取出这些表中的行，比未用索引时要快一百万倍。
+利用索引，MySQL加速了WHERE子句满足条件行的搜索，而在多表连接查询时，在执行连接时加快了与其他表中的行匹配的速度。
+----------------------
+查看索引：
+  show index from 表名;
+------------------
+建表时创建索引：
+ mysql> create table goods(
+    -> goodsId int primary key auto_increment,
+    -> goodsName varchar(50) not null,
+    -> goodsType char(10) not null,
+    -> goodsImg  varchar(50) not null,
+    -> goodsPric decimal(6,2) not null,
+    -> goodsMsg  text,
+    -> index(goodsName),index(goodsType)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+------------------------------------------------------------
+alter table 创建索引：
+ alter table 表名 add 索引类型 索引名称(字段)
+
+索引类型： 普通索引： index  唯一性索引： unique 主键索引： primay key
+
+mysql> alter table goods add index gi(goodsImg);
+Query OK, 0 rows affected (0.06 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+------------------------------------
+create index 创建索引
+ create 索引类型 索引名称 on 表名(字段)
+
+mysql> create index  gp on goods(goodsPric);
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+注意：
+不能用CREATE INDEX语句创建PRIMARY KEY索引。
+-------------------------------------------
+删除索引：
+DROP INDEX index_name ON talbe_name
+ALTER TABLE table_name DROP INDEX index_name
+ALTER TABLE table_name DROP PRIMARY KEY
+
+
+
+
+
+
+
+
+
+MySQL数据同步，锁
+ 
+什么是数据同步？如果有两个进程或者两个应用需要访问同一个数据的话，这时候就要启用到同步概念。只要一牵扯到同步，就一定要用到锁的概念。锁：两个操作加之于同一个对象的时候如何避免讹误的。
+ 
+假设现在有两个SQL语句，M正在插入knight，而N则查询knight表，这样，当m查询的时候，查询的其实可能只是一部分内容。那如何解决呢？则锁的机制决定了，一个人在做事的时候，另一个人不能对其操作。
+ 
+锁是无时无刻不在的，只要有一个人读或者写，则就开始加锁。
+ 
+ 
+ 
+锁的分类：
+ 
+共享锁：读锁，大家都可以同时进行，读是可以允许别人也读的，但是读不允许别人写。
+ 
+独占锁：写锁，写的时候不允许别人写。也不允许别人读。
+ 
+而写锁的优先级是比较高的，但是你不能一直在写，过多的读锁是会造成写饥饿的，而过多的写锁也会造成读饥饿的~！
+ 
+读和写的锁是互斥的，写和写的锁也是互斥的。只有读和读的锁才是共享的
+ 
+ 
+ 
+SHOW ENGINE的时候里面就能看到引擎锁
+ 
+为了保证备份的一致性，在你备份的时候是不能让别人写的。
+ 
+ 
+ 
+锁的级别：
+ 
+表锁，一锁就锁定了一张表（并发级别低）
+ 
+行锁：一锁只锁定了几行（并发级别相对较高，但是可控制性要麻烦和复杂的多的多）
+ 
+事物引擎大部分都是行级别的锁。而像MyISAM这种就用的是表级别的锁。
+ 
+ 
+ 
+锁的实现：
+ 
+服务器级别的实现：在服务器上无论你是哪种存储引擎我都加锁（表锁）
+ 
+存储引擎级别的实现：大部分事务性引擎都可以实现行锁，有的数据库还能实现页锁（页就是内存的空间Page）。
+-----------
+对表进行加锁
+ 
+mysql> lock tables goods read;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> unlock tables;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> lock tables goods write;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> unlock tables;
+Query OK, 0 rows affected (0.00 sec)
+------------------
+
+ 对锁进行释放：
+ 
+UNLOCK TABLES;
+ 
+ 
+ 
+为了实现更好的并发性，我们可以实现降低粒度（解析度），来降低锁的级别/范围，这样并发性就会大大提高。
+
+
+数据引擎：
+ 
+存储引擎是表级别的概念，所以存储引擎通常也被称为表类型。有的引擎支持事物，有的存储引擎不支持，如果在一个数据库中使用多种含事物和非事物的引擎的话，势必将会对用户在事物的支持上产生麻烦。
+MyISAM：
+ 
+早期的MyISAM是MySQL默认的引擎。现在已经被InnoDB取代。它支持全文索引，支持空间索引机制来索引结构化的数据。而且MyISAM在组织它的数据的时候，结构比较特殊，每一张表都对应了三个文件，
+ 
+       db.opt：定义数据库的选项及其信息
+ 
+       *.frm：format格式的定义
+ 
+       *MYD：My Data：数据保存位置
+ 
+       *MYI：My Index：数据的索引存放位置
+ 
+ 
+ 
+MyISAM的重要特性：
+ 
+1.非事物
+ 
+2.不支持外键约束
+ 
+3.支持全文索引（能够支持全文索引的引擎只有MyISAM）,当我们需要在InnoDB引擎中进行全文索引怎么办呢？利用其他的插件，比如Lucene(Java语言构架)或者Sphinx(C语言构架)，都能对Mysql不管什么引擎，对其数据进行快速全文索引的功能。
+ 
+4.无数据缓存：无法对数据进行缓存，但是对于服务器是可以缓存的。
+ 
+5.只对索引进行缓存。索引缓存也被称为Key Buffer
+ 
+6.支持HASH和BTREE索引，HASH一般只在特定场合使用，比如只在Age=30时使用。
+ 
+7.表级别的锁
+ 
+8.对于读来说，速度非常快，用于数据仓库是一个非常好的选择。
+ 
+9.数据可以压缩存放
+ 
+10.支持在线备份
+ 
+11.支持最多64个索引（不过这已经足够了）
+ 
+ MyISAM的服务器变量：
+ 
+key_buffer_size:索引缓存：用于定义MyISAM索引缓存大小,
+ 
+使用SHOWVARIABLES LIKE ‘key_buffer_size’;来查看当前大小。
+ 
+即便是我们没有使用MyISAM引擎，你也是要设置这个值的。默认是8M。
+ 
+concurrent_insert：是否允许并发写入（锁），
+ 
+如果想使用并发写入，无非就是实现了如果两个写入操作影响的不是相同数据的话，可以允许它并发写于，事先需要Mysql对其判断。而且并发写入要求表操作中存在数据间隙才能实现。
+ 
+delay_key_write：推迟索引/键的写入操作：ON|OFF
+ 
+索引是为了加速查询过程的，我们如果对表做一次修改，则索引就必须要重建了，而重建索引很浪费时间，浪费系统资源。而这个值，就是用于延迟索引写操作的，定义不是表一修改就立即进行索引重建。默认是开启的
+ 
+max_write_lock_count：嗯……这个就不介绍了……可以参照官方文档
+ 
+preload_buffer_size：用于定义刚启动的时候缓存大小的。默认是32KB
+ 
+ 
+ 
+MyISAM的专用管理工具：
+ 
+myisamchk：实现分析优化并修复MyISAM表的
+ 
+myisampack：实现压缩MyISAM表的，当压缩完成之后就不能再修改了
+ 
+myisam_ftdump：显示全文索引的
+
+InnoDB:
+ 
+具有以下几个特性：
+ 
+1.支持事物，基于MVCC
+ 
+2.支持行级别的锁
+ 
+3.支持外键
+ 
+4.支持聚簇索引。它是BTREE的一种属性，非聚簇索引，索引和数据是分开存放的，所以找到索引之后索引其实只是一个指针，而聚簇索引，它的索引和数据是在一起的，只要能找到索引则立刻能找到数据，它要比非聚簇索引少一次查找，速度非常快。所以当我们把索引读取到内存，则意味着把数据也读取到内存了。
+ 
+5.同时支持索引缓存和数据缓存。意味着把用户查询的数据可以直接缓存下来。
+ 
+6.支持在线非阻塞式的备份，支持热备：不过需要商业化的备份工具来实现
+
+
+
+开启mysql慢查询日志
+
+查看配置：
+
+//查看慢查询时间
+show variables like "long_query_time";默认10s
+//查看慢查询配置情况
+show status like "%slow_queries%";
+//查看慢查询日志路径
+ show variables like "%slow%";
+ 
+
+修改配置文件
+
+在my.ini中加上下面两句话
+log-slow-queries = D:\wamp\mysql_slow_query.log
+long_query_time=5
+第一句使用来定义慢查询日志的路径（因为是windows，所以不牵涉权限问题）
+第二句使用来定义查过多少秒的查询算是慢查询，我这里定义的是5秒
+第二步：查看关于慢查询的状态
+执行如下SQL语句来查看mysql慢查询的状态
+show variables like '%slow%';
+执行结果会把是否开启慢查询、慢查询的秒数、慢查询日志等信息打印在屏幕上。
+第三步：执行一次慢查询操作
+其实想要执行一次有实际意义的慢查询比较困难，因为在自己测试的时候，就算查询有20万条数据的海量表，也只需要0.几秒。我们可以通过如下语句代替：
+SELECT SLEEP(10);
+第四步：查看慢查询的数量
+通过如下sql语句，来查看一共执行过几次慢查询：
+show global status like '%slow%';
+
+mysql日志的配置：
+
+复制代码
+注意：这些日文件在mysql重启的时候才会生成
+#记录所有sql语句
+log=E:/mysqllog/mysql.log
+
+#记录数据库启动关闭信息，以及运行过程中产生的错误信息
+log-error=E:/mysqllog/myerror.log
+
+# 记录除select语句之外的所有sql语句到日志中，可以用来恢复数据文件
+log-bin=E:/mysqllog/bin
+
+#记录查询慢的sql语句
+log-slow-queries=E:/mysqllog/slow.log  
+
+#慢查询时间
+long_query_time=0.5
+复制代码

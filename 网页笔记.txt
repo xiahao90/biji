@@ -1,0 +1,822 @@
+1.段落标记 <P>
+   标记属性：align="left/center/right"
+   用法 ：<p align="center">
+2.换行标记  <br>单标记，直接使用。
+3.水平线标记 <hr>
+	单标记
+	标记属性：align="left/center/right"
+		size="5px" 表示线的厚度，或者说线的高度
+		width="500px/50%" 线的长度。或者线的宽度
+		color="#00ff00/green" 颜色
+5.<PRE>称为预设格式标记
+7.nobr标记  不折行标记  双标记
+3.标题标记 H1\H2\H3\H4\H5\H6
+4.字体标记  FONT
+	作用：对文字进行修饰
+	标记属性：字体，字号，颜色 (FACE,SIZE,COLOR)
+	字体：黑体，宋体，华文。。。
+	字号：+1 - +4和-1  - -4
+	颜色：两个写法
+无序列表：
+	type="disc/circle/square"
+	disc:实心圆
+	circle:空心圆
+	square:方块
+	start标记属性在无序列表中是无效的。！！
+四。表格标记
+
+table  容器标记
+--width 宽度
+ height 高度
+border 边框大小
+align 水平位置  控制的是表格本身在网页中的水平位置，不影响表格中内容的位置。
+background 背景图片
+bgcolor 背景颜色
+bordercolor 边框颜色
+cellspacing  单元格之间的距离
+cellpadding 单元格内部文字与单元格边框的距离
+bordercolorlight 亮光面的颜色
+bordercolordark  背光面的颜色
+cols  表示栏位数目，以便让浏览器先把整个表格画出来。
+以上是table标记的标记属性<--
+
+tr双标记 
+作用：用来创建表格中的行。
+--align
+ valign --> top,middle,bottom
+ bgcolor 
+bordercolor 
+bordercolorlight 
+bordercolordark
+TR不能使用 背景图片属性，如要使用，只能在TABLE、TD中使用。
+--
+td双标记 
+作用：用来创建表格中的列。
+----
+width height 
+
+ colspan  用于横向合并单元格
+ rowspan  用于纵向合并单元格
+
+ align valign bgcolor background bordercolor bordercolorlight bordercolordark
+---
+
+
+
+th标记---表格栏目
+caption标记--表格标题
+--align  valign
+
+都是双标记
+
+<table width=500px height=300px border=2 align=center
+backgroun="背景图像.jpg" bgcolor="red" bordercolor="边框颜色"
+cellspacing="5px" cellpadding="5px"
+>
+
+</table>
+五。图像标记
+
+img标记，单标记
+标记属性：src  指定图片的位置和名字
+	width	
+	height 
+	alt 
+	border 图片的边框 ，默认是有边框的，并且是黑色的。
+	align
+	hspace 控制图片左右两边的空白距离
+	vspace 控制图片上下两边的空白距离
+链接标记：
+A :
+标记属性：href,用来指明链接到目标网页（地址）
+name,给链接取的一个标识名字。
+
+target:用来指定打开链接页面的方式。
+_blank  在新窗口中打开
+_parent 指定在父窗口中打开
+_self 指定在当前自身窗口中打开
+_top 指定在有框架时，在最顶端窗口打开，会取消框架。
+a{ text-decoration:none;} 取消下划线
+---内部链接：
+用A链接做标签：
+1.先做标签名字：
+<a name="top"></a>
+2.引用标签：
+<a heft="#top">回到顶部</>
+
+~~~外部链接：
+<a href="demo.html" target="_self">
+表单：
+
+非常重要！
+
+<form>双标记
+
+标记属性：action ="后台处理程序"
+
+method="post/get"
+
+post:用于大于1K以上的文件传输，通过文件编码的方式，传递表单数据，在浏览器地址栏是看不到传输数据的。
+get:小于1K的文件传输。同时，可以在浏览器地址栏看到表单数据的传递。
+注：
+属于一个容器标记，表示其它表单标记需要在它的包围中才有效，才能把表单数据提交到后台去处理。但是其它表单标记是可以独立做HTML标记出现的。但是单独出现时，是无法提交表单元素中的数据的，因此，它们必须和form标记一起使用。
+
+INPUT表单标记一：
+<input type="text" name="username" id="userid" size="12" maxlength="6" value="请输入账号">
+input 类型1：text 文本输入框 ，size  输入框的宽度，maxlength，最大输入字符数，value 默认值。
+readonly readonly 规定输入字段为只读。 
+input 类型2：password 密码输入框 ，Password 的其他参数和 Text 是完全相同的，请参考 Text 的介绍。 两者作用不同，Password 所输入的字元全以 * 号表示。 
+
+input 类型3：radio ，单选按钮，
+<input type="radio" name="ssex" value="男">男
+<input type="radio" name="ssex" value="女" checked>女
+在使用radio时，一定要使用value属性，不然后台无法接收到用户选定的值。
+如果要指定一个默认值，请加上checked属性。
+
+input 类型4：checkbox,多选按钮，
+
+<input type="checkbox" name="aihao" value="apple">苹果
+<input type="checkbox" name="aihao" value="香蕉" checked>香蕉
+<input type="checkbox" name="aihao" value="orange">橙子
+<input type="checkbox" name="aihao" value="huanggua">黄瓜
+
+radio与checkbox：
+radio   必须要选择一项，
+checkbox   可以多选，全选，或一个也不选。
+在使用checked时，radio，只能使用一个默认，而checkbox可以使用多个默认勾选值。
+
+input 类型5：submit  提交按键
+
+input 类型6： reset 重置表单信息
+
+submit\reset 都可以使用value标记属性，是显示给用户看的。一般表示按键的功能。
+
+input 类型7：image 图片按钮，用于顶替submit的功能。
+
+ <input type="image" name="submit" src="../photo/tu_sj.gif">
+
+input 类型8： file 文件上传。
+<input type="File" name="upload" size="20" maxlength="100" accept="text/html"> 
+ file,表示上传文件，size，表示文本框宽度，maxlength,最大字符数。accept上传文件类型。
+
+input 类型9：hidden  隐藏表单项
+<input type="Hidden" name="ID" value="6618"> 
+它不会显示任何输入介面，而是一个内定值随表单一起 传给 后台。
+
+input 类型10：button 按钮
+type="Button" 输入方式为一般按键。常配合 Java Script 作为其启动按键
+
+
+select 标记-------：
+<select size=4 name="city" multiple>
+	<option value="CD">成都
+	<option value="CQ" selected>重庆
+	<option value="SH" selected>上海
+	<option value="HK">香港
+	<option value="BJ">北京
+</select>
+
+标记属性：size，在下拉列表框中，显示多少项列表。
+ multiple,表示允许多项选择。
+
+在option，增加option的标记属性：
+设定默认值 ：selected
+
+textarea文字区块（文本域）标记：
+
+<textarea name="" cols="20" rows="5" wrap="" readolny>
+cols:通过列数，来限定文本域的宽度。
+rows:通过行数，来限定文本域的高度。
+wrap：设定自动折行。
+wrap:设定其折行问题，可选值为： off, physical, virtual。off 表示不使用此属性，physical 时则会强迫刘览器在送资料到 CGI（Web 伺服器端）必须将实际文字中的换行一 并送出，设为 virtual 时则送出连续成串的字（除非使用者按了键盘的 ENTER）。 
+readolny:设定文本域内容为只读，即不能修改。
+
+多媒体标记：BGSOUND
+<BGSOUND src="your.mid" autostart=true loop=infinite> 
+src="your.mid" 设定 midi 档案及路径，可以是相对或绝对。 
+autostart=true 是否在音乐档传完之後，就自动播放音乐。true 是，false 否 (内定值)。 
+loop=infinite 是否自动反覆播放。LOOP=2 表示重复两次，Infinite 表示重复多次。
+
+让flash变成透明：
+  <param name="wmode" value="transparent" />
+
+<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0" width="32" height="32">
+  <param name="movie" value="file:///f|/UserData/Administrator/桌面/abc.swf" />
+  <param name="wmode" value="transparent" />
+  <embed src="file:///f|/UserData/Administrator/桌面/abc.swf" quality="high" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" width="32" height="32"></embed>
+</object>
+
+
+1.了解CSS的作用。
+
+2.CSS的添加方法：
+-- 1.<tag style="properties"></tag>
+   <div style="color:red;">adfad</div>
+-- 2.在标记head中，写的内容：
+<style type="text/css">
+	<!--
+		body {color:red;}
+	-->
+</style>
+
+-- 3.在head中，添加link标记，
+<link rel="stylesheet" href="指定样式表文件位置" type="text/css">
+这个也叫引用外部的样式表文件。
+-- 4.联合样式表
+在head标记中使用。
+<style type="text/css">
+	<!--
+	@import "*.css";
+	body {color:red;}
+	-->
+</style>
+
+3.CSS的格式：
+-- 1.选择符 {属性：值;}
+-- 2.选择符1，选择符2，选择符3{ 属性：值；}
+分组法；
+-- 3.选择符1 选择符2 {属性：值；}
+包含法；
+4.CSS的分类，伪类：
+
+--1.选择符.类别名{属性：值；}
+--定义：
+p{color:red;}
+p.frist{color:blue;}
+p.second{color:yellow;}
+--引用：
+<p class="frist">
+<p class="second">
+
+--2.伪类：
+--定义：
+.abc{color:red;}
+
+<div class="abc"></div>
+可以重复的引用 ！
+
+--3.ID选择符
+--定义：
+#hi{color:red;}
+--引用：
+<div id="hi"></div>
+根据W3C的标准，ID选择符只能引用一次。
+
+5.控制字体、文本的样式：
+--字体：
+font-family:"黑体";  控制字体
+font-size:18px;      控制字号大小
+font-style:italic     控制字体的风格，斜体。
+font-weight:bold/bolder/lighter/100-900   加粗，变细。
+
+
+--CSS 文本属性
+属性 描述 
+color 设置文本颜色  color:red/#00ff00;
+direction 设置文本方向。  ltr/rtl
+line-height 设置行高。 设置固定的行间距:line-height:30px;
+如果配合height属性:可以让文本在行内垂直方向居中。 
+letter-spacing 设置字符间距。 letter-spacing:5px
+text-align 对齐元素中的文本。  left/center/right
+text-decoration 向文本添加修饰。
+--属性值：
+none 默认。定义标准的文本。 
+underline 定义文本下的一条线。 
+overline 定义文本上的一条线。 
+line-through 定义穿过文本下的一条线。 
+blink 定义闪烁的文本。 
+
+
+ 
+text-indent 缩进元素中文本的首行。 给个具体的值 就可以了。
+
+ 
+text-transform 控制元素中的字母。 
+
+--属性值：
+
+none 默认。定义带有小写字母和大写字母的标准的文本。 
+capitalize 文本中的每个单词以大写字母开头。 
+uppercase 定义仅有大写字母。 
+lowercase 定义无大写字母，仅有小写字母。 
+
+
+white-space 设置元素中空白的处理方式。
+---属性值：
+值 描述 
+normal 默认。空白会被浏览器忽略。 
+pre 空白会被浏览器保留。其行为方式类似 HTML 中的 <pre> 标签。 
+nowrap 文本不会换行，文本会在在同一行上继续，直到遇到 <br> 标签为止。 
+pre-wrap 保留空白符序列，但是正常地进行换行。 
+pre-line 合并空白符序列，但是保留换行符。 
+ 
+word-spacing 设置字间距。 给个具体的值：word-spacing:5px;
+
+
+
+-- 二、背景：
+都是以 background- 开始
+1.背景颜色：background-color:blue;
+2.背景图片：background-image:url(URL文字路径和名字);
+3.背景图片重复语法如下：
+background-repeat: no-repeat;
+repeat 默认。背景图像将在垂直方向和水平方向重复。 
+repeat-x 背景图像将在水平方向重复。 
+repeat-y 背景图像将在垂直方向重复。 
+no-repeat 背景图像将仅显示一次。 
+
+4.背景图片定位：
+background-position:如果您仅规定了一个关键词，那么第二个值将是"center"。默认是左上角。
+top left 
+top center 
+top right 
+center left 
+center center 
+center right 
+bottom left 
+bottom center 
+bottom right 
+
+
+5.背景图片固定语法如下:
+回顾一下标记的属性：bgproperties:fixed;
+background-attachment:fixed 不滚动，默认是scroll，即滚动。
+
+-- 三、列表样式控制
+
+1.列表符号：
+list-style-type: none;
+值 描述 
+none 无标记。 
+disc 默认。标记是实心圆。 
+circle 标记是空心圆。 
+square 标记是实心方块。 
+decimal 标记是数字。 
+lower-roman 小写罗马数字(i, ii, iii, iv, v, 等。) 
+upper-roman 大写罗马数字(I, II, III, IV, V, 等。) 
+lower-alpha 小写英文字母The marker is lower-alpha (a, b, c, d, e, 等。) 
+upper-alpha 大写英文字母The marker is upper-alpha (A, B, C, D, E, 等。) 
+
+2.图形符号：
+list-style-image:url("/i/arrow.gif");
+3.列表位置：
+list-style-position:inside（默认）/outside
+
+-- 四、控制框与边框的样式 
+1.边框空白：margin:
+margin-top：顶部空白距离　　  margin-right：右边空白距离
+margin-bottom：底部空白距离　margin-left：左边空白距离
+
+margin: 上 右  下 左；
+--》margin:5px 10px 12px 30px;
+margin: 上 右 下；
+--》margin: 5px 10px 14px;  ->少写左的情况下，左的值使用右的值；
+margin:上 右；
+-->margin:5px 10px; ->上--下，右--左；
+margrin:上；
+--》margin:5px;  ->用上来表示四个方向的值。
+
+2.对象间隙：（内部的文字距对象边框的距离）
+padding-top：顶部间隙　     padding-right：右边间隙
+padding-bottom：底部间隙　padding-left：左边间隙 
+
+padding的组合写法，同margin的组合写法一样。
+
+
+
+
+3.边框 border
+border-width:设置四个边的边框线的粗线。 
+border-top-width：顶边框宽度
+ border-right-width：右边框宽度 
+ border-bottom-width：底边框宽度
+border-left-width：左边框宽度
+
+--border-width：所有顶边框宽度 ，统一写四个边粗细时，按margin顺序来。
+thin 定义细的边框。 
+medium 默认。定义中等的边框。 
+thick 定义粗的边框。
+一般我们直接给一个具体的像素值。
+--border-color：边框颜色
+--border-style:
+none 定义无边框。 
+hidden 与 "none" 相同。不过应用于表时除外，对于表，hidden 用于解决边框冲突。 
+dotted 定义点状边框。在大多数浏览器中呈现为实线。 
+dashed 定义虚线。在大多数浏览器中呈现为实线。 
+solid 定义实线。 
+double 定义双线。双线的宽度等于 border-width 的值。 
+
+border的组全写法：
+border:1px solid red ;--》样式，颜色，粗细度。
+
+---------clear 设置一个元素的侧面是否允许其他的浮动元素。 
+只有left,right,both,none  默认值。
+-------cursor 规定当指向某元素之上时显示的指针类型。 
+Auto
+Crosshair
+Default
+Pointer
+Move
+e-resize
+ne-resize
+nw-resize
+n-resize
+se-resize
+sw-resize
+s-resize
+w-resize
+text
+wait
+help 
+
+---display 设置是否及如何显示元素。 
+
+none 此元素不会被显示。 
+block 此元素将显示为块级元素，此元素前后会带有换行符。 
+inline 默认。此元素会被显示为内联元素，元素前后没有换行符。 
+list-item 此元素会作为列表显示。 
+
+---float 定义元素在哪个方向浮动。 只有left,right两个值。
+属性定义元素在哪个方向浮动。以往这个属性总应用于图像，使文本围绕在图像周围，不过在 CSS 中，任何元素都可以浮动。浮动元素会生成一个块级框，而不论它本身是何种元素。
+
+如果浮动非替换元素，则要指定一个明确的宽度；否则，它们会尽可能地窄。
+
+注释：假如在一行之上只有极少的空间可供浮动元素，那么这个元素会跳至下一行，这个过程会持续到某一行拥有足够的空间为止。
+
+ 
+-------position 把元素放置到一个静态的、相对的、绝对的、或固定的位置中。
+ absolute 生成绝对定位的元素，相对于 static 定位以外的第一个父元素进行定位。
+
+元素的位置通过 "left", "top", "right" 以及 "bottom" 属性进行规定。
+ 
+fixed 生成绝对定位的元素，相对于浏览器窗口进行定位。
+
+
+-------锚伪类
+在支持 CSS 的浏览器中，链接的不同状态都可以不同的方式显示，这些状态包括：活动状态，已被访问状态，未被访问状态，和鼠标悬停状态。
+a{text-decoration:none;}
+a:link {color: #FF0000}	/* 未访问的链接 */
+a:visited {color: #00FF00}	/* 已访问的链接 */
+a:hover {color: #FF00FF}	/* 鼠标移动到链接上 */
+a:active {color: #0000FF}	/* 选定的链接 */
+提示：在 CSS 定义中，a:hover 必须被置于 a:link 和 a:visited 之后，才是有效的。
+
+提示：在 CSS 定义中，a:active 必须被置于 a:hover 之后，才是有效的。
+
+提示：伪类名称对大小写不敏感。
+
+元素的位置通过 "left", "top", "right" 以及 "bottom" 属性进行规定。
+ 
+relative 生成相对定位的元素，相对于其正常位置进行定位。
+
+因此，"left:20" 会向元素的 LEFT 位置添加 20 像素。
+ 
+static 默认值。没有定位，元素出现在正常的流中（忽略 top, bottom, left, right 或者 z-index 声明）。 
+Z-index 
+Z-index可被用于将在一个元素放置于另一元素之后。
+
+-----visibility 设置元素是否可见或不可见。 
+提示：即使不可见的元素也会占据页面上的空间。请使用 "display" 属性来创建不占据页面空间的不可见元素。
+visible 默认值。元素是可见的。 
+hidden 元素是不可见的。 
+
+
+
+1.JAVASCRIPT 内部使用格式：
+
+<script type="text/javascript">
+<!--
+
+javascript语句；
+
+//-->
+
+</script>
+
+2.使用外部的JS文件；
+<script type="text/javascript" src="1.js"></script>
+
+3.变量的声明
+--声明变量：
+var 变量；
+--声明并初始化变量：
+var 变量=值;
+
+var是用来声明我们变量的关键字。
+在javascript中，定义变量时，不指定变量类型。
+
+var a;
+a=10;
+a=prompt("请输入你的年龄",18);
+
+
+注意：全局变量不需要以 var 关键字进行声明，但局部变量则必须
+以此关键字来声明
+var x1;
+function a{}
+{
+var x2;
+}
+var x3;
+function b()
+{
+
+
+}
+4.JAVASCRIPT代码中，使用/*...*/ ,//来注释javascript代码。
+
+5.JAVASCRIPT运算符：
+--算数运算符  + - / * %
+--比较运算符  > < == >=  <=  !=   结果是：true , false
+--逻辑运算符  && || !		  结果是：1  ,0
+--字符串运算符  +
+
+6.几个常用的方法：
+alert("弹出的提示内容")
+confirm("弹出确定取消")
+prompt("弹出的提示内容")
+
+7.控制语句：
+if
+if..else
+if嵌套
+switch
+for
+while
+do...while
+break
+continue
+
+8.函数的定义：
+
+function 函数名（参数1,参数2… ）
+{
+ 函数体；
+}
+
+9.调用函数：函数调用一般和元素
+的事件一起使用。①调用包含参数的函数：
+     函数名([参数1,][参数2,][…])
+②调用不包含参数的函数：
+     函数名()
+<INPUT name=“add” type=“button” value=“加法”
+onClick=“sum(１，２)">
+
+10.数组的定义：
+
+var 数组名= new Array();
+var a = new Array(10);
+a[0]=10;
+a[1]=20;
+...
+a[9]=10;
+
+ 11.数组的属性与方法：
+
+格式：数组名 .属性名
+      数组名 .方法名
+var a = new Array(10);
+属性：
+var b = a.length;
+如果数组没有指定数组元素个数，那么长度是0；
+只有当他被赋值后，才会有相应的长度值。
+
+方法：
+a.sort();对数组元素进行排序。
+
+a.reverse();颠倒数组元素的顺序，使第一个元素成为最后一个，而最后一个元素成为第一个。
+
+所有对象都属性或方法，那么使用这些属性与方法都有一个通用的格式 ：
+对象名.属性名
+对象名.方法名   -->方法要带上"（）".
+语句结束，应该有分号。
+
+
+
+回忆数组的声明：
+
+var a = new Array();
+var a = new Array(10);
+var a = new Array(1,2,3);
+
+a.length  //数组元素的个数
+
+a.sort();
+a.reverse();
+
+
+一、对象的层次结构
+
+1.浏览器对象
+2.脚本对象
+3.HTML对象
+
+概念：
+对象是属性和方法的组合
+属性是对象所拥有的一组外观特征，一般为名词 
+方法是对象可以执行的功能，一般为动词
+
+1.字符串对象的声明
+两种方法：
+直接赋值：var str1="龙潭寺";
+创建一个字符串对象：var str1= new String("我是字符串");
+
+属性：length 作用： 返回字符串的长度。
+str1.length
+
+方法：见案例
+
+
+2.Math数学对象：
+
+
+Math对象不用声明，直接使用就可以了。
+
+直接使用它的属性和方法就可以了。
+
+属性：
+Math.PI
+方法：
+min (x, y)	返回 x 和 y 两个数中较小的数 
+max (x, y)	返回 x 和 y 两个数中较大的数 
+random	返回0-1的随机数
+round (y)	四舍五入取整
+floor(x) 对数进行下舍入。 
+ceil(x) 对数进行上舍入。 
+
+Math.min(3,4,5)
+
+3.Date日期对象
+格式：
+var a = new Date(年，月，日等参数);
+
+比如：var a = new Date(99,10,1,20,30,00);
+	var a= new Date(); //在不指定参数时，是获得本机的日期和时间。
+
+--》方法分组	说 明 
+setxxx	这些方法用于设置时间和日期值--->主要 是用方法去修改对象。
+getxxx 	这些方法用于获取时间和日期值---》主要是通过对象获得相应的
+日期参数的值。
+
+方法	说明
+setDate	设置 Date 对象中月份中的天数，其值介于 1 至 31 之间。
+setHours	设置 Date 对象中的小时数，其值介于 0 至 23 之间。
+setMinutes	设置 Date 对象中的分钟数，其值介于 0 至 59 之间。 
+setSeconds	设置 Date 对象中的秒数，其值介于 0 至 59 之间。 
+setTime	设置 Date 对象中的时间值。 
+setMonth	设置 Date 对象中的月份，其值介于 0 至 11 之间。
+----------------------------------------------------------------
+getDate	返回 Date 对象中月份中的天数，其值介于 1 至 31 之间
+getDay	返回 Date 对象中的星期几，其值介于 0 至 6 之间
+getHours	返回 Date 对象中的小时数，其值介于 0 至 23 之间
+getMinutes	返回 Date 对象中的分钟数，其值介于 0 至 59 之间
+getSeconds	返回 Date 对象中的秒数，其值介于 0 至 59 之间
+getMonth	返回 Date 对象中的月份，其值介于 0 至11 之间
+getFullYear	返回 Date 对象中的年份，其值为四位数
+getTime	返回自某一时刻（1970 年 1 月 1 日）以来的毫秒数
+
+Date 方法的参数：
+
+值	整 数 
+Seconds 和 minutes	0 至 59 
+Hours	0 至 23 
+Day	0 至 6（星期几） 
+Date	1 至 31（月份中的天数） 
+Month	0 至 11（一月至十二月） 
+year     0001-9999
+
+案例1：求2008年8月8日北京奥运会过去了多少天？
+案例2：求距离2012年7月26日伦敦奥运会还有多少天？
+案例3：制作一个可以走秒的时间。
+
+
+2. 定义并初始化一个String对象，将其附值为"my heart will go on" , 返回"will"子字符串在其中的开始位置并输出
+<script type="text/javascript">
+var str="my heart will go on";
+document.write(str.indexOf("will"))
+</script>
+
+
+3. 求"hello my friend"的子字符串'friend'的位置。
+
+
+4. 输入字符串，要求首字母大写，否则重新输入
+var a=prompt("请输入一个字符串");
+var b = a.charAt(0);
+if(b>='A' && b<='Z'){
+
+alert("输入符合标准。");
+
+}
+else
+{
+alert("输入不符合标准。重新输入");
+}
+
+
+5. 应用Math对象产生10个15-28的随机数存储在数组中，并将数组中元素降序排序输出 
+(提示: Math.random() 可产生0-1之间的随机小数 ，Math.floor() 可将小数截断取整)
+var a = new Array(10);
+for (var i=0;i<10;i++)
+{
+a[i]=Math.floor(Math.random()*(28-15+1)+15);
+
+}
+a.sort().reverse();
+alert(a);
+
+
+
+1.什么是 RegExp？
+
+RegExp 是正则表达式的缩写。
+
+当您检索某个文本时，可以使用一种模式来描述要检索的内容。RegExp 就是这种模式。
+
+简单的模式可以是一个单独的字符。
+
+更复杂的模式包括了更多的字符，并可用于解析、格式检查、替换等等。
+
+您可以规定字符串中的检索位置，以及要检索的字符类型，等等
+
+2.RegExp 的格式：
+
+1）。直接量语法
+/pattern/attributes
+
+参数 pattern 是一个字符串，指定了正则表达式的模式或其他正则表达式。
+
+参数 attributes 是一个可选的字符串，包含属性 "g"、"i" 和 "m"，分别用于指定全局匹配、区分大小写的匹配和多行匹配。如果 pattern 是正则表达式，而不是字符串，则必须省略该参数。
+
+2）。创建 RegExp 对象的语法：
+new RegExp(pattern, attributes);
+
+例：  var RegExp = //;
+<script type="text/javascript">
+var str="Give 100%!"; 
+var patt1=/\D/g;
+document.write(str.match(patt1));
+</script>
+
+3.RegExp 定义和用法
+test() 方法用于检测一个字符串是否匹配某个模式.
+语法：
+RegExpObject.test(string)
+
+返回值：
+如果字符串 string 中含有与 RegExpObject 匹配的文本，则返回 true，否则返回 false。
+
+<script type="text/javascript">
+var str = "Visit W3School";
+//var patt1 = new RegExp("W3School");
+var patt1 = /W3School/;
+var result = patt1.test(str);
+
+document.write("Result: " + result);
+</script>
+
+4. 表1.常用的元字符 
+
+代码	说明
+.	匹配除换行符以外的任意字符
+\w	匹配字母或数字或下划线
+\s	匹配任意的空白符
+\d	匹配数字
+\b	匹配单词的开始或结束
+^	匹配字符串的开始
+$	匹配字符串的结束
+
+表2.常用的限定符 
+
+代码/语法	说明
+*	重复零次或更多次
++	重复一次或更多次
+?	重复零次或一次
+{n}	重复n次
+{n,}	重复n次或更多次
+{n,m}	重复n到m次
+
+方括号
+方括号用于查找某个范围内的字符：
+
+表达式 描述 
+[abc] 查找方括号之间的任何字符。 
+[^abc] 查找任何不在方括号之间的字符。 
+[0-9] 查找任何从 0 至 9 的数字。 
+[a-z] 查找任何从小写 a 到小写 z 的字符。 
+[A-Z] 查找任何从大写 A 到大写 Z 的字符。 
+[a-Z] 查找任何从小写 a 到大写 Z 的字符。 
+[adgk] 查找给定集合内的任何字符。 
+[^adgk] 查找给定集合外的任何字符。 
+[red|blue|green] 查找任何指定的选项。 
+
+分组与选择
+|	满足多个条件中的一个
+( )	对条件进行分组
+
+
+修饰符
+修饰符 描述 
+i 执行对大小写不敏感的匹配。 
+g 执行全局匹配（查找所有匹配而非在找到第一个匹配后停止）。 
+m 执行多行匹配。 

@@ -1,0 +1,137 @@
+什么叫json：
+JSON(JavaScript Object Notation) 是一种轻量级的数据交换格式，采用完全独立于语言的文本格式，是理想的数据交换格式。同时，JSON是 JavaScript 
+原生格式，这意味着在 JavaScript 中处理 JSON数据不须要任何特殊的 API 或工具包。
+
+为什么出现了json：
+尽管有许多宣传关于 XML 如何拥有跨平台，跨语言的优势，然而，除非应用于 Web Services，否则，在普通的 Web 应用中，
+
+开发者经常为 XML 的解析伤透了脑筋，无论是服务器端生成或处理 XML，还是客户端用 JavaScript 
+解析 XML，都常常导致复杂的代码，极低的开发效率。实际上，对于大多数 Web 应用来说，他们根本不需要复杂的 XML 来传输数据，XML 的扩展性很少具有优势，许多 AJAX 应用甚至直接返回 HTML 片段来构建动态 Web 页面。和返回 XML 并解析它相比，返回 HTML 片段大大降低了系统的复杂性，但同时缺少了一定的灵活性。 
+现在， JSON 为 Web 应用开发者提供了另一种数据交换格式。JSON 天生是为 JavaScript 准备的，因此，JSON 的数据格式非常简单
+
+总结:
+json与xml区别：
+   xml 结构化描述 json 键值对描述
+   json 是纯文本对机器友好，xml 对人友好
+   json 效率高于 xml
+   xml json 都可以通过通过 JavaScript 进行解析
+   xml JSON 数据可使用 AJAX 进行传输
+
+相比 XML 的不同之处
+ 没有结束标签
+ 更短
+ 读写的速度更快
+ 能够使用内建的 JavaScript eval() 方法进行解析
+ 使用数组
+ 不使用保留字
+
+在JSON中，有两种结构：对象和数组。
+ 
+1. 一个对象以“{”（左括号）开始，“}”（右括号）结束。每个“名称”后跟一个“:”（冒号）；“‘名称/值’ 对”之间运用 “,”（逗号）分隔。 名称用引号括起来；值如果是字符串则必须用括号，数值型则不须要。例如：
+var o={"xlid":"cxh","xldigitid":123456,"topscore":2000,"topplaytime":"2009-08-20"};
+    访问：  alert(o.xlid);
+
+var j={"name":"Michael",
+      "address":{"city":"Beijing","street":" Chaoyang Road ","postcode":100025}
+  }; 
+  document.write(j.name); 
+  document.write(j.address.city); 
+
+在js中定义一个二维数组:
+var stu2= new Array();
+    stu2['address']=new Array();
+    stu2['address']['city']='aaa'
+   alert(stu2.address.city);
+
+2. 数组是值（value）的有序集合。一个数组以“[”（左中括号）开始，“]”（右中括号）结束。值之间运用 “,”（逗号）分隔。
+
+例如：
+   var jsonranklist=[
+	{"xlid":"cxh","xldigitid":123456,"topscore":2000,"topplaytime":"2009-08-20"},
+	{"xlid":"zd","xldigitid":123456,"topscore":1500,"topplaytime":"2009-11-20"}
+       ];
+访问: jsonranklist[0].xlid
+
+在数据传输流程中，json是以文本，即字符串的形式传递的，而JS操作的是JSON对象，所以，JSON对象和JSON字符串之间的相互转换是关键。例如：
+ 
+    JSON字符串:
+ 
+    var str1 = '{ "name": "cxh", "sex": "man" }';
+ 
+    JSON对象:
+ 
+    var str2 = { "name": "cxh", "sex": "man" };
+
+JSON字符串转换为JSON对象: var obj = eval('(' + str1 + ')'); 或者 var obj = str1.parseJSON(); //由JSON字符串转换为JSON对象
+然后，就可以这样读取：
+  Alert(obj.name);
+  Alert(obj.sex);
+
+
+JSON对象转换为JSON字符串
+toJSONString()或者全局要领 JSON.stringify()将JSON对象转化为JSON字符串。
+
+例如：
+    var last=obj.toJSONString(); //将JSON对象转化为JSON字符
+    或者
+    var last=JSON.stringify(obj); //将JSON对象转化为JSON字符
+    alert(last);
+
+注意: 除了eval()函数是js自带的之外，其他的多个要领都来自json.js包。如果提示找不到toJSONString()和parseJSON()要领，则说明您的json版本太低。
+
+php 转换json：
+   json_encode()；数组装换成json
+   json_deconde();
+
+
+
+jquery 使用json
+
+ajax异步返回的数据:
+var data=" 
+{ 
+root: [ 
+{name:'1',value:'0'}, 
+{name:'6101',value:'西安市'}, 
+{name:'6102',value:'铜川市'}, 
+{name:'6103',value:'宝鸡市'}, 
+{name:'6104',value:'咸阳市'}, 
+{name:'6105',value:'渭南市'}, 
+{name:'6106',value:'延安市'}, 
+{name:'6107',value:'汉中市'}, 
+{name:'6108',value:'榆林市'}, 
+{name:'6109',value:'安康市'}, 
+{name:'6110',value:'商洛市'} 
+] 
+}";
+
+//服务器返回json处理 ：如果jquery异步请求没做类型说明，或者以字符串方式接受，那么需要做一次对象化处理，方式不是太麻烦，就是将该字符串放于eval()中执行一次。
+这种方式也适合以普通javascipt方式获取json对象；对于一般的js生成json对象，只需要将$.each()方法替换为for语句即可，其他不变
+
+
+var dataObj=eval("("+data+")");//转换为json对象 
+alert(dataObj.root.length);//输出root的子对象数量 
+$.each(dataObj.root,function(index,item){
+   if(index==0){ 
+    return true; 
+  } 
+  //输出每个root子对象的名称和值 
+  alert("name:"+item.name+",value:"+item.value); 
+}) 
+
+
+对于服务器返回的JSON字符串，如果jquery异步请求将dataType: 'json',，或者利用$.getJSON()方法获得服务器返回，那么就不需要eval（）方法了，
+因为这时候得到的结果已经是json对象了，只需直接调用该对象即可，这里以$.getJSON方法为例说明数据处理方法
+
+$.getJSON("http://gaoyusi.blog.163.com/",{param:"gaoyusi"},function(data){ 
+	//此处返回的data已经是json对象 
+	$.each(data.root,function(idx,item){
+		if(idx==0){ 
+			return true;//同countinue，返回false同break 
+		} 
+			alert("name:"+item.name+",value:"+item.value); 
+		}); 
+	}); 
+
+
+ 

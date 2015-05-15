@@ -1,0 +1,423 @@
+数据缓存：
+
+
+随着Internet技术的不断发展,影响网络速度的瓶颈主要集中在访问距离和服务器承载负荷能力方面。
+扩展服务器或者镜像服务器作为基本解决方案在运营维护方面花费的代价较高,
+而Cache缓存技术作为一种补充方案,以其简单的设计、高效的存储性能得到了越来越广泛的应用。
+
+memcache是比较流行的cache解决方案，是高效、快速的分布式内存对象缓存系统，主要用 于加速 WEB 动态应用程序 
+
+Memcache是什么 
+Memcache是danga.com的一个项目，最早是为 LiveJournal 服务的，目前全世界不少人使用这个缓存项目来构建自己大负载的网站，来分担数据库的压力。
+
+Memcache的工作机制
+它的工作机制是在内存中开辟一块空间，然后建立一个HashTable，Memcached自管理这些HashTable。  
+
+为什么会有Memcache和memcached两种名称？ 
+其实Memcache是这个项目的名称，而memcached是它服务器端的主程序文件名
+
+memcached是运行在缓存服务器上的服务端程序名。
+
+memcache是 memcache server的client端，有各种语言的版本，如：java、php等
+
+可以把memcache server看成是DB服务器，
+
+memcache不是必须和apache安装在同一台服务器,和apache安装在一起可以使资源充分使用，apache占用CPU多，内存相对较少，而 memcache占用CPU低，内存多。
+
+Memcache的安装分为两大块： 
+
+memcache服务器端安装 
+
+memcache客户端安装 
+
+所谓服务器端的安装就是在服务器（一般都是linux系统）上安装 Memcache实现数据的存储 
+
+所谓客户端的安装就是指为php添加扩展，如PHP_memcache.dll，apache启动 后使用服务器端的Memcache 提供的函数。
+
+
+在windows下安装memcache：
+  
+  客户端memcache.dll支持php5.2，放到php的ext目录下，php.ini中加一句extension=php_memcache.dll就可以了。
+
+  其中服务端解压后有个memcached.exe。
+
+
+
+
+在DOS下，切换到目录：
+memcached.exe -d install 安装成windows的系统服务。
+之后就可以在服务中启动和关闭memcached了，
+也可以在DOS下用memcached.exe -d start来开启。
+默认端口号是：11211。
+
+memcache 的标志是驴：
+
+到百度 谷歌 搜索到 你当前memcache版本的相对于的 php_memecache.dll
+下载后 拷贝到 ext/
+
+找到  extension  在它的后面增加
+extension=php_memcache.dll
+; 一个高性能的分布式的内存对象缓存系统，通过在内存里维护一个统一的巨大的hash表， 
+
+; 它能够用来存储各种格式的数据，包括图像、视频、文件以及数据库检索的结果等。 
+
+; 是否在遇到错误时透明地向其他服务器进行故障转移。 
+memcache.allow_failover = On
+
+; 接受和发送数据时最多尝试多少个服务器，只在打开memcache.allow_failover时有效。 
+memcache.max_failover_attempts = 20 
+; 数据将按照此值设定的块大小进行转移。此值越小所需的额外网络传输越多。 
+; 如果发现无法解释的速度降低，可以尝试将此值增加到32768。 
+memcache.chunk_size = 8192 
+; 连接到memcached服务器时使用的默认TCP端口。 
+memcache.default_port = 11211 
+
+
+
+ 
+
+让php支持memcache
+
+重启apache
+
+打开 phpinfo();
+
+如果出现
+memcache
+memcache support enabled 
+Active persistent connections  0  
+Version  2.2.4-dev  
+Revision  $Revision: 1.99 $  
+
+Directive Local Value Master Value 
+memcache.allow_failover 1 1 
+memcache.chunk_size 8192 8192 
+memcache.default_port 11211 11211 
+memcache.hash_function crc32 crc32 
+memcache.hash_strategy standard standard 
+memcache.max_failover_attempts 20 20 
+
+
+表示memcache安装成功!
+
+
+
+ memcached
+
+
+ memcache的默认端口 11211
+ mysql 数据库默认端口 3306
+ apache的默认端口 80
+
+ $memcacheOBj->connect("memcache服务器名称",端口);
+
+ 长连接 pconnect("memcache服务器名称",端口);
+
+添删改查
+
+  add(key,value,bool,time);  如果已经存在key，返回false， 如果成功返回true
+  set(key,value,bool,time);   
+参数解释：
+   key： 键 用来定位一个数据
+   value: 值 需要保存的数据内容
+  bool： 是否压缩： 通常使用false
+  time:当前存储数据的过期时间，就是说数据在这个时间内是有效的，如果过去这个时间，那么会被Memcache服务器端清除掉这个数据，单位是秒，如果设置为0，则是永远有效
+
+ get(key); 返回 该key 的value  , key的数据类型可以是数组 字母
+
+
+替换
+replace(key,value,bool,time);替换已经存在key 的值
+
+删除
+delete(key,time); //参数解释： time 表示在多长的时间后删除 如果是0 表示马上删除
+
+
+//清除所有数据
+$mem->flush(); 表示清空缓存
+
+//关闭连接 
+$mem->close(); 
+
+实例：
+
+链接
+<?php
+
+/**
+ * @author phpadmin
+ * @copyright 2012
+ */
+$memcacheOBj=new Memcache();
+$conn=$memcacheOBj->connect('localhost',11211) or die('memcahce 服务器连接失败');
+if($conn){
+    echo 'memcahce 服务器连接成功'; 
+}
+?>
+
+多台服务器服务器连接
+
+
+添加
+<?php
+
+/**
+ * @author phpadmin
+ * @copyright 2012
+ */
+$mem=new Memcache();
+ $conn=$mem->connect('127.0.0.1',11211) or die('memcache 连接失败');
+if($conn){
+    $result=$mem->set('test','华育国际lmap25班'); 
+    if($result){
+          $value=$mem->get('test');
+          echo $value;
+    }
+}
+?>
+
+修改
+<?php
+
+/**
+ * @author phpadmin
+ * @copyright 2012
+ */
+$mem=new Memcache();
+ $conn=$mem->connect('127.0.0.1',11211) or die('memcache 连接失败');
+if($conn){
+      $tmp=$mem->replace('test','我要更改了，你读取出来看看');
+      if($tmp){
+         echo  $mem->get('test');
+      }
+}
+?>
+数据缓存与mysql的应用
+<?php
+
+/**
+ * @author phpadmin
+ * @copyright 2012
+ */
+$conn=mysql_connect('localhost','root','');
+mysql_select_db('memcache');
+mysql_set_charset('utf8');
+/**
+ * 在项目中实际的应用
+ *  在查询数据库之前 先查询是否有缓存 如果没有再 查询数据库
+-*/
+$mem=new Memcache();
+$tmp=$mem->connect('127.0.0.1',11211) or die('memcache 连接失败');
+$query='select * from mytest order by id desc';
+if($tmp){
+     $value=$mem->get('$query');
+     if($value){
+            echo '<pre>';
+              print_r($value);
+           echo '</pre>';
+            echo 'memcache';
+     }else{
+            $result=mysql_query($query);
+             while($rows=mysql_fetch_assoc($result)){
+                  $values[]=$rows;
+             }
+               $return=$mem->set('$query',$values);
+               if($return){
+                   echo '<pre>';
+                     print_r($values);
+                   echo '</pre>';
+                    echo 'sql';
+               }
+ 
+
+     }
+}
+?>
+
+
+Memcache的使用 
+使用Memcache的网站一般流量都是比较大的，为了缓解数据库的压力，让Memcache作为一个缓存区域，把部分信息保存在内存中，在前端能够迅速的进行存取。那么一般的焦点就是集中在如何分担数据库压力和进行分布式，毕竟单台Memcache的内存容量的有限的。
+
+
+分布式应用 
+Memcache本来支持分布式，我们客户端稍加改造，更好的支持。我们的key可以适当进行有规律的封装，比如以user为主的网站来说，每个用户都有User ID，那么可以按照固定的ID来进行提取和存取，比如1开头的用户保存在第一台Memcache服务器上，以2开头的用户的数据保存在第二胎Mecache服务器上，存取数据都先按照User ID来进行相应的转换和存取。 
+
+上面只是一个简单的举例。在实际的工作中根据自己的实际业务来进行考虑，或者去想更合适的方法。 
+
+
+减少数据库压力 
+这个算是比较重要的，所有的数据基本上都是保存在数据库当中的，每次频繁的存取数据库，导致数据库性能极具下降，无法同时服务更多的用户，比如MySQL，特别频繁的锁表，那么让Memcache来分担数据库的压力吧。我们需要一种改动比较小，并且能够不会大规模改变前端的方式来进行改变目前的架构。 
+ 
+
+2012-08-04 00:40 thinkphp config文件配置 <?php
+
+return array(
+//---------------------------------------------------------------------------------------
+//模版配置
+//---------------------------------------------------------------------------------------
+"TMPL_DETECT_THEME" => false , //自动侦测模板主题 
+"TMPL_TEMPLATE_SUFFIX"=>'.html', //默认模板文件后缀
+"TMPL_CACHFILE_SUFFIX"=>'.php', //默认模板缓存后缀
+"TMPL_PARSE_STRING" => '', //模板引擎要自动替换的字符串，必须是数组形式。例如 array('__MYPATH__'=>Lib_PATH,...) 
+"TMPL_ACTION_ERROR" =>'Public:error', //错误跳转模板文件 
+"TMPL_ACTION_SUCCESS" =>'Public:success', //成功跳转模板文件 
+"TMPL_TRACE_FILE" =>THINK_PATH.'/Tpl/PageTrace.tpl.php', //页面Trace的模板文件 
+"TMPL_EXCEPTION_FILE" =>THINK_PATH.'/Tpl/ThinkException.tpl.php', //异常页面的模板文件 
+"TMPL_ENGINE_TYPE" => 'Think', //默认模板引擎 
+//以下设置仅对使用Think模板引擎有效 
+"TMPL_DENY_FUNC_LIST" =>'echo,exit', //模板引擎禁用函数 
+"TMPL_L_DELIM" =>'{', //模板引擎普通标签开始标记 
+"TMPL_R_DELIM" =>'}', //模板引擎普通标签结束标记 
+"TMPL_VAR_IDENTIFY" =>'array', //模板变量识别 留空自懂判断 array 数组 obj 对象 
+"TMPL_FILE_DEPR" =>'/', //模板文件MODULE_NAME不ACTION_NAME之间的分割符，只对项目分组部署有效 
+"TMPL_STRIP_SPACE" =>false, //是否去除模板文件里面癿html空格不换行 
+"TMPL_CACHE_ON" =>true, //默认开启模板编译缓存 false 的话每次都重新编译模板 
+"TMPL_CACHE_TIME" => -1, //模板缓存有效期 -1 永久 单位为秒 
+"TAGLIB_BEGIN" =>'<', //标签库标签开始标记 
+"TAGLIB_END" =>'>', //标签库标签结束标记 
+"TAGLIB_BUILD_IN" =>'cx', //内置标签库名称 可以添加自己的标签库，多个使用逗号分隔 
+"TAGLIB_PRE_LOAD" =>'', //预先加载的标签库，无需在每个模板使用 taglib标签加载， 多个使用逗号分隔
+"TAG_NESTED_LEVEL" =>3 //标签嵌套级别 
+
+//---------------------------------------------------------------------------------------
+//应用配置
+//---------------------------------------------------------------------------------------
+"APP_GROUP_DEPR" =>'.', //模块分组之间的分割符
+"APP_GROUP_LIST" =>'', //项目模块分组列表，多个组之间用逗号分隑，例如 'Admin,Home'
+"APP_CONFIG_LIST" =>array('taglibs','routes','tags','htmls','modules','actions'), //项目扩展配置文件列表
+"APP_DOMAIN_DEPLOY" =>false, //是否使用独立域名部署项目，只有在项目目录本身就是网站根目录的情况下开启 
+
+//---------------------------------------------------------------------------------------
+//URL配置
+//---------------------------------------------------------------------------------------
+"URL_MODEL" =>1, //URL模式： 0 普通模式 1 PATHINFO 2 REWRITE 3 兼容模式 当URL_DISPATCH_ON开启后有效 
+//默认为PATHINFO 模式，提供最好的用户体验和 SEO支持 
+
+"URL_PATHINFO_MODEL" =>2, //PATHINFO 模式，默认采用智能模式 
+//普通模式1 参数没有顺序/m/module/a/action/id/1 
+//智能模式2 制动识别模块和操作/module/action/id/1/ 或者 /module,action,id,1/...
+
+"URL_PATHINFO_DEPR" =>'/', //PATHINFO参数之间分割号 
+"URL_ROUTER_ON" =>true, //是否开启URL路由 
+"URL_HTML_SUFFIX" =>'.av', //伪静态后缀设置，例如 .shtml 
+"URL_CASE_INSENSITIVE" =>false, //URL是否不区分大小写，默认区分大小写
+
+
+//---------------------------------------------------------------------------------------
+//日志配置
+//---------------------------------------------------------------------------------------
+"LOG_RECORD" =>false, //是否记录网站日志，默认不记录日志 
+"LOG_RECORD_LEVEL" =>array('EMERG','ALERT','CRIT','ERR'), //允许记录的日志级别
+"LOG_FILE_SIZE" =>2097152, //日志文件大小限制， 针对文件方式的日志记录，超过会自动生成备份文件 
+
+
+//---------------------------------------------------------------------------------------
+//错误配置
+//---------------------------------------------------------------------------------------
+"ERROR_MESSAGE" =>'您浏览的页面暂时发生了错误！请稍后再试～', //错误显示信息 非调试模式有效 
+"ERROR_PAGE" =>'', //错误定向页面，需要填写完整的URL地址 
+
+
+//---------------------------------------------------------------------------------------
+//数据库配置
+//---------------------------------------------------------------------------------------
+"DB_CHARSET" =>'utf8', //数据库编码，默认采用 utf8 
+"DB_DEPLOY_TYPE" =>0, //数据库部署方式 ：0 集中式（单一朋务器） 1 分布式（主从朋务器） 
+"DB_RW_SEPARATE" =>false, //数据库读写是否分离，分布式数据库方式下面有效 
+"DB_FIELDS_CACHE" =>true, //开启数据表字段缓存 
+"DB_TYPE" =>'mysql', //数据库类型 
+"DB_HOST" =>'localhost', //数据库服务器地址
+"DB_NAME" =>'', //数据库名称 
+"DB_USER" =>'root', //数据库用户名 
+"DB_PWD" =>'', //数据库 密码 
+"DB_PORT" =>3306, //数据库使用的端口 
+"DB_PREFIX" =>'think_', //数据库癿表前缀 
+"DB_SUFFIX" =>'', //数据库的表后缀 
+"DB_FIELDTYPE_CHECK" =>false, //是否迕行字段类型检查 
+
+
+//---------------------------------------------------------------------------------------
+//静态缓存配置
+//---------------------------------------------------------------------------------------
+"HTML_FILE_SUFFIX" =>'.shtml', //默认静态文件后缀 
+"HTML_CACHE_ON" =>false, //默认关闭静态缓存 
+"HTML_CACHE_TIME" =>60, //静态缓存有效期 
+"HTML_READ_TYPE" =>1, //静态缓存读取方式 0 readfile 1 redirect 
+
+
+//---------------------------------------------------------------------------------------
+//数据缓存配置
+//---------------------------------------------------------------------------------------
+"DATA_CACHE_TYPE" =>'File', //数据缓存类型 支持 File Db Apc Memcache Shmop Sqlite Xcache Apachenote Eaccelerator 
+"DATA_CACHE_PATH" =>TEMP_PATH //缓存路径设置 (仅对File方式缓存有效) 
+"DATA_CACHE_TIME" =>-1, //数据缓存有效期 
+"DATA_CACHE_COMPRESS" =>false, //数据缓存是否压缩缓存 
+"DATA_CACHE_CHECK" =>false, //数据缓存是否校验缓存 
+"DATA_CACHE_SUBDIR" =>false, //使用子目录缓存 (自动根据缓存标识的哈希创建子目录) 
+"DATA_PATH_LEVEL" =>1, //子目录缓存级别
+
+
+//---------------------------------------------------------------------------------------
+//运行时间配置
+//---------------------------------------------------------------------------------------
+"SHOW_RUN_TIME" =>false, //运行时间显示 
+"SHOW_ADV_TIME" =>false, //显示详细的运行旪间，SHOW_RUN_TIME开启后有效 
+"SHOW_DB_TIMES" =>false, //显示数据库读写次数 
+"SHOW_CACHE_TIMES" =>false, //显示缓存读写次数 
+"SHOW_USE_MEM" =>false, //显示内存开销 
+"SHOW_PAGE_TRACE" =>false, //显示页面Trace信息 由 Trace文件定义和Action操作赋值 
+"SHOW_ERROR_MSG" =>true, //发生错误时显示错误信息 
+
+
+//---------------------------------------------------------------------------------------
+//Cookie设置
+//---------------------------------------------------------------------------------------
+"COOKIE_EXPIRE" =>3600, //Coodie有效期 
+"COOKIE_DOMAIN" =>'', //Cookie有效域名 
+"COOKIE_PATH" =>'/', //Cookie路径 
+"COOKIE_PREFIX" =>'', //Cookie前缀 避免冲突 
+
+//---------------------------------------------------------------------------------------
+//令牌验证配置
+//---------------------------------------------------------------------------------------
+"TOKEN_ON" =>true, //是否开启令牌验证 
+"TOKEN_NAME" =>'__hash__', //令牌验证的表单隐藏字段名称 
+"TOKEN_TYPE" =>'md5', //令牌验证哈希规则 
+
+
+//---------------------------------------------------------------------------------------
+//默认值配置
+//---------------------------------------------------------------------------------------
+"DEFAULT_APP" =>'@', //默认模型类所在的项目名称 @ 表示当前项目 
+"DEFAULT_GROUP" =>'Home', //默认分组 
+"DEFAULT_MODULE" =>'Index', //默认模块名称 
+"DEFAULT_ACTION" =>'index', //默认操作名称 
+"DEFAULT_THEME" =>'default',//默认模板主题名称 
+"DEFAULT_LANG" =>'zh-cn', //默认语言 
+"DEFAULT_TIMEZONE" =>'PRC', //默认时区 
+"DEFAULT_AJAX_RETURN" =>'JSON', //AJAX 数据返回格式 JSON XML ... 
+"DEFAULT_CHARSET" =>'utf-8', //默认页面输出编码
+
+
+//---------------------------------------------------------------------------------------
+//系统变量配置
+//---------------------------------------------------------------------------------------
+//下面这些变量配置主要用于URL的特殊传值，在项目中的URL和表单参数尽量不要与之冲突，否则容易造成错误。 
+"VAR_PATHINFO" =>'s', //PATHINFO 兼容模式获取变量例如 ?s=/module/action/id/1 
+"VAR_GROUP" =>'g', //默认分组发量 
+"VAR_ROUTE" =>'r', //默认路由获取变量 
+"VAR_MODULE" =>'m', //默认模块获取变量 
+"VAR_ACTION" =>'a', //默认操作获取变量 
+"VAR_PAGE" =>'p', //默认分页跳转变量 
+"VAR_TEMPLATE" =>'t', //默认模板切换变量
+"VAR_LANGUAGE" =>'l', //默认语言切换变量 
+"VAR_AJAX_SUBMIT" =>'ajax', //默认的AJAX提交变量 
+
+//---------------------------------------------------------------------------------------
+//语言和时区
+//---------------------------------------------------------------------------------------
+"LANG_SWITCH_ON" => false //是否开启多语言功能，默认关闭 
+
+);
+?>
+

@@ -1,0 +1,675 @@
+一、什么是smarty?
+smarty是一个使用PHP写出来的模板PHP模板引擎，它提供了逻辑与外在内容的分离，简单的讲，目的就是要使用PHP程序员同美工分离,使用的程序员改变程序的逻辑内容不会影响到美工的页面设计，美工重新修改页面不会影响到程序的程序逻辑，这在多人合作的项目中显的尤为重要。
+
+二、smarty优点：
+1. 速度：采用smarty编写的程序可以获得最大速度的提高，这一点是相对于其它的模板引擎技术而言的。
+
+2. 编译型：采用smarty编写的程序在运行时要编译成一个非模板技术的PHP文件，这个文件采用了PHP与HTML混合的方式，在下一次访问模板时将WEB请求直接转换到这个文件中，而不再进行模板重新编译（在源程序没有改动的情况下）
+
+3. 缓存技术：smarty选用的一种缓存技术，它可以将用户最终看到的HTML文件缓存成一个静态的HTML页，当设定smarty的cache属性为true时，在smarty设定的cachetime期内将用户的WEB请求直接转换到这个静态的HTML文件中来，这相当于调用一个静态的HTML文件。
+
+4. 插件技术：smarty可以自定义插件。插件实际就是一些自定义的函数。
+
+5. 模板中可以使用if/elseif/else/endif。在模板文件使用判断语句可以非常方便的对模板进行格式重排。
+
+
+三、不适合使用smarty的地方：
+
+1. 需要实时更新的内容。例如像股票显示，它需要经常对数据进行更新，这类型的程序使用smarty会使模板处理速度变慢。
+
+2. 小项目。小项目因为项目简单而美工与程序员兼于一人的项目，使用smarty会丧失php开发迅速的优点。
+
+四.smarty工作流程
+在逻辑层 打开smarty--> smarty 引擎开始工作---->smarty 调用模板----->smarty 判断该模板是否是第一次编译， 如果是第一次编译，smarty 将模板编译成php 文件 ，如果已经被编译，smarty 判断该模板是否发生变化，如果没有发生变化，smarty 不在编译该模板，而是直接执行已经编译后的php 文件，如果发生了变化，smarty 将重新编译。
+
+五、常见的其他模板引擎：
+dwoo
+phptemplate
+smarty2.x  smarty3.x
+template
+disczu!模板引擎
+dedecms模板引擎
+thinkphp模板引擎
+phpcms模板引擎
+
+安装smarty的环境：php版本4.06以上版本。
+安装smarty方法非常简单，从http://samrty.php.net中下载smarty.t...将LIB中所有文件
+拷入comm目录,完成基本安装.
+
+项目目录结构
+myapp
+---admin  后台目录
+-----index.php 后台入口文件
+---api    接口目录
+---config  配置文件目录
+---editor  编辑器目录
+---runtime  允许编译目录
+-----logs
+-----caches
+-----template_c
+---common
+------smarty   smarty引擎
+------jpgraph  图形框架引擎
+---static   网站静态挂件
+-----css
+-----js
+-----images
+---tpl    主图目录
+----themes   主题目录
+------admin   后端模板目录
+------home    前端模板目录
+---uploads  上传文件目录
+---index.php  网站入口文件
+---smarty.ini.php  smarty配置文件
+---mysql.ini.php  数据库配置文件
+
+
+六、配置：
+<?php
+//加载smarty 模板引擎
+ require_once('./smarty/Smarty.class.php');
+ //实例化smarty 对象
+ $smarty=new Smarty();
+ //配置参数
+ $smarty->template_dir="./tpl/themes/";//配置模板目录
+ $smarty->compile_dir='./runtime/template_c';//编译目录
+ $smarty->cache_dir="./runtime/caches/";//缓存目录
+ $smarty->config_dir="./static/config/";//模板配置文件目录
+ $smarty->left_delimiter='<{'; //配置左边界符
+ $smarty->right_delimiter='}>';//配置右边界符
+ $smarty->compile_check=true;//设置每次访问都检查模板文件
+?>
+
+七、使用smarty
+ 1. assign 与 display
+helloword.php
+<?php
+require_once './Smarty.ini.php';
+$title="hello word!";
+$message="smarty 我来了!";
+$smarty->assign('title',$title);
+$smarty->assign('msg',$message);
+$smarty->display('helloword.html');
+?>
+helloword.html
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title><{$title}></title>
+</head>
+<body>
+  <div>
+     <b><{$msg}></b>
+  </div>
+</body>
+</html>
+
+2.注释与文件加载
+<{* 这是注释 *}>
+{include file="模板的文件名"}
+
+<{include_php file="D:/AppServ/www/2013-2-27/login.php"}>  加载php
+news.php
+<?php
+require_once './Smarty.ini.php';
+$title="我的新闻网站";
+$smarty->assign('title',$title);
+$smarty->assign('content','这是news 内容');
+$smarty->display('news.html')
+?> 
+news.html
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title><{$title}></title>
+<link rel="stylesheet" href="./static/css/main.css" />
+</head>
+<body>
+<div class="warp">
+  <{* 加载头部文件 *}>
+ <{include file="header.html"}>
+<div class="content">
+  <{$content}>
+</div>
+  <{* 加载尾部文件 *}>
+ <{include file="footer.html"}>
+</div>
+</body>
+</html>
+
+3.fetch() 不输出页面返回字符串,通常用于页面静态化或者同一页面动态显示
+<?php
+require_once './Smarty.ini.php';
+$title="我的新闻网站";
+$smarty->assign('title',$title);
+//判断 get参数 a是否等于register,如果等于那么就加载注册页面并返回，最后一变量显示在主页面，实现替换
+if(isset($_GET['a']) && $_GET['a']=='register'){
+   $str=$smarty->fetch('register.html'); 
+}
+$smarty->assign('left_one_content', $str);
+$smarty->display('news.html');
+?>
+
+register.html
+<div>
+  这是注册
+</div>
+
+news.html 内容部分
+<div class="content">
+   <div class="left">
+         <{$left_one_content}>
+  </div>
+   <div class="right">
+   </div>
+ 
+</div>
+
+4.config 配置文件
+ 配置config目录
+   $smarty->config_dir="./config/";//模板配置文件目录
+ smarty配置文件的命名规则：
+    xxxx.conf
+ 在视图中加载配置文件
+  <{config_load file="global.conf" section="headerinfo"}>
+ 配置文件格式：一般建议使用数组方式配置
+ [数组名]
+    配置项="值"
+
+
+#global 全局模板配置
+
+title="我的网站"
+basePath="http://127.0.0.1/2013-2-27/"
+
+[headerinfo]
+register="注册"
+loging="登陆"
+about="关于我们"
+contat="联系我们"
+
+[footerinfo]
+copyright="<b>CopyRight(C) By XiaoJun, Li 2004<b>"
+
+在视图中使用配置 <{#配置项#}>
+header.html 代码片段
+<{config_load file="global.conf" section="headerinfo"}>
+<div class="header">
+<div class="menuInfo">
+ <ul  class="menu">
+   <li><a href="http://127.0.0.1/2013-2-27/news.php?a=register"><{#register#}></a></li>
+   <li><a href="http://127.0.0.1/2013-2-27/news.php?a=login"><{#login#}></a></li>
+   <li><a href="http://127.0.0.1/2013-2-27/news.php?a=loginOut"><{#loginOut#}></a></li>
+ </ul>
+</div>
+<div class="headinfo"></div>
+<div class="navInfo">
+<ul class="menu">
+    <li><a href="http://127.0.0.1/2013-2-27/news.php?a=home">首页</a></li>
+    <li><a href="http://127.0.0.1/2013-2-27/news.php?a=about"><{#about#}></a></li>
+    <li><a href="http://127.0.0.1/2013-2-27/news.php?a=contat"><{#product#}></a></li>
+    <li><a href="http://127.0.0.1/2013-2-27/news.php?a=contat"><{#company#}></a></li>
+    <li><a href="http://127.0.0.1/2013-2-27/news.php?a=contat"><{#job#}></a></li>
+    <li><a href="http://127.0.0.1/2013-2-27/news.php?a=contat"><{#contat#}></a></li>
+</ul>
+</div>
+</div>
+
+5.变量调节器：
+  使用规则： <{$变量|调节器关键字:"值"}>
+首字大写: capitalize
+$smarty->assign('str',"my school in Eduask-cd");
+<{$str|capitalize}>
+
+计算字符空格：count_characters
+$smarty->assign('str2', 'Cold Wave Linked to Temperatures.');
+$smarty->assign('str3', '这是几个汉字？');
+ <{$str2|count_characters:true}>  
+ <{$str3|count_characters}> 注意： 一个汉字字utf-8文件里面占3个字符
+
+值连接到给定的变量后面. cat
+$smarty->assign('str4', '￥99.8');
+不要998, 只要<{$str4|cat:"元,要不了命，也去不了香港"}>
+
+时间格式化：date_format
+date_default_timezone_set("PRC");
+$smarty->assign('str5', time());
+当前服务器时间为：<{$str5|date_format:"%Y 年 %m 月  %d 日 %T"}>
+
+空变量设置一个默认值： default
+$smarty->assign('str6',"杨鹏");
+<{$str6|default:'<a href="#">注册</a>'}>
+
+
+每行缩进字符串，默认是4个字符:indent 注意：在HTML中,则需要使用&nbsp;(空格)来代替缩进，否则没有效果
+$smarty->assign('str7',"啃爹的星二代：李天一");
+<div style="border: 1px solid; width: 600px; height: 100px;">
+    <b>新闻标题:</b> <br>
+    <span><a href="" style="text-decoration: none;"><{$str7|indent:5:"&nbsp;"}></a></span><br>
+</div>
+$smarty->assign('str9', 'tmd, ye ye ye ');
+$smarty->assign('str10','29');
+
+替换：replace
+$smarty->assign('str9', 'tmd, ye ye ye ');
+<{$str9|replace:"tmd":"和谐社会"}>
+
+字符串格式化输出：
+$smarty->assign('str10','29');
+商品价格：<{$str10|string_format:"%.2f"}>
+
+截取:truncate
+$smarty->assign('str11','党中央国务院要求房价下跌,那是不可能的。元芳你真么看?');
+<a href="" style="text-decoration: none;" title="<{$str11}>">  {  $str11|truncate:24:".........":true|indent:5:"&nbsp;"}> //多个调节器使用
+</a>
+
+多个调节器使用|分隔
+
+
+6.使用模板内定函数
+ 在 模板中申明变量
+  <{assign var="变量名" value="变量值"}>
+
+<{assign  var="name" value="test123"}>
+<{$name}>
+
+ 创建checkbox
+  $smarty->assign('CheckName', 
+        array(1001 => '读书',1002 => '音乐',1003 => '电影',1004=>'旅游',1005=>'逛街'));
+        $smarty->assign('IsChecked', 1001);
+//将输出3个多选框
+ <{html_checkboxes name="mytest" options=$CheckName checked=$IsChecked separator="<br />"}>
+
+创建radio
+  $smarty->assign('RadioName', array('f' => '女', 'm' => '男', 'n' => '保密'));
+  $smarty->assign('radioIsChecked','n');
+将输出3个单选框
+ <{html_radios name="u_sex" options=$RadioName checked=$radioIsChecked separator="&nbsp;"}>  
+
+创建显示一个月,日, 年选择框:
+<{html_select_date}>
+ 使用参数
+<{html_select_date  start_year=-5 end_year=+5 month_format="%m"}>
+
+创建图片
+{html_image file="pumpkin.jpg"}
+
+创建下拉选择框
+ $smarty->assign('city_options', 
+	array('0'=>'请选择城市','cd' => '成都','gx'=> '高新','qy'=> '青羊','wh'=> '武侯')
+      );
+ $smarty->assign('default_option', '0');
+
+<select name=customer_id>
+              <{html_options options=$city_options selected=$default_option}>
+</select>
+
+内容捕获：通常应用于加载某个部分数据但是需要满足一定条件才输出
+   <{*加载某个html 页面 判断当前get参数如果a=login 那么就显示 否则就不显示*}>
+<{capture name=login}>
+       <{include file="login.html"}>  <{* 加载登陆html 页面*}>
+<{/capture}>
+
+ <{if $smarty.get.a eq 'login'}>
+       <{if $smarty.capture.login ne ""}>  <{* ne 不等*}>
+	     <{$smarty.capture.login}>
+       <{/if}>
+<{/if}>
+
+加载php 文件
+login.php
+<?php
+require_once 'D:/AppServ/www/2013-2-27/Smarty.ini.php';
+$arr = array(1000, 1001, 1002);
+$this->assign('myarray',$arr);
+$this->display("login.html");
+?>
+
+login.html
+<ul>
+<{foreach from=$myarray item=foo}>
+    <li><{$foo}></li>
+<{/foreach}>
+</ul>
+
+在主页面 如果用户点击的是 login 那么就加载login.php
+main.php
+<{capture name=login}>
+          <{include_php file="D:/AppServ/www/2013-2-27/login.php"}>  <{* 加载php代码*}>
+            <{/capture}>
+         <{if $smarty.get.a eq 'login'}>
+          <{if $smarty.capture.login ne ""}> 
+	     <{$smarty.capture.login}>
+         <{/if}>
+       <{/if}>
+
+7. 循环与逻辑判断 foreach section if   elseif 
+
+判断：
+{if $name eq "Fred"}
+	Welcome Sir.
+{elseif $name eq "Wilma"}
+	Welcome Ma'am.
+{else}
+	Welcome, whatever you are.
+{/if}
+
+常用条件判断符号：
+ ==、!=、>、<、 <=、 >=、=== 、 ！、 %
+ eg  ne  gt  lt gte lte         not  mod  
+
+
+循环：foreache  foreachelse
+foreach 是除 section 之外处理循环的另一种方案(根据不同需要选择不同的方案).
+foreach 用于处理简单数组(数组中的元素的类型一致)，它的格式比 section 简单许多，缺点是只能处理简单数组.
+foreach 必须和 /foreach 成对使用，且必须指定 from 和 item 属性.
+name 属性可以任意指定(字母、数字和下划线的组合).
+foreach 可以嵌套，但必须保证嵌套中的 foreach 名称唯一.
+from 属性(通常是数组)决定循环的次数.
+foreachelse 语句在 from 变量没有值的时候被执行.
+
+语法格式：
+<{foreach key=循环变量key item=循环变量 from=数组}>
+     ...........
+<{foreachelse}>
+    ............
+<{/foreach}>
+
+实例：
+php代码:索引数组
+<?php
+$arr = array(1000, 1001, 1002);
+$smarty->assign('myArray', $arr);
+?> 
+
+<ul>
+<{foreach from=$myArray item=foo}>
+    <li><{$foo}></li>
+<{/foreach}>
+</ul>
+
+<?php
+$arr = array(9 => 'Tennis', 3 => 'Swimming', 8 => 'Coding');
+$smarty->assign('myArray', $arr);
+?>
+<{* 类似于 php 的foreach 分别得到 key 与 value *}>
+<ul>
+<{foreach from=$myArray key=k item=v}>
+   <li><{$k}>:<{$v}></li>
+<{/foreach}>
+</ul>
+
+二维关联数组：
+<?php
+$items_list = array(
+23 => array('no' => 2456, 'label' => 'Salad'),
+96 => array('no' => 4889, 'label' => 'Cream')
+);
+$smarty->assign('items', $items_list);
+?> 
+
+<ul>
+<{foreach from=$items key=myId item=i}> <{* key=myId 是键值 item=i是二维数组  关联数组访问 item.filed  *}>
+  <li><a href="item.php?id=<{$myId}>"><{$i.no}>:<{$i.label}></li>
+<{/foreach}>
+</ul>
+
+foreach 嵌套
+?php
+ $smarty->assign('contacts', array( 
+				array('phone' => '1','fax' => '2', 'cell' => '3'),
+				array('phone' => '555-4444', 'fax' => '555-3333','cell' => '760-1234')
+				)
+);
+?>
+
+<{foreach name=outer  from=$contacts item=contact}>
+  <hr />
+  <{foreach  from=$contact  key=key item=item }>
+    <{$key}>:<{$item}><br />
+  <{/foreach}>
+<{/foreach}>
+
+foreach的属性：通常用于在循环中判断
+<{$smarty.foreach.foeachName.index}>  从0开始每循环一次自动加1
+<{$smarty.foreach.foeachName.iteration}>  从1开始每循环一次自动加1
+<{$smarty.foreach.foeachName.first}>   如果是第一次循环返回 true
+<{$smarty.foreach.foeachName.last}>      如果是最后一次输出返回 true
+<{$smarty.foreach.foeachName.total}>     显示循环次数
+
+举例：
+{* 每五行输出一次头部区块 th *}
+<table>
+{foreach from=$items key=myId item=i name=foo}
+  {if $smarty.foreach.foo.index % 5 == 0}
+     <tr><th>Title</th></tr>
+  {/if}
+  <tr><td>{$i.label}</td></tr>
+{/foreach}
+</table>
+
+循环 section 
+section的产生是为解决foreach的不足的，与foreach一样，它用于设计模板内的循环块。
+ section 标签必须成对出现，（如：{section}{/section}）
+ section 必须设置 name 和 loop 属性.名称可以是包含字母、数字和下划线的任意组合.。
+ section 可以嵌套但必须保证嵌套的 name 唯一， 
+ section 变量 loop (通常是数组)决定循环执行的次数
+ sectionelse 当 loop 变量无值时被执行。
+
+语法：
+<{section name = name loop = $varName[, start = $start, step = $step, max = $max, show = true]}>
+  .............
+<{sectionelse}>
+ ...............
+{/section}
+
+name: section的名称，不用加$
+$loop: 要循环的变量，在程序中要使用assign对这个变量进行操作。
+$start: 开始循环的下标，循环下标默认由0开始
+$step: 每次循环时下标的增数
+$max: 最大循环下标
+$show: boolean类型，决定是否对这个块进行显示，默认为true 
+
+smarty模版中section的各个变量说明：
+index:用于显示当前循环的索引，从0开始（如果指定了start属性，那么由该值开始），每次加1（如果指定了step属性，那么由该值决定）.如果没有指定step和start属性，此值的作用和iteration类似，只不过从0开始而已。
+index_prev:用于显示上一个循环索引值。循环开始时，此值为-1。
+index_next:用于显示下一个循环索引值。循环执行到最后一次时，此值仍然比当前索引值大1（如果指定了step，取决于此值）
+iteration:用于显示循环的次数。iteration不像index属性受start、step和max属性的影响。
+first:如果当前循环第一次执行，first被设置为true。
+last:如果当前循环执行到最后一次，last被设置为true
+total:用于显示循环执行总的次数。可以在循环中或执行结束后调用此属性。
+调用方式：
+ <{$smarty.section.sectionName.index}>
+
+实例：
+索引数组
+    $week = array('Monday','Tuesday','Wednesday','Thursday');   
+    $smarty->assign('week',$week); 
+
+   <{section name = faith loop = $week}>   
+        week => {$week[faith]}<br/>   
+    <{/section}>  
+
+关联数组
+ $arr = array(   
+                   array('key' => 1,'week' => 'Monday'),   
+                   array('key' => 2,'week' => 'Tuesday'),   
+                   array('key' => 3,'week' => 'Wednesday')   
+              );  
+$smarty->assign('week',$arr ); 
+
+<{section name = faith loop = $week}>   
+        {if $smarty.section.faith.first}   
+            <table>   
+                <th>key</th>   
+                <th>week</th>   
+        {/if}   
+                <tr>   
+                    <td>{$week[faith].key}</td>   
+                    <td>{$week[faith].week}</td>   
+                </tr>   
+        {if $smarty.section.faith.last}   
+            </table>   
+        {/if}   
+    {sectionelse}   
+        No week show.   
+    {/section}  
+
+8、smarty缓存
+实现缓存需要：
+1.需要开启缓存
+2.指定一下缓存的时间 更新一次 然后再进行缓存
+3.指定缓存文件保存位置
+
+cache配置：
+   $smarty->cache_dir = "/caches/";  //缓存目录   
+   $smarty->caching = true;  //开启缓存,为flase的时侯缓存无效   
+   $smarty->cache_lifetime = 6000;  //缓存时间
+
+全局缓存：
+  $smarty->display('cache.tpl');
+
+一个模板只能有一个缓存文件，如果一个模板的多个文章，则需要每个文章有一个缓存
+通常缓存id是:md5(文件名.缓存id) 如果需要,可使用gzcompress和gzuncompress来压缩和解压
+第二个参数 , 每变化一个值就会有一个不同的缓存
+  $tpl->display('test.tpl',$cacheid);
+
+  比如： 我们需要缓存第20条新闻，使用的模板是news.html
+  $tpl->display('news.html',md5(news.20.$_SERVER['RIQUEST_URI'])); 
+  假如url: http://127.0.0.1/news/news.php?news_id=20
+
+如果有缓存了就不要执行连接数据库和到数据库中操作数据表了
+is_cached 是否被缓存
+if( ! $smarty->is_cached("news.html",$id)) { 
+     //读取数据 循环 赋值
+}
+
+cache清除
+$smarty->clear_all_cache(); //清除所有缓存
+$smarty->clear_cache('index.htm'); //清除index.tpl的缓存
+$smarty->clear_cache('index.htm',cache_id); //清除指定id的缓存 
+
+
+
+使用insert 函数 ：以"insert_"开头的函数在PHP中是不缓存的,这样就可以在实现某些内容的实时更新
+
+比如我们需要缓存id=1的同学的信息，但是当前的时间不缓存
+<?php
+//实现实时更新时间
+function insert_shijian(){
+ return date("y-m-d H:i:s"); 
+}
+
+$id = $_GET['id'];
+$value = array('id'=>1,'姓名' => 'Eduask','性别' => '男','籍贯' => '四川');
+$smarty->assign("mess",$value);
+$smarty->display('cache.html',$id);
+//$smarty->clear_cache('cache.htm',$id);//删除cache.htm页面的缓存和$id生成的缓存
+?>
+在模板中调用
+<{foreach from = $mess item =item}>
+<{$item}><br>
+<{foreachelse}>
+<{/foreach}>
+{insert name='shijian'} <!-- 引入实时更新的时间 -->
+
+
+php代码:
+自定义函数缓存：
+function smarty_block_cacheless($param,$content,$smarty){
+  return $content;
+}
+$smarty->register_block('cacheless', 'smarty_block_cacheless', false); //第三参数false表示该区域不被缓存 
+
+ 模板代码:
+<div>
+   已经缓存的:<{$smarty.now}><br>
+<{cacheless}>
+没有缓存的:<{$smarty.now}>
+<{/cacheless}>
+    
+</div>
+更多与缓存相关的函数、块block，不过掌握这些，Smarty缓存就可以运用自如了。
+
+smarty 常用的预定义变量：
+<{$smarty.get.page}>
+<{$smarty.post.page}>
+<{$smarty.cookies.username}>
+<{$smarty.server.SERVER_NAME}>
+<{$smarty.env.PATH}>
+<{$smarty.session.id}>
+
+smarty 插件技术:(高级部分选修)
+
+1.插件是如何工作的。
+  插件总在需要的时候被装载。只有在模板脚本里调用的特定修饰、函数、资源插件等会被装载。此外，即便在同一个请求中有几个不同的Smarty实体运行，每个插件也只被装载一次
+ 插件目录是包含一条路径信息的字符串或包含多条路径信息的字符串数组。安装插件的时候，将插件置于其中plugins目录下，Smarty会自动识别使用。
+
+2.命名约定：
+  插件文件和函数必须遵循特定的命名约定以便Smarty识别。
+ 件文件必须命名如下： 
+   type.name.php
+其中type是如下插件中的一种： 
+function
+modifier 
+block 
+compiler 
+prefilter 
+postfilter 
+outputfilter 
+resource 
+insert 
+
+
+name为仅包含字母、数字和下划线的合法标志符。
+
+插件内的函数应遵循如下命名约定： 
+function smarty_type_name(){
+
+}
+如果指定的插件文件不存在或命名不合规范，Smarty会输出相应的错误信息。
+
+3.编写插件
+function.get_url.php
+
+<?php
+function smarty_function_get_url($params, &$smarty){
+     $host=$_SERVER['SERVER_NAME'];
+     $port=$_SERVER['SERVER_PORT'];
+     $script=$_SERVER['REQUEST_URI'];
+     $http=($port==80)?'http://':"https://";
+     $url=$http.$host.':'.$port.$script;
+     return $url;
+}
+?>
+在模板中调用用自定义插件
+<{get_url}>  //输出：http://127.0.0.1:80/2013-2-27/test.php
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+ 
+
+  

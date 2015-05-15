@@ -1,0 +1,76 @@
+字符处理：
+  encodeURI();  将中文等双字节字符转换成16进制
+  decodeURI()； 将16进制编码进行解码
+
+
+js 获取当前url路径中 ?后面的内容。
+
+ window.location.search； 
+时间对象： 
+
+date.getTime(); 返回时间戳 毫秒单位
+
+Math.floor(); 向下取整
+
+       //产生倒计时的函数
+       /**
+       *参数说明：
+          y年m月d日h小时i分钟s秒e元素
+       *
+       */
+        function createResort(y,m,d,h,i,s,e){
+             //参数验证
+                 if(y!=''&& m!='' && d!='' && h!='' && i!='' && s!='' && e!=''){
+                     //获取当前时间
+                     var start=new Date().getTime();
+                    //获取结束时间
+                     var end=new Date(y,m-1,d,h,i,s).getTime();
+                    //计算差 (秒)
+                     var lastTime=parseInt((end-start)/1000);
+                     // 1天=60*60*24=86400秒
+                     var day=Math.floor(lastTime/86400);
+                     //计算小时  把已经产生的天数 所消耗的秒 减去  1小时=60*60=3600
+                     var hours=Math.floor((lastTime-day*86400)/3600);
+                     //计算分钟  1分钟=60
+                     var minutes=Math.floor((lastTime-day*86400-hours*3600)/60);
+                     //计算秒  
+                     var seconds=Math.floor(lastTime-day*86400-hours*3600-minutes*60);
+                     //显示：
+                     var _element=document.getElementById(e);
+                     var str='<font color="red">'+day+'</font>天<font color="red">'+hours+'</font>时<font color="red">'+minutes+'</font>分<font color="red">'+seconds+'</font>秒';
+                     if(lastTime<0){
+                        //str='时间到！';
+                        str='00天00小时00分00秒';
+                        //clearInterval(qingkong);
+                     }
+                     
+                     _element.innerHTML=str;
+                   
+              }
+        }
+        
+        /**
+          运行倒计时函数
+        */
+        function runResort(){
+          //要显示的位置id！sj
+            var sj=new Array('showTime','showTime1','showTime2','showTime3','showTime4','showTime5','showTime6','showTime7','showTime8','showTime9');
+            createResort(2013,1,24,16,01,14,sj[0]);
+            createResort(2013,1,22,15,56,54,sj[1]);
+            createResort(2013,1,29,15,56,54,sj[2]);
+            createResort(2013,1,25,16,01,15,sj[3]);
+            createResort(2013,1,26,15,56,57,sj[4]);
+            createResort(2013,1,27,16,01,13,sj[5]);
+            createResort(2013,1,28,15,56,55,sj[6]);
+            createResort(2013,1,29,16,01,11,sj[7]);
+            createResort(2013,1,30,15,56,58,sj[8]);
+            createResort(2013,3,22,15,56,50,sj[9]);
+           }
+       //倒计时 运行定时器
+       setInterval(runResort,1000);
+
+倒计时的完成
+
+<script>
+setInterval("sj.innerHTML=new Date().toLocaleString()+' 星期'+'日一二三四五六'.charAt(new Date().getDay());",1000);
+</script>

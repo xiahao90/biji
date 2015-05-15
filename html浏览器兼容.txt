@@ -1,0 +1,186 @@
+html:
+
+版本：
+
+html4:<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+html5：
+
+ <!DOCTYPE >
+  <html>
+
+------------
+标签： 不区分大小写
+
+html5 提供非常多的js接口 
+
+
+
+xhtml：基于xml的html   相对于html 来讲 语法更加严格： 严格区分大小写 ;  xhtml 所有标签都必须小写  属性小写  必须有结束符
+
+ <div>
+
+ </div>
+
+  <DIV></DIV>
+ <input  />
+
+
+xml：结构化语言  ：语法非常严格： 严格区分大小写  所有的标签必须成对出现  后缀名是 .xml
+
+html结构：
+
+html标签：
+
+html标签属性:  
+
+style: css 属性
+
+
+css:层叠样式表
+
+id  class  元素
+
+#   .       元素名
+
+<link rel="stylelsheet"  type="text/css" href="" />
+
+css 样式表权限 ：就近原则
+  元素的style 属性  权重最高  
+  当前页面head里面的样式表 权重次之
+  外部样式连接 权重最小
+
+
+css 样式:
+
+
+浏览器兼容性：
+
+浏览器厂商:
+
+w3c： ie9   遵循w3c 标准
+
+ie6 ie7 ie8 firfox opera
+
+
+w3c： 一个国际标准化组织  简称 万维网联盟
+
+hack: css的hack  
+
+1.手型解决方案：
+  在ie 里面  cursor:hand; 在w3c cursor:pointer
+
+2.div 内容溢出
+
+  overflow: auto | hidden | scroll 
+
+  overflow-x: 横向
+  
+  overflow-y: 纵向
+
+3.css属性浏览器兼容性 hacK 解决方案：
+先调试符合w3c标准样式兼容性：
+
+firfox  opera  ie8 ie7  ie6
+
+css hack:
+
+在css 属性前面 
+
+_ 表示该属性样式 ie6 识别 
+
+* 表示该属性样式 ie6 ie7 识别
+
+*+ 表示该属性样式 ie6 ie7 识别
+
+在 css 属性值后添加!important  表示优先应用哪个属性
+
+4.html依据浏览器显示不同的样式或html
+
+<!--[if IE]> 这里是ie 识别 <![endif]-->
+
+<!--[if !ie]><!--> 这里是非ie识别 <!--<![endif]-->
+
+<!--[if ie 6]> <link rel="stylesheet" href="2.css" type="text/css" /> <![endif]-->
+<!--[if ie 7]> <link rel="stylesheet" href="3.css" type="text/css" /> <![endif]-->
+<!--[if ie 8]> <link rel="stylesheet" href="1.css" type="text/css" /> <![endif]-->
+<!--[if !ie]><!--><link rel="stylesheet" href="4.css" type="text/css" /><!-- <![endif]-->
+
+4.显示和隐藏解决方案：
+
+display:block 显示
+display:none 不占位隐藏
+
+visibility: visible; 显示
+visibility: hidden;  占位隐藏
+
+
+5.定位解决方案：
+ position:absolute ; 表示把当前元素从文档流拖出 所以 需要重新定位 left right  top   bottom 
+当前元素对象在浏览器的x  y 等于0 
+  
+
+6position:relative  ; 表示把当前元素对象从正常的文档流中偏移到浏览器最左端；需要重新定位 left right  top   bottom  
+相对于当前的正常位置进行流动； 需要使用left right  top   bottom  重新定位
+
+
+7.div自动居中解决方案：
+  margin: 0 auto;
+
+8.将普通元素标签转换成块状元素对象
+    display: inline-block;  横向不换行
+   display: block;   具有换行
+
+
+--------------------
+做浏览器兼容性的技巧：
+-----------------------
+分析网页：整体布局
+切图：
+div+css：符合 w3c 标准  方便蜘蛛爬虫   方便网页重构：
+浏览器不兼容部分：对html css 样式的解释机制不同.
+产品克服浏览器的不兼容：  程序员调试浏览器的兼容性
+
+
+css hack:
+ _  *  *+  
+
+调试浏览器的兼容性的顺序： 符合w3c标准的css 样式   ----> 有异样的css 样式
+
+通过html 判断浏览器版本的语法：依据不同的浏览器依次调试
+
+-------------------------------------------------------
+
+<base href="http://127.0.0.1/fk/" />  设置当前网页的js css  image 脚本文件路径的 服务器根目录地址
+
+----------------------------------
+css 滤镜
+  页面整体颜色滤镜解决方案
+       body{filter:gray;}
+
+
+---------------------
+img的透明度的解决方案：
+ cursor: pointer;
+ filter:alpha(opacity=50,finishOpacity=50,style=1)
+
+
+
+---------------
+图文排版解决方案
+       img{float: left;}
+
+-------------------
+span 自动换行解决方案
+    span{word-break:keep-all;word-spacing: normal; display: block; float: left; }
+
+-----------------------
+css 层
+z-index: 表示该元素在body中的优先级《，告诉浏览器将谁显示在上面　将谁显示在下面，
+
+如果要是有层　z-index 那么必须使用 postion
+
+ img{z-index: -1; position: absolute; left: 100px;}
+ p{z-index: 2;}
+  
+----------------------

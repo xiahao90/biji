@@ -1,0 +1,232 @@
+01:14上午 2012-12-26--删除数据库
+	IF EXISTS (SELECT * 
+		   FROM   master..sysdatabases 
+		   WHERE  name = N'Alex')
+		DROP DATABASE Alex
+	GO
+--创建数据库
+
+        create database Alex
+	on
+	(
+	name='Alexdata',
+	filename='G:\华育国际\sql2000\Alex_data.mdf',
+	size=5,
+	maxsize=50,
+	filegrowth=5
+	)
+	log on
+	(
+	name='Alexdata_log',
+	filename='G:\华育国际\sql2000\Alex_data,log',
+	size=5,
+	maxsize=20,
+	filegrowth=5
+	)
+--建表
+	use Alex
+	GO
+	create table Student
+	(
+	Sid char (6) primary key,
+	Sname char(10) not null,
+	Sage int  not null check(Sage <'151' and Sage >'0'),
+	Ssex char (2) not null check(Ssex='男' or Ssex='女'),
+	Szhuanye char (20) not null
+	)
+	go
+	create table Course
+	(
+	Cid char (4) primary key,
+	Cname char (20) not null,
+	Cxueshi int not null check(Cxueshi>'0'),
+	Teacher char (10) not null
+	)
+	go
+	create table Score
+	(
+	Scid int primary key identity(1,1),
+	Sid char (6)not null
+	foreign key references Student(Sid),
+	Cid char (4) not null 
+	foreign key references Course(Cid),
+	Score int not null check(Score>'0' and Score <'101')
+	)
+	go
+	create table Users
+	(
+	Username char (10) primary key,
+	Passwords char (10) not null,
+	Powers int not null default'0'
+	)
+	go
+--删表
+	drop table Coeres --将表结构记录全删
+	
+	truncate table Coeres --删除记录 不易恢复
+	delete from Coeres（where） --删除记录 一条一条删 易恢复（条件）
+        go
+--添加表内容
+	insert into Student
+	(Sid,Sname,Sage,Ssex,Szhuanye)
+	values('100001','安在旭','18','男','英语软件')
+	insert into Users
+	values('赵朔','367521','0')
+
+	insert into Course
+	values('1001','计算机基础','64','高彩丽')
+
+	insert into Score
+	(Sid,Cid,Score)
+	values('100008','1001','89')
+	
+--查询
+        select * from Users
+--练习一  1、用update命令修改User表中’赵朔’的Power值为1
+	update Users set Powers='1' where Username='赵朔'
+	go
+	--2、用update命令将Course表中’JAVA精进’的任课教师（Teacher）改为杨威，课时（Cxueshi）增长14
+	update Course set Tracher='杨威', Cxueshi=Cxueshi+14 where Cname='JAVA精进'
+	go
+	--3、用delete命令将User表中Username为’马博文’的用户删除
+	delete from Users where Username='马博文'
+	go
+	--4、用Alter Table命令为User表添加check约束，限制Power字段值的范围为0-5
+	alter table Users add constraint powers check(powers>=0 and powers<=5)
+	go
+	--5、查询User表中Power值大于2的用户姓名和权限信息
+	select * from Users where powers>2
+	go
+	--6、查询Cname为’计算机基础’的任课教师姓名
+	select * from Course where Cname='计算机基础'
+	go
+	--7、显示所有Student表信息
+	exec sp_help Student
+	go
+	--8、显示所有教师姓名
+	select Teacher from Course 
+	--9、显示选修’手机游戏’专业的学生信息
+	select * from Student where Szhuanye='手机游戏'
+--练习三 1、显示年龄在20岁以上，选修’英语软件’专业的女生信息
+	select *  from Student where Szhuanye='英语软件' and Sage>'19' and Ssex='女'
+	--2、查询所有姓'张’的学生信息
+	select * from Student where Sname like '张%'
+	--3、显示正好为名字为两个汉字的学生姓名
+	select Sname from Student where Sname like '__'
+	--显示名字前一个字
+	select sname from student
+	select left(sname,1) from student
+	select right(sname,1) from student 
+	--将所有名字中的‘张’替换为‘夏’
+	select replace(sname,'张','夏') from student
+	--4、按权限由高到低显示User表所有用户
+	select * from Users order by powers desc降序
+	select * from Users order by powers asc
+--练习四  1、统计’女生’人数
+	select count(Sname) from Student where Ssex='女'
+	--2、统计一共开设了多少专业
+	select count(distinct Szhuanye) 专业 from Student 
+	--3、统计每个专业的学生人数
+	select szhuanye 专业,count(szhuanye) 学生人数
+        from student  group by szhuanye
+--练习七  1、统计每门课程的平均分，最高分和最低分
+	select * from score
+	select Cid,avg(score) 平均分,max(score) 最高分,
+	min(score) as 最低分 from score group by cid
+--统计开设了多少个专业
+	select count(distinct szhuanye) from student
+--2、显示平均分大于等于60的学生姓名、课程和成绩
+	select * from student
+	select * from Course
+	select * from Score
+	select * from Users
+	select sname,score,cname 
+	from student,course,score
+	where score.cid=course.cid and student.sid=score.sid 
+	group by sname,score,cname
+	having score>=60
+--3、按课程列出补考名单，课程名称（不及格）
+	select cname,sname,score from student st,course c,score sc
+	where st.sid=sc.sid and sc.cid=c.cid and score<60
+	group by cname,sname,score
+--4、按性别统计每门课程的平均分
+	select ssex,cname,avg(score) 平均分
+	from student,course,score
+	where score.cid=course.cid and student.sid=score.sid 
+	group by cname,ssex
+
+--统计男生，女生名有多少人
+	select ssex, count(ssex) 人数 from student
+	group by ssex
+--统计每个专业的学生人数，剔除人数不够5个的。
+	select szhuanye,count(szhuanye) from student 
+        group by szhuanye
+	having count(szhuanye)>=5
+-- 1、按专业和课程显示各科的选修人数
+	select * from student
+	select * from Course
+	select * from Score
+	select * from Users
+	select cname,szhuanye,count(score.cid) 人数 from student,course,score 
+	where score.cid=course.cid and student.sid=score.sid 
+	group by cname,szhuanye
+-- 2、显示'宋祖英'同学的姓名、所学课程、任课教师
+	select sname,cname,tracher,szhuanye from student,course,score
+	where  score.cid=course.cid and student.sid=score.sid and szhuanye=(select szhuanye from student where sname='宋祖英')
+-- 3、按专业统计每门课程的平均分
+	select cname,szhuanye,avg(score) 平均分 from student,course,score
+	where  score.cid=course.cid and student.sid=score.sid
+	group by szhuanye,cname
+	
+-- 4、显示选修’J2EE高级应用’课程的人数、平均分、最高分
+	select count(cname) 人数,avg(score) 平均分,max(score) 最高分 from course,score,student
+	where score.cid=course.cid and student.sid=score.sid and cname='J2EE高级应用'
+-- 5、查询年龄在18岁以下的学生的平均分
+	select count(score) 人数,avg(score) 平均分 from student,course,score
+	where  score.cid=course.cid and student.sid=score.sid and sage<18
+-- 6、查询出选修课程超过1门以上学生的姓名、课程名称、成绩
+	select * from student
+	select * from Course
+	select * from Score
+	select * from Users
+	select sname,cname,score from student,course,score
+	where score.cid=course.cid and student.sid=score.sid
+	and  cname in(select cname from course,score,student 
+	where score.cid=course.cid and student.sid=score.sid 
+	group by cname having count(score.cid)>1)
+
+-- 7、查询'芙蓉姐姐'的学号、姓名、专业、及所学所有课程和各科分数
+	select student.sid,sname,szhuanye,cname,score from student,course,score 
+	where score.cid=course.cid and student.sid=score.sid and sname='芙蓉姐姐'
+
+-- 8、显示’张晓蕾’老师所教课程的名称、学生人数、平均分、最高分
+	select cname,count(score.sid) 学生数 ,avg(score) 平均分 ,max(score) 最高分
+	from student,course,score
+	where score.cid=course.cid and student.sid=score.sid and tracher='张晓雷'
+	group by cname
+-- 9、统计列印各门课程成绩各分数段人数：课程名称，[100-85]，[84-70]，[69-60]，[<60] 
+	 select cname,
+	(select count(score) from student st,score sc,course c1 where st.sid=sc.sid and sc.cid=c1.cid and score>=85 and score<=100 and c.cname=c1.cname) as '100-85',
+	(select count(score) from student st,score sc,course c1 where st.sid=sc.sid and sc.cid=c1.cid and score>=70 and score<=84 and c.cname=c1.cname) as '84-70',
+	(select count(score) from student st,score sc,course c1 where st.sid=sc.sid and sc.cid=c1.cid and score>=60 and score<=74 and c.cname=c1.cname) as '69-60',
+	(select count(score) from student st,score sc,course c1 where st.sid=sc.sid and sc.cid=c1.cid and score<60 and c.cname=c1.cname)as '60以下'
+	from course as c
+
+-- 10、统计'数据库基础'参加考试人数、及格人数以及及格率（以百分比形式显示）
+	select * from student
+	select * from Course
+	select * from Score
+	select * from Users
+select cname,
+(select count(sc.cid) from student st,score sc,course c1 where st.sid=sc.sid and sc.cid=c1.cid and cname='数据库基础') as '考试人数', 
+(select count(sc.cid) from student st,score sc,course c1 where st.sid=sc.sid and sc.cid=c1.cid and cname='数据库基础' and score>=60) as '及格人数',
+(
+cast((select count(sc.cid) from student st,score sc,course c1 where st.sid=sc.sid and sc.cid=c1.cid and cname='数据库基础' and score>=60)as float)
+/
+cast((select count(sc.cid) from student st,score sc,course c1 where st.sid=sc.sid and sc.cid=c1.cid and cname='数据库基础')as float)
+)
+as '及格率'
+from score,course
+where cname='数据库基础'
+group by cname
+

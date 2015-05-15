@@ -1,0 +1,49 @@
+
+
+list-style：none //设置列表的格式为none。也就是没有格式。列表格式有好几种。有前面是圆点的。有是小正方快的等等
+font-style:normal//设置字体样式，斜体...
+text-decoration: none//清除a的下划线
+a:focus//当获取焦点的时候
+outline：none//设置轮廓
+vertical-align//比如说top就是垂直对齐文本的顶部 。
+position:absolute//设置绝对定位 relative设置相对定位 fixed固定定位基于浏览器
+inline-block//块对象呈递。旁边的内联对象会被呈递在同一行内，允许空格。将块级元素变成行及元素
+background:url(../images/list01.png) no-repeat 0 center;//的意思是 图像地址 不重复 水平位置0 垂直位置居中
+white-space: nowrap//属性设置如何处理元素内的空白。  忽略
+clear:both//清除浮动，一般用户浮动块的后面一个元素块
+overflow:hidden//文本溢出隐藏
+text-overflow:ellipsis;//显示省略符号来代表被修剪的文本。
+background-position:center;//背景图位置
+
+html5 头部
+---------------------------------------
+*{margin:0px; padding:0px;}
+ul{margin: 0;padding: 0;}
+li{list-style: none;}
+em,i{font-style: normal;}
+span{
+    display: inline-block;
+}
+a{color: #282828;text-decoration: none}
+a:focus{outline: none;}
+img{vertical-align: top;}
+p{margin: 0px;}
+html{-webkit-text-size-adjust:none;}
+*, *:after, *:before {
+	-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
+    -ms-user-select: none;
+    -ms-touch-action: none;
+    -moz-user-select: -moz-none;
+}
+body {
+	font-family:'微软雅黑', helvetica, sans-serif;;
+	text-size-adjust: none;
+	-webkit-text-size-adjust: none;
+	font-size: 14px;
+	background:#f7f7f7;
+	padding:0 0 5px 0;
+
+}
+---------------------------------------

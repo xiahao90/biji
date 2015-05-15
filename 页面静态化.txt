@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @author Administrator
+ * @copyright 2013
+ *  逻辑流程：
+ *     打开缓冲通道
+ *     加载文件
+ *     写入缓冲通道里面的数据资源集
+ *     将数据资源集保存为一个html静态页面
+ *
+ *  程序逻辑：
+ *       判断是否存在用户请求html静态页面  如果存在 就加载html 否则就重新生成 html
+ *
+ *  需要使用到的函数：
+ *       ob_start();
+ *       ob_get_contents();
+ *       ob_end_clean();
+ */
+ header("content-type: text/html;charset=utf-8");
+ ob_start();
+ if(file_exists('1.html')){
+      $str=file_get_contents('html/1.html');
+       echo '输出：1.html 静态的<hr />';
+      echo $str;
+  }else{
+     require_once('1.php');
+     $string=ob_get_contents();
+      file_put_contents('1.html',$string);
+      ob_end_clean();
+      echo '第一次输出：1.php 动态的<hr />';
+  }
+?>

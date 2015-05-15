@@ -1,0 +1,268 @@
+pdo为何物?
+POD扩展是在PHP5中加入，该扩展提供PHP内置类 PDO来对数据库进行访问，不同数据库使用相同的方法名，解决数据库连接不统一的问题。
+
+PDO的目标:
+提供一种轻型、清晰、方便的 API
+统一各种不同 RDBMS 库的共有特性，但不排除更高级的特性。
+通过 PHP 脚本提供可选的较大程度的抽象/兼容性。
+
+
+PDO的特点：
+性能===== PDO 从一开始就吸取了现有数据库扩展成功和失败的经验教训。因为 PDO 的代码是全新的，所以我们有机会重新开始设计性能，以利用 PHP 5 的最新特性。
+能力====PDO 旨在将常见的数据库功能作为基础提供，同时提供对于 RDBMS 独特功能的方便访问。
+简单====PDO 旨在使您能够轻松使用数据库。API 不会强行介入您的代码，同时会清楚地表明每个函数调用的过程。
+运行时可扩展==PDO 扩展是模块化的，使您能够在运行时为您的数据库后端加载驱动程序，而不必重新编译或重新安装整个 PHP 程序。例如，PDO_OCI 扩展会替代 PDO 扩展实现 oracle 数据库 API。还有一些用于 MySQL、PostgreSQL、ODBC 和 Firebird 的驱动程序，更多的驱动程序尚在开发。 [separator]
+
+我们为什么要使用PDO？
+ 0、PDO提供了一个数据访问抽象层，这就意味着，不管你使用的是哪种数据库，你都可以用同样的函数去进行查询的获取数据。
+ 1、更换数据库时取得极大便利
+ 2、极大提高程序运行效率
+ 
+
+
+安装PDO
+我这里是WINDOWS下开发用的PDO扩展.
+修改你的php.ini配置文件,使它支持pdo.（php.ini这个东西没有弄懂的话，先弄清楚，要修改调用你的phpinfo()函数所显示的那个 php.ini）把extension=php_pdo.dll前面的分号去掉，分毫是php配置文件注释符号,这个扩展是必须的。往下还有
+;extension=php_pdo.dll
+;extension=php_pdo_firebird.dll
+;extension=php_pdo_informix.dll
+;extension=php_pdo_mssql.dll
+;extension=php_pdo_mysql.dll
+;extension=php_pdo_oci.dll
+;extension=php_pdo_oci8.dll
+;extension=php_pdo_odbc.dll
+;extension=php_pdo_pgsql.dll
+;extension=php_pdo_sqlite.dll
+
+
+使用pdo
+
+我们通过下面的例子来分析pdo连接数据库，
+<?php
+$dbhms='mysql'; //数据库类型 oracle 用odi,对于开发者来说，使用不同的数据库，只要改这个，不用记住那么多的函数了
+$host='localhost'; //数据库主机名
+$dbhname='test'; //使用的数据库
+$user='root'; //数据库连接用户名
+$pass='test123'; //对应的密码
+$dsn="$dbhms:host=$host;dbname=$dbhname"; 　//就是构造我们的DSN（数据源
+try {
+    $dbhh = new PDO($dsn, $user, $pass); //初始化一个PDO对象，就是创建了数据库连接对象$dbhh
+    echo "连接成功<br/>";
+    /*你还可以进行一次搜索操作
+    foreach ($dbhh->query('Select * from FOO') as $row) {
+        print_r($row); //你可以用 echo($GLOBAL); 来看到这些值
+    }
+    */
+    $dbhh = null; //清除当前连接资源
+} catch (PDOException $e) {
+    die ("Error!: " . $e->getMessage() . "<br/>");
+}
+//默认这个不是长连接，如果需要数据库长连接，需要最后加一个参数：array(PDO::ATTR_PERSISTENT => true) 变成这样：
+$dbhh = new PDO($dsn, $user, $pass, array(PDO::ATTR_PERSISTENT => true));
+?>
+
+
+
+
+数据库查询：
+上面我们已经进行了一次查询，我们还可以使用如下的查询：
+<?php
+$dbh->setAttribute(PDO::ATTR_CASE, PDO::CASE_UPPER); //设置属性
+$rs = $dbh->query("Select * FROM foo");
+$rs->setFetchMode(PDO::FETCH_ASSOC);
+$result_arr = $rs->fetchAll();
+print_r($result_arr);
+?>
+
+
+看上面的代码，setAttribute() 方法是设置部分属性，主要属性有：PDO::ATTR_CASE、PDO::ATTR_ERRMODE等等，
+我们这里需要设置的是 PDO::ATTR_CASE，就是我们使用关联索引获取数据集的时候，关联索引是大写还是小写，有几个选择：
+ 
+PDO::ATTR_CASE  强制列名变成一种格式：
+	PDO::CASE_LOWER    强制列名是小写
+	PDO::CASE_NATURAL  列名按照原始的方式
+	PDO::CASE_UPPER    强制列名为大写
+
+PDO::ATTR_ERRMODE   错误提示:
+	PDO::ERRMODE_SILENT      不显示错误信息，只显示错误码.
+	PDO::ERRMODE_WARNING     显示警告错误.
+	PDO::ERRMODE_EXCEPTION   抛出异常.
+
+查询操作主要是:
+PDO::query()主要是用于有记录结果返回的操作，特别是Select操作，
+PDO::exec()主要是针对没有结果集合返回的操作，比如Insert、Update、Delete等操作，它返回的结果是当前操作影响的列数。
+PDO::prepare()主要是预处理操作，需要通过$rs->execute()来执行预处理里面的SQL语句，这个方法可以绑定参数，功能比较强大。
+
+插入，更新，删除数据，
+	$dbh->exec("delete from `xxxx_menu` where mid=43");
+
+
+setFetchMode方法来设置获取结果集的返回值的类型
+     PDO::FETCH_ASSOC -- 关联数组形式
+ 　　PDO::FETCH_NUM -- 数字索引数组形式
+ 　　PDO::FETCH_BOTH -- 两者数组形式都有，这是缺省的
+ 　　PDO::FETCH_OBJ -- 按照对象的形式，类似于以前的 mysql_fetch_object()
+当然，一般情况下我们是使用PDO::FETCH_ASSOC，具体使用什么，按照你自己的需要，其他获取类型参考手册。
+ 
+
+获取结果集操作主要是：
+PDOStatement::fetchColumn() 是获取结果指定第一条记录的某个字段，缺省是第一个字段。
+PDOStatement::fetch() 是用来获取一条记录，
+PDOStatement::fetchAll()是获取所有记录集到一个中，获取结果可以通过PDOStatement::setFetchMode来设置需要结果集合的类型。
+
+
+另外有两个周边的操作：
+   PDO::lastInsertId()是返回上次插入操作，主键列类型是自增的最后的自增ID。
+   PDOStatement::rowCount()主要是用于PDO::query()和PDO::prepare()进行DELETE、INSERT、UPDATE操作影响的结果集
+对 PDO::exec()方法和SELECT操作无效。
+
+
+错误处理:
+  错误信息： PDO::errorInfo()
+  异常信息:   Exception::getMessage()
+ SQL状态错误代码： Exception::getCode()
+
+
+ 比如：
+
+  $rs = $dbhh-＞query("SELECT aa,bb,cc FROM foo");
+  if ($dbhh-＞errorCode() != '00000'){
+ 　print_r($dbhh-＞errorInfo());
+ 　exit;
+ }
+ $arr = $rs-＞fetchAll();
+ print_r($arr);
+ $dbh = null;
+
+
+事务和自动提交：
+
+如果之前没有接触过事务，那么首先要知道事务的 4 个特征：原子性（atomicity）、一致性（consistency）、独立性（isolation）和持久性（durability），即 acid。
+用外行人的话说，对于在一个事务中执行的任何工作，即使它是分阶段执行的，也一定可以保证该工作会安全地应用于数据库，
+并且在工作被提交时，不会受到来自其他连接的影响。事务性工作可以根据请求自动撤销（假设您还没有提交它），这使得脚本中的错误处理变得更加容易。
+
+事务通常是通过把一批更改积蓄起来、使之同时生效而实现的。这样做的好处是可以大大提高这些更新的效率。换句话说，事务可以使脚本更快，而且可能更健壮（不过需要正确地使用事务才能获得这样的好处）。 
+
+不幸的是，并不是每种数据库都支持事务
+pdo 需要在所谓的“自动提交（auto-commit）”模式下运行。
+自动提交模式意味着，如果数据库支持事务，那么您所运行的每一个查询都有它自己的隐式事务，如果数据库不支持事务，每个查询就没有这样的事务。
+如果您需要一个事务，那么必须使用 pdo::begintransaction() 方法来启动一个事务。如果底层驱动程序不支持事务，那么将会抛出一个 pdoexception（无论错误处理设置是怎样的：这总是一个严重错误状态）。
+在一个事务中，可以使用 pdo::commit() 或 pdo::rollback() 来结束该事务，这取决于事务中运行的代码是否成功。
+当脚本结束时，或者当一个连接即将被关闭时，如果有一个未完成的事务，那么 pdo 将自动回滚该事务。这是一种安全措施，有助于避免在脚本非正常结束时出现不一致的情况 —— 如果没有显式地提交事务，那么假设有某个地方会出现不一致，所以要执行回滚，以保证数据的安全性。
+
+事物的典型应用 银行转账:
+
+$dbhh->setAttribute(PDO::ATTR_AUTOCOMMIT,0);  //执行后 修改成自动提交
+try{
+ //开启事物
+  $dbhh->beginTransaction();
+  $price=500;
+  $sql="update lixin set p
+rice=price-{$price} where id=1";
+  $dbhh->exec($sql);
+  $sql1="update lixin set price=price+{$price} where id=3";
+  //查询语句使用query();
+  //增删改使用exec();
+ $affact_row=$dbhh->exec($sql1);
+  if(!$affact_row){
+    throw new PDOException("黄琼霖转入失败");
+  }
+  echo "交易成功";
+  $dbhh->commit();
+  // 手动提交
+}catch(PDOException $e){
+  echo "链接数据库出错".$e->getMessage();
+  $dbhh->rollback(); //回滚
+}
+$dbhh->setAttribute(PDO::ATTR_AUTOCOMMIT,1);  //执行后 修改成自动提交
+?>
+
+
+预处理语句和存储过程：
+
+什么是预处理语句:
+   很多更成熟的数据库都支持预处理语句的概念。
+预处理语句可以带来两大好处：
+ 查询只需解析（或准备）一次，但是可以用相同或不同的参数执行多次。
+ 当查询准备好后，数据库将分析、编译和优化执行该查询的计划。对于复杂的查询，这个过程要花比较长的时间，如果您需要以不同参数多次重复相同的查询，那么该过程将大大降低应用程序的速度。
+ 通过使用预处理语句，可以避免重复分析/编译/优化周期。简言之，预处理语句使用更少的资源，因而运行得更快。 
+
+使用预处理语句重复插入数据(1)
+此示例演示了一个通过向命名占位符代入一个name和一个value值来执行的INSERT查询
+$stmt = $dbhh->prepare("INSERT INTO REGISTRY (name, value) VALUES (:name, :value)");
+$stmt->bindParam(':name', $name);
+$stmt->bindParam(':value', $value); //插入一行 
+$name = 'one';
+$value = 1;
+$stmt->execute();//使用不同的值插入另一行 
+
+
+$name = 'two';
+$value = 2;
+$stmt->execute();
+
+
+使用预处理语句重复插入数据(2)
+此示例演示了一个通过向用?表示的占位符代入一个name和一个value值来执行的INSERT查询
+
+$stmt = $dbhh->prepare("INSERT INTO REGISTRY (name, value) VALUES (?, ?)");
+ $stmt->bindParam(1, $name);
+ $stmt->bindParam(2, $value); // 插入一行 
+ $name = 'one';
+ $value = 1;
+
+ $stmt->execute(); // 使用不同的值插入另一行 
+
+
+ $name = 'two';
+ $value = 2;
+ $stmt->execute();
+
+
+ 通过预处理语句获取数据
+ 此示例演示使用从表单获取的数据为关键值来执行查询获取数据。用户的输入会被自动添加引号，所以这儿不存在SQL注入攻击的危险。
+ 
+ $stmt = $dbhh->prepare("SELECT * FROM REGISTRY where name = ?");
+ if ($stmt->execute(array($_GET['name']))) {
+         while ($row = $stmt->fetch()) {
+         print_r($row);
+     }
+ }
+
+//占位符的错误使用 
+$stmt = $dbhh->prepare("SELECT * FROM REGISTRY where name LIKE '%?%'");
+$stmt->execute(array($_GET['name'])); // 占位符必须用于整个值的位置
+（下面是正确的用法） 
+  $stmt = $dbh->prepare(”SELECT * FROM REGISTRY where name LIKE ?”);
+  $stmt->execute(array(”%$_GET[name]%”));
+
+
+
+
+//调用一个带有输出参数的存储过程 
+$stmt = $dbhh->prepare("CALL sp_returns_string(?)");
+$stmt->bindParam(1, $return_value, PDO::PARAM_STR, 4000); //执行存储过程 
+$stmt->execute();
+print "procedure returned $return_value/n";
+
+你也可以指定既代表输入又代表输出的参数，语法类似于输出参数。
+在下个代码示例中，“hello”字符串被传递到存储过程中，当它返回时，hello就会被存储过程的返回值取代。
+ 
+//调用一个带有输入/输出参数的存储过程 
+$stmt = $dbhh->prepare("CALL sp_takes_string_returns_string(?)");
+$value = 'hello';
+$stmt->bindParam(1, $value, PDO::PARAM_STR|PDO::PARAM_INPUT_OUTPUT, 4000);
+// 执行存储过程 
+$stmt->execute();
+print "procedure returned $value/n";
+
+
+pdo乱码解决：
+$dbhh->exec("SET CHARACTER SET 编码"); 
+
+
+
+
+
+
+

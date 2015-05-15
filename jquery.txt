@@ -1,0 +1,203 @@
+
+dom对象和jquery对象混合使用
+Var $cr=$(“#cr”);//jquery对象
+
+Var cr=$cr[0];//dom对象
+
+
+
+
+
+dom 对象转换成 jquery对象
+
+$(dom 对象).jquery方法.
+$(document).ready(function(){
+        // ready 预加载  执行效率要高于其他写法，从jquery 的内部机制，在加载页面的时候已经同时加载了jquery
+});
+
+  $('选择器').val(); 获取该对象的value   
+  $('选择器').text(); 获取该对象的text  
+  $('选择器').html(); 获取该对象的html
+
+remove("")：删除子元素；
+removeAttr("src"); 删除元素的一个属性；
+append("文字<br />");向每个匹配的元素内部追加内容。
+clone(bool);克隆匹配的DOM元素并且选中这些克隆的副本（一个布尔值（true 或者 false）指示事件处理函数是否会被复制。）
+insertAfter('#div')把所有匹配的元素插入到另一个、指定的元素元素集合的后面。
+replaceWith()将所有匹配的元素替换成指定的HTML或DOM元素
+appendTo("div");把所有匹配的元素追加到另一个指定的元素元素集合中。
+parent()找父亲节点
+prev();前一个；
+next();后一个节点；
+children(0)对象下面第0个标签！
+
+
+
+动态添加class:
+   
+  $('选择器').addClass("类名")
+
+   $('根元素 子元素  .....')  多个子元素之间有空格分隔    找到的是最后一个子元素
+    平级关系 相邻的两个元素，已知大哥 找 小弟
+   $(元素+元素)
+
+   $('#one~div')  查找某元素的后面的元素  已知 大哥 找到它下面的所有小弟
+
+
+$(元素选择器:first) 符合该元素选择器的集合中的第一个
+
+$(元素选择器:last) 符合该元素选择器的集合中的最后一个
+
+$(元素选择器:last-child):last'只匹配一个元素，而此选择符将为每个父元素匹配一个子元素
+
+
+$(元素选择器:not()) 匹配不符合某个选择器选定对象 类似于 ！  逻辑非
+
+$(元素选择器:even)   匹配符合该选择器元素对象集合中的偶数对象
+
+$(元素选择器:odd)  匹配符合该选择器元素对象集合中的奇数对象 
+
+$(元素选择器:eq(索引))     符合该元素选择器的集合中的第index个元素  注意： index 索引 从 0 开始
+  :gt(索引) 大于
+ :lt(索引)  小于
+
+属性选择器：
+  $('元素[属性="值"]')；
+
+ 属性选择器：
+   $("元素[属性名='属性值']")  等于
+   $("input[name!='newsletter']") 不等
+   $("input[name^='属性值的开始字符']")  
+   $("input[name$='属性值的结束字符']")
+   $("input[id][name$='man']")  找到的是 input元素中 有id属性的 name属性中以 man结束的对象
+   $("input[id][name*='man']") 模糊匹配
+内容匹配对象：
+ $("div:contains('John')")  通过内容找到某个具体的对象
+
+
+attr()； 设置或者获取元素的属性
+
+ 对象.attr(属性名)  返回该对象的属性的值
+
+ 对象.attr(属性名,'属性值') ;
+
+  对象.attr({属性名:'属性值',......}) ;
+$($tp[i]).css("display","block");
+
+显示与隐藏：
+  show(时间);
+   show(时间,functtion(){回调函数 })
+
+ hide(时间);
+ hide(时间,functtion(){回调函数 })
+
+ $.ajax({
+               type: "POST",  数据传递的方式  get  post
+               url: "some.php",   访问服务器的路径
+               data: "name=John&location=Boston",  参数
+               success: function(msg){  服务器的返回数据
+                 alert( "Data Saved: " + msg );  //在客户端处理
+               }
+            });
+
+ $.ajax({
+               type: "POST",
+               url: "20.php",
+               data: "city=chengdu",
+               dataType:"json",
+               success: function(text){
+                // alert(text[0])
+                $('select[name="sel"]').empty();
+                for(var i in text){
+                 //alert(i);
+                  $('select[name="sel"]').append("<option value='"+i+"'>"+text[i]+"</option>");      
+                }
+                  
+               }
+            });
+
+数据交互格式
+
+ json 格式：
+  将一个数组转换成json 格式
+  
+json_encode();  
+
+将json 格式的字符串转换成数组
+
+json_decode()
+
+
+var o=eval('('+data+')');//将  打他转换成对象！
+
+注意：如果要使用json 进行数据交互的话，我们经常遇到的问题是编码格式， 由于js默认是采用ｕｔｆ－８的格式处理
+ 数据，所以 我建议 所有的编码格式都是utf-8 
+
+
+如果是在gbk的格式下面json 数据交互的
+
+contentType："application/x-www-form-urlencoded"，
+
+
+
+$(".mydiv").load("load20.html");  远程加载一个页面
+
+
+动态的添加 option
+$('select[name="sel"]').append("<option value='"+i+"'>"+text[i]+"</option>"); 
+
+
+ //设置或者获取div navBox 的最顶端 距离浏览器窗口的可见内容的最顶端的距离
+        //当浏览器窗口发生滚动时触发事件
+       $(window).scroll(function(){
+          var setNavBoxScroll=$(window).scrollTop();
+          $('.navBox').animate({top:setNavBoxScroll},{duration:200 ,queue:false });
+
+       })
+
+//移入缓慢弹出  移出缓慢收回
+$('li').mouseenter(function(){
+            $(this).animate({left:"0px"},200);
+        }).mouseleave(function(){
+            $(this).animate({left:"-80px"},200);
+        });
+
+
+
+each  循环：
+$('#diwuti input').each(function(key,value){
+
+            });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

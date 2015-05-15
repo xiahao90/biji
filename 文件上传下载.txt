@@ -1,0 +1,68 @@
+<body>
+<label onclick='tj()' style=" cursor: pointer; font-size: 30px;"onmousemove="style.color='red'" onmouseout="style.color='#000000'">点击增加</label>
+<form style="display: none;" action="zuoyeaction.php" method="post" enctype="multipart/form-data">
+<div style="display: none;" id="d1"><input type="file" name="i0" /><br /></div>
+<div id="zh"><input type="submit" name="qb" value="全部上传" /></div>
+</form>
+<script type="text/javascript">
+    var i=1;
+  function tj(){
+    if(i>10){
+        alert('打开过多!已达到最大上限');
+        exit();
+    }
+    if(i==1){//第一次点击
+        document.getElementById('d1').style.display='block';
+        document.getElementById('d1').parentNode.style.display='block';
+        i++;
+    }else{
+         //找到并复制要添加的对象
+         var _mydiv=document.getElementById('d1');
+         var _newdiv=_mydiv.cloneNode(true);
+         //修改要添加的对象
+         _newdiv.setAttribute('id','')
+         var _input=_newdiv.firstChild;//父对象下面第一个对象
+         _input.setAttribute('name','i'+i)
+         i++;
+         //添加进去
+         var _zh=document.getElementById('zh');
+        var _fjd=_zh.parentNode;
+        _fjd.insertBefore(_newdiv,_zh); //插入某个对象的前面
+    
+    }
+   
+  }
+</script>
+</body>
+____________________________________________
+header("content-type: text/html; charset=utf-8");
+if(isset($_POST['qb'])){
+    for($y=0;$y<10;$y++){
+        if(isset($_FILES['i'.$y]['name'])){
+          $uploadFileName =$_FILES['i'.$y]['name'];
+          $uploadFormDir=$_FILES['i'.$y]['tmp_name'];         
+          $to=$_SERVER['DOCUMENT_ROOT'].'/xiahao/wenjian/'.$uploadFileName;
+          if($uploadFileName!==""){
+              if(move_uploaded_file($uploadFormDir,$to)){
+              echo '文件：'.$uploadFileName.' 上传成功</br>';
+              }else{    
+               echo '文件：'.$uploadFileName.' 上传失败</br>';
+              }
+          }   
+        }
+
+
+
+unlink — 删除文件
+
+
+
+
+
+
+
+
+        
+    }
+          
+}
